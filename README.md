@@ -1,10 +1,16 @@
-# gcisl-fullstackapp
+# gcisl_app
 
-This project was requested by the Granger Cobb Institute of Senior Living. It is to be a mobile and web application where faculty, alumni, and students can post their
-job history, current status, and communication with each other.
+A new Flutter project.
 
-This repository is managed by Musa Husseini, Tom Arad, and Nathan Bunge as a part of Washington State Universities Computer Science Capstone Project. 
+## Getting Started
 
-Musa Husseini - musa.husseini@wsu.edu
-Tom Arad - tom.arad@wsu.edu
-Nathan Bunge nathan.bunge@wsu.edu
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
