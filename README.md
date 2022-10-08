@@ -1,16 +1,62 @@
-# gcisl_app
+# Project Name
+GCISL Team
 
-A new Flutter project.
+## Project summary
+A web and mobile application for a social networking app. 
 
-## Getting Started
+### One-sentence description of the project
 
-This project is a starting point for a Flutter application.
+A social networking web and mobile application that can connect facutly with alumni in the field of hospitality.
 
-A few resources to get you started if this is your first Flutter project:
+### Additional information about the project
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The GCISL team has  been assigned to make a web application and a mobile application that allows alumni to share their career tracks with other alumni, faculty, and students. Each user will be able to post their job history and chat with other users. The motivation behind this project was the Granger Cobb Institute for Senior Living is a new institution in the school of hospitality looking for a way to stay connected with alumni in the field. They have data of students who have graduated from the hospitality program in the past eleven years and plan to share this application with them so faculty and alumni can reconnect. The GCISL team will provide the faculty with an application that can help connect the school with alumni. 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+TODO:
+### Prerequisites
+
+TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
+
+### Add-ons
+
+TODO: List which add-ons are included in the project, and the purpose each add-on serves in your app.
+
+### Installation Steps
+
+TODO: Describe the installation process (making sure you mention `bundle install`).
+Instructions need to be such that a user can just copy/paste the commands to get things set up and running. 
+
+
+## Functionality
+
+TODO: Write usage instructions. Structuring it as a walkthrough can help structure this section,
+and showcase your features.
+
+
+## Known Problems
+
+TODO: Describe any known issues, bugs, odd behaviors or code smells. 
+Provide steps to reproduce the problem and/or name a file or a function where the problem lives.
+
+
+## Contributing
+
+TODO: Leave the steps below if you want others to contribute to your project.
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+## Additional Documentation
+
+TODO: Provide links to additional documentation that may exist in the repo, e.g.,
+  * Sprint reports
+  * User links
+
+## License
+
+If you haven't already, add a file called `LICENSE.txt` with the text of the appropriate license.
+We recommend using the MIT license: <https://choosealicense.com/licenses/mit/>
