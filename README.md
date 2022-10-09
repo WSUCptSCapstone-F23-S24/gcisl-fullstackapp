@@ -33,9 +33,7 @@ More help with installing flutter can be found [here](https://docs.flutter.dev/g
 For VS code, you will want to add extensions to make it easier to read code
 - Flutter
 - C++/C
-
-Additional Extensions : 
-- GitLens
+- GitLens (optional)
 
 ### Clonning Repo
 - Create a new folder to store the repository on your local machine
