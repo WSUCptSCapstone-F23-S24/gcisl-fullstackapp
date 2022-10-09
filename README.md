@@ -28,9 +28,9 @@ Adding Flutter Path - This is required to run flutter commands in the terminal
 - Select Enviornment Variables
 - In the user variables window, select the line with "PATH"
 - Click Edit
-- Add a new row
+- Add a new row and enter "C:\flutter\bin" (If you stored flutter somehwere else, enter that path instead) 
 
-## Add-Ons
+### Add-Ons
 
 For VS code, you will want to add exstentions to make it easier to read code
 - Flutter
