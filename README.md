@@ -21,7 +21,24 @@ IDE -  You will need a program to view and edit code. We recomend Visual Sudio.
 
 Flutter - This is required to run .dart files to see UI changes
 - You can download flutter from their [website](https://docs.flutter.dev/get-started/install)
-- Unzip the files and run the installation 
+- Unzip downloaded file and place the entire folder in your main source or local disk directory (i.e. C:\flutter)
+
+Adding Flutter Path - This is required to run flutter commands in the terminal
+- Open your system proporties advanced window by searching 'env' and selecting 'Edit the System enviornment variables'
+- Select Enviornment Variables
+- In the user variables window, select the line with "PATH"
+- Click Edit
+- Add a new row
+
+## Add-Ons
+
+For VS code, you will want to add exstentions to make it easier to read code
+- Flutter
+- C++/C
+
+Additional Exstentions: 
+- GitLense
+- Git History
 
 ### Cloning Repo
 - Create a new folder to store the repository on your local machine
