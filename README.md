@@ -13,27 +13,31 @@ The motivation behind this project was the Granger Cobb Institute for Senior Liv
 
 The GCISL team has  been assigned to make a web application and a mobile application that allows alumni to share their career tracks with other alumni, faculty, and students. Each user will be able to post their job history and chat with other users. The motivation behind this project was the Granger Cobb Institute for Senior Living is a new institution in the school of hospitality looking for a way to stay connected with alumni in the field. They have data of students who have graduated from the hospitality program in the past eleven years and plan to share this application with them so faculty and alumni can reconnect. The GCISL team will provide the faculty with an application that can help connect the school with alumni. 
 
-## Installation
+## Installation 
+### Prerequisites
 IDE 
 - Install [VS code](https://code.visualstudio.com/download), or a another IDE of your choice.
-- Use the link https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp.git to clone locally 
 
 Flutter
-- Download and install [Flutter](https://docs.flutter.dev/get-started/install) to run dart files
-- Open a terminal window and run "flutter run"
+- Download [Flutter](https://docs.flutter.dev/get-started/install)
+- Unzip the files and run the installation 
 
-### Prerequisites
+### Cloning Repo
+- Create a new folder to store the repository on your local machine
+- Open Visual Studio, or the IDE of your choice 
+- Select "Clone a Repo" from the left side tab
+- Paste https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp.git
+- Select the folder you want the repository in
 
-TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
+### Running Code
+- Open terminal window in VS code 
+- Run command "Flutter Run"
 
-### Add-ons
-
-TODO: List which add-ons are included in the project, and the purpose each add-on serves in your app.
-
-### Installation Steps
-
-TODO: Describe the installation process (making sure you mention `bundle install`).
-Instructions need to be such that a user can just copy/paste the commands to get things set up and running. 
+### Making Edits
+- At the bottom left select the branch icon (it should say "main")
+- Choose to "create new branch"
+- Name the branch according to the feature you will be working on
+- Press enter, and then ensure you are checked out to ths new branch you made at the bottom left
 
 
 ## Functionality
