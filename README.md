@@ -51,14 +51,12 @@ For VS code, you will want to add extensions to make it easier to read code
 
 ## Functionality
 
-TODO: Write usage instructions. Structuring it as a walkthrough can help structure this section,
-and showcase your features.
+Currently the application has no real functionality as it only displays the launch page and the color theme.
 
 
 ## Known Problems
 
-TODO: Describe any known issues, bugs, odd behaviors or code smells. 
-Provide steps to reproduce the problem and/or name a file or a function where the problem lives.
+There are no known problems.
 
 
 ## Contributing
