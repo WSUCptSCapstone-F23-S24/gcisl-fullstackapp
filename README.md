@@ -15,20 +15,21 @@ The GCISL team has  been assigned to make a web application and a mobile applica
 
 ## Installation 
 ### Prerequisites
-IDE -  You will need a program to view and edit code. We recomend Visual Studio Code.
+IDE -  You will need a program to view and edit code. We recommend Visual Studio Code.
 - Download from their [website](https://code.visualstudio.com/download)
 - Unzip the files and run the installation  
 
 Flutter - This is required to run .dart files to see UI changes
 - You can download flutter from their [website](https://docs.flutter.dev/get-started/install)
-- Unzip downloaded file and place the entire folder in your main source or local disk directory (i.e. C:\flutter)
+- Unzip downloaded file and place the entire folder in a commen directory (i.e. C:\flutter)
 
 Adding Flutter Path - This is required to run flutter commands in the terminal
-- Open your system proporties advanced window by searching 'env' and selecting 'Edit the System enviornment variables'
-- Select Enviornment Variables
+- Open your system properties advanced window by searching 'env' and selecting 'Edit the System environment variables'
+- Select Environment Variables
 - In the user variables window, select the line with "PATH"
 - Click Edit
 - Add a new row and enter "C:\flutter\bin" (If you stored flutter somehwere else, enter that path instead) 
+More help with installing flutter can be found [here](https://docs.flutter.dev/get-started/install/windows#update-your-path)
 
 ### Add-Ons
 
@@ -37,10 +38,9 @@ For VS code, you will want to add exstentions to make it easier to read code
 - C++/C
 
 Additional Exstentions: 
-- GitLense
-- Git History
+- GitLens
 
-### Cloning Repo
+### Clonning Repo
 - Create a new folder to store the repository on your local machine
 - Open Visual Studio, or the IDE of your choice 
 - Select "Clone a Repo" from the left side tab
