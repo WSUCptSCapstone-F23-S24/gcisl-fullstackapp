@@ -15,11 +15,12 @@ The GCISL team has  been assigned to make a web application and a mobile applica
 
 ## Installation 
 ### Prerequisites
-IDE 
-- Install [VS code](https://code.visualstudio.com/download), or a another IDE of your choice.
+IDE -  You will need a program to view and edit code. We recomend Visual Sudio.
+- Download from their [website](https://code.visualstudio.com/download)
+- Unzip the files and run the instalation  
 
-Flutter
-- Download [Flutter](https://docs.flutter.dev/get-started/install)
+Flutter - This is required to run .dart files to see UI changes
+- You can download flutter from their [website](https://docs.flutter.dev/get-started/install)
 - Unzip the files and run the installation 
 
 ### Cloning Repo
