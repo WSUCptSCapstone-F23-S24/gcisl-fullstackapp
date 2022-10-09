@@ -77,9 +77,13 @@ Through VS code IDE:
 
 ## Additional Documentation
 
-TODO: Provide links to additional documentation that may exist in the repo, e.g.,
-  * Sprint reports
-  * User links
+Sprints:
+- [Sprint 1](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
+
+Users:
+- [Tom Arad](https://github.com/Tom1779)
+- [Nathan Bunge](https://github.com/nathanbunge)
+- [Musa Husseini](https://github.com/Musa-Husseini)
 
 ## License
 
