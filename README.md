@@ -1,7 +1,7 @@
 # GCISL Team
 
 ## Overview
-A social networking web and mobile application that can connect facutly with alumni in the field of hospitality.
+A social networking web and mobile application that can connect faculty with alumni in the field of hospitality.
 
 ## Project description 
 Our project provided by Granger Cobb Institute for Senior Living (GCISL) has asked for the team to make a web and mobile application. This application will allow faculty, students, and alumni to stay in touch with each other. Users of this application will be able to post job updates, current and past, see other users job updates, and message with any user in the system.
@@ -15,9 +15,9 @@ The GCISL team has  been assigned to make a web application and a mobile applica
 
 ## Installation 
 ### Prerequisites
-IDE -  You will need a program to view and edit code. We recomend Visual Sudio.
+IDE -  You will need a program to view and edit code. We recomend Visual Studio Code.
 - Download from their [website](https://code.visualstudio.com/download)
-- Unzip the files and run the instalation  
+- Unzip the files and run the installation  
 
 Flutter - This is required to run .dart files to see UI changes
 - You can download flutter from their [website](https://docs.flutter.dev/get-started/install)
