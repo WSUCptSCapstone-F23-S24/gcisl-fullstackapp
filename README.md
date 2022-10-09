@@ -1,20 +1,26 @@
 # Project Name
 GCISL Team
 
-## Project summary
-A web and mobile application for a social networking app. 
-
-### One-sentence description of the project
-
+## Overview
 A social networking web and mobile application that can connect facutly with alumni in the field of hospitality.
+
+## Project description 
+Our project provided by Granger Cobb Institute for Senior Living (GCISL) has asked for the team to make a web and mobile application. This application will allow faculty, students, and alumni to stay in touch with each other. Users of this application will be able to post job updates, current and past, see other users job updates, and message with any user in the system.
+
+The motivation behind this project was the Granger Cobb Institute for Senior Living is a new institution in the school of hospitality looking for a way to stay connected with alumni in the field. They have data of students who have graduated from the hospitality program in the past eleven years and plan to share this application with them so faculty and alumni can reconnect. The GCISL team will provide the faculty with an application that can help connect the school with alumni 
+
 
 ### Additional information about the project
 
 The GCISL team has  been assigned to make a web application and a mobile application that allows alumni to share their career tracks with other alumni, faculty, and students. Each user will be able to post their job history and chat with other users. The motivation behind this project was the Granger Cobb Institute for Senior Living is a new institution in the school of hospitality looking for a way to stay connected with alumni in the field. They have data of students who have graduated from the hospitality program in the past eleven years and plan to share this application with them so faculty and alumni can reconnect. The GCISL team will provide the faculty with an application that can help connect the school with alumni. 
 
 ## Installation
-- Install [VS code](https://code.visualstudio.com/download), or a another IDE of your choice 
-- 
+IDE 
+- Install [VS code](https://code.visualstudio.com/download), or a another IDE of your choice.
+- Use the link https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp.git to clone locally 
+Flutter
+- Download and install [Flutter](https://docs.flutter.dev/get-started/install) to run dart files
+- Open a terminal window and run "flutter run"
 ### Prerequisites
 
 TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
