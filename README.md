@@ -1,7 +1,7 @@
 # GCISL Team
 
 ## Project Overview
-A social networking web and mobile application that can connect faculty with alumni in the field of hospitality.
+A web and mobile application that aims to connect faculty and alumni from the Ganger Cobb Institude of Senior Living.
 
 ### General Description 
 
