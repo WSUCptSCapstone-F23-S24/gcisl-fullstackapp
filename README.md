@@ -1,5 +1,4 @@
-# Project Name
-GCISL Team
+# GCISL Team
 
 ## Overview
 A social networking web and mobile application that can connect facutly with alumni in the field of hospitality.
