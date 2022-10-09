@@ -34,11 +34,6 @@ Flutter - This is required to run .dart files to see UI changes
 - Open terminal window in VS code 
 - Run command "Flutter Run"
 
-### Making Edits
-- At the bottom left select the branch icon (it should say "main")
-- Choose to "create new branch"
-- Name the branch according to the feature you will be working on
-- Press enter, and then ensure you are checked out to ths new branch you made at the bottom left
 
 
 ## Functionality
@@ -55,13 +50,19 @@ Provide steps to reproduce the problem and/or name a file or a function where th
 
 ## Contributing
 
-TODO: Leave the steps below if you want others to contribute to your project.
-
+Through the terminal: 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
+
+Through VS code IDE:
+- At the bottom left select the branch icon (it should say "main")
+- Choose to "create new branch"
+- Name the branch according to the feature you will be working on
+- Press enter, and then ensure you are checked out to ths new branch you made at the bottom left
+
 
 ## Additional Documentation
 
