@@ -41,6 +41,7 @@ For VS code, you will want to add extensions to make it easier to read code
 - Select "Clone a Repo" from the left side tab
 - Paste `https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp.git`
 - Select the folder you want the repository in
+- Press Enter. Repo should now be cloned to your local machine
 
 ### Running Code
 - Open terminal window in VS code 
