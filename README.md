@@ -18,9 +18,11 @@ The GCISL team has  been assigned to make a web application and a mobile applica
 IDE 
 - Install [VS code](https://code.visualstudio.com/download), or a another IDE of your choice.
 - Use the link https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp.git to clone locally 
+
 Flutter
 - Download and install [Flutter](https://docs.flutter.dev/get-started/install) to run dart files
 - Open a terminal window and run "flutter run"
+
 ### Prerequisites
 
 TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
