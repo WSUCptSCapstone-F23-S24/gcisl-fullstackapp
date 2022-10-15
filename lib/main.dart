@@ -121,4 +121,37 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  void selectedItem(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MessagesPage(),
+          ),
+        );
+        break;
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AnalyticsPage(),
+          ),
+        );
+        break;
+    }
+  }
 }
