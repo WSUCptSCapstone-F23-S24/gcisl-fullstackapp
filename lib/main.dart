@@ -6,6 +6,7 @@ import 'pages/home.dart';
 import 'pages/profile.dart';
 import 'pages/messages.dart';
 import 'pages/analytics.dart';
+import 'main_widgets/appbar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -60,87 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            flex: 4,
-            child: Row(
-              children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 199, 195, 195),
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () => selectedItem(context, 0),
-                  child: Text(
-                    'Home',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 1),
-                  child: Text(
-                    'Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 2),
-                  child: Text(
-                    'Messages',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 3),
-                  child: Text(
-                    'Analytics',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(flex: 3, child: Text("")),
-          Expanded(
-            flex: 1,
-            child: IconButton(
-              iconSize: 30,
-              icon: const Icon(
-                Icons.settings,
-              ),
-              // the method which is called
-              // when button is pressed
-              onPressed: () {},
-            ),
-          )
-        ],
-      )),
+      appBar: HeaderNav(context, widget.title),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -162,38 +83,5 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  void selectedItem(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ),
-        );
-        break;
-      case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(),
-          ),
-        );
-        break;
-      case 2:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MessagesPage(),
-          ),
-        );
-        break;
-      case 3:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => AnalyticsPage(),
-          ),
-        );
-        break;
-    }
   }
 }
