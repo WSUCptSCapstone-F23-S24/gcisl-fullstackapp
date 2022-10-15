@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/WSULogo.png'),
+            Image.asset('assets/GCISL_logo.png'),
             const Text(
               'You have pushed the button this many times:',
             ),
