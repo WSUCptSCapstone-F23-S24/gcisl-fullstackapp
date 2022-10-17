@@ -44,43 +44,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String name = "";
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-      if (_counter % 2 == 0) {
-        name = "Cobb";
-      } else {
-        name = "Connect";
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // extendBodyBehindAppBar: true,
       appBar: HeaderNav(context, widget.title),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('assets/GCISL_logo.png'),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter : $name',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          color: Palette.ktoCrimson,
+          child: Row(
+            children: [
+              Expanded(
+                child: Image.asset(
+                  'assets/GCISL_logo.png',
+                  height: 50,
+                  width: 120,
+                  color: Color.fromARGB(255, 199, 195, 195),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
