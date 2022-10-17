@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // extendBodyBehindAppBar: true,
       appBar: HeaderNav(context, widget.title),
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
