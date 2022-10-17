@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'pallete.dart';
@@ -47,24 +47,65 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // extendBodyBehindAppBar: true,
       appBar: HeaderNav(context, widget.title),
-      body: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          color: Palette.ktoCrimson,
-          child: Row(
-            children: [
-              Expanded(
-                child: Image.asset(
-                  'assets/GCISL_logo.png',
-                  height: 50,
-                  width: 120,
-                  color: Color.fromARGB(255, 199, 195, 195),
-                ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Color.fromARGB(255, 199, 195, 195),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 5),
+              child: Image.asset(
+                'assets/GCISL_logo.png',
+                height: 50,
+                color: Palette.ktoCrimson,
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        margin: EdgeInsets.only(top: 20),
+        alignment: Alignment.topCenter,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(),
+            ),
+            Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Palette.ktoCrimson.withOpacity(0.1),
+                          width: 2)),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text("feed"),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            hintText: 'Create Post...',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
+            Expanded(
+              flex: 1,
+              child: Column(),
+            ),
+          ],
         ),
       ),
     );
