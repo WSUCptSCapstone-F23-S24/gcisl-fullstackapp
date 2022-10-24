@@ -70,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: EdgeInsets.only(top: 20),
         alignment: Alignment.topCenter,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 1,
@@ -88,12 +89,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Text("feed"),
                         SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
                         TextField(
+                          maxLines: 4,
+                          cursorColor: Colors.black,
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30)),
+                            filled: true,
+                            fillColor: Colors.black12,
+                            border: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            hintStyle: TextStyle(color: Colors.white),
                             hintText: 'Create Post...',
                           ),
                         ),

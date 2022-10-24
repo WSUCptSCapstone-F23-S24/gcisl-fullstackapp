@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_import, unnecessary_const, duplicate_ignore, unnecessary_new
+// ignore_for_file: non_constant_identifier_names, unused_import, unnecessary_const, duplicate_ignore, unnecessary_new, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import '../pages/home.dart';
@@ -35,9 +35,13 @@ AppBar HeaderNav(BuildContext context, String title) {
             children: [
               // ignore: unnecessary_new
               new Flexible(
-                child: TextButton(
+                child: ElevatedButton.icon(
                   onPressed: () => selectedItem(context, 0),
-                  child: const Text(
+                  icon: Icon(
+                    Icons.home_rounded,
+                    color: Color.fromARGB(255, 199, 195, 195),
+                  ),
+                  label: const Text(
                     'Home',
                     style: TextStyle(
                       color: Colors.white,
@@ -48,9 +52,13 @@ AppBar HeaderNav(BuildContext context, String title) {
               ),
               // ignore: unnecessary_new
               new Flexible(
-                child: TextButton(
+                child: ElevatedButton.icon(
                   onPressed: () => selectedItem(context, 1),
-                  child: const Text(
+                  icon: Icon(
+                    Icons.portrait_rounded,
+                    color: Color.fromARGB(255, 199, 195, 195),
+                  ),
+                  label: const Text(
                     'Profile',
                     style: TextStyle(
                       color: Colors.white,
@@ -60,9 +68,13 @@ AppBar HeaderNav(BuildContext context, String title) {
                 ),
               ),
               new Flexible(
-                child: TextButton(
+                child: ElevatedButton.icon(
                   onPressed: () => selectedItem(context, 2),
-                  child: const Text(
+                  icon: Icon(
+                    Icons.message_rounded,
+                    color: Color.fromARGB(255, 199, 195, 195),
+                  ),
+                  label: const Text(
                     'Messages',
                     style: TextStyle(
                       color: Colors.white,
@@ -72,9 +84,13 @@ AppBar HeaderNav(BuildContext context, String title) {
                 ),
               ),
               new Flexible(
-                child: TextButton(
+                child: ElevatedButton.icon(
                   onPressed: () => selectedItem(context, 3),
-                  child: const Text(
+                  icon: Icon(
+                    Icons.analytics_rounded,
+                    color: Color.fromARGB(255, 199, 195, 195),
+                  ),
+                  label: const Text(
                     'Analytics',
                     // ignore: unnecessary_const
                     style: const TextStyle(
