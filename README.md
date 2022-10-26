@@ -28,6 +28,8 @@ The motivation behind this project was the Granger Cobb Institute for Senior Liv
 - Add a new row and enter "C:\flutter\bin" (If you stored flutter somewhere else, enter that path instead) 
 More help with installing flutter can be found [here](https://docs.flutter.dev/get-started/install/windows#update-your-path)
 
+***Firebase*** - #TODO
+
 ### Add-Ons
 
 For VS code, you will want to add extensions to make it easier to read code
