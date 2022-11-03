@@ -30,6 +30,8 @@ More help with installing flutter can be found [here](https://docs.flutter.dev/g
 
 ***Firebase*** - #TODO
 
+(Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine)
+
 ### Add-Ons
 
 For VS code, you will want to add extensions to make it easier to read code
