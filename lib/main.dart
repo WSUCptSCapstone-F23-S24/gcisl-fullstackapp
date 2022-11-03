@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/pages/signin.dart';
+import 'package:gcisl_app/pages/register.dart';
+
 import 'pallete.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       //home: const MyHomePage(title: 'Cobb Connect'),
       home : const SignInPage(),
+
     );
   }
 }
