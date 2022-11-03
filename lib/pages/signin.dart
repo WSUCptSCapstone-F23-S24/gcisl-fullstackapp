@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/main.dart';
+import 'package:gcisl_app/pages/home.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showRegisterpage;
-  const SignInPage({Key? key, required this.showRegisterpage})
-      : super(key: key);
+  const SignInPage({Key? key, required this.showRegisterpage}) : super(key: key);
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -81,21 +82,29 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'Sign In',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyHomePage(title : 'Cobb Connect')),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    )),
+                      child: Center(
+                          child: Text(
+                        'Sign In',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      )),
+                    ),
                   ),
                 ),
 

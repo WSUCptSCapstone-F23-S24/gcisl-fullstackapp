@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
               displayColor: Palette.ktoCrimson,
             ),
       ),
-      //home: const MyHomePage(title: 'Cobb Connect'),
       home: const AuthPage(),
     );
   }
