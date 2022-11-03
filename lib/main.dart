@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'pallete.dart';
@@ -6,6 +6,7 @@ import 'pages/home.dart';
 import 'pages/profile.dart';
 import 'pages/messages.dart';
 import 'pages/analytics.dart';
+import 'main_widgets/appbar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,157 +44,77 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String name = "";
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-      if (_counter % 2 == 0) {
-        name = "Cobb";
-      } else {
-        name = "Connect";
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            flex: 4,
-            child: Row(
-              children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 199, 195, 195),
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () => selectedItem(context, 0),
-                  child: Text(
-                    'Home',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 1),
-                  child: Text(
-                    'Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 2),
-                  child: Text(
-                    'Messages',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => selectedItem(context, 3),
-                  child: Text(
-                    'Analytics',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(flex: 3, child: Text("")),
-          Expanded(
-            flex: 1,
-            child: IconButton(
-              iconSize: 30,
-              icon: const Icon(
-                Icons.settings,
-              ),
-              // the method which is called
-              // when button is pressed
-              onPressed: () {},
-            ),
-          )
-        ],
-      )),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      appBar: HeaderNav(context, widget.title),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Color.fromARGB(255, 199, 195, 195),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Image.asset('assets/WSULogo.png'),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter : $name',
-              style: Theme.of(context).textTheme.headline4,
+            Container(
+              margin: EdgeInsets.only(right: 5),
+              child: Image.asset(
+                'assets/GCISL_logo.png',
+                height: 50,
+                color: Palette.ktoCrimson,
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: Container(
+        margin: EdgeInsets.only(top: 20),
+        alignment: Alignment.topCenter,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(),
+            ),
+            Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Palette.ktoCrimson.withOpacity(0.1),
+                          width: 2)),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text("feed"),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          maxLines: 4,
+                          cursorColor: Colors.black,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.black12,
+                            border: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            hintStyle: TextStyle(color: Colors.white),
+                            hintText: 'Create Post...',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
+            Expanded(
+              flex: 1,
+              child: Column(),
+            ),
+          ],
+        ),
       ),
     );
-  }
-
-  void selectedItem(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ),
-        );
-        break;
-      case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(),
-          ),
-        );
-        break;
-      case 2:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MessagesPage(),
-          ),
-        );
-        break;
-      case 3:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => AnalyticsPage(),
-          ),
-        );
-        break;
-    }
   }
 }
