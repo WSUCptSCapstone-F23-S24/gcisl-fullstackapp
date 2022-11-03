@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/auth/auth_page.dart';
+import 'package:gcisl_app/pages/signin.dart';
+import 'package:gcisl_app/pages/register.dart';
+
 import 'pallete.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
@@ -29,7 +33,7 @@ class MyApp extends StatelessWidget {
               displayColor: Palette.ktoCrimson,
             ),
       ),
-      home: const MyHomePage(title: 'Cobb Connect'),
+      home: const AuthPage(),
     );
   }
 }
