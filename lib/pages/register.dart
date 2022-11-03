@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  final VoidCallback showSignInPage;
+  const RegisterPage({Key? key, required this.showSignInPage})
+      : super(key: key);
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -39,6 +41,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
@@ -59,6 +63,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -81,6 +87,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -123,10 +131,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      'Login',
-                      style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    GestureDetector(
+                      onTap: widget.showSignInPage,
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ),
                     )
                   ],
                 )

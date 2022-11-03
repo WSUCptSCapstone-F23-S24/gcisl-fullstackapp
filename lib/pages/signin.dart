@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  final VoidCallback showRegisterpage;
+  const SignInPage({Key? key, required this.showRegisterpage})
+      : super(key: key);
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -40,9 +42,12 @@ class _SignInPageState extends State<SignInPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
+                          hoverColor: Colors.black,
                         ),
                       ),
                     ),
@@ -60,6 +65,8 @@ class _SignInPageState extends State<SignInPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
                         obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -102,11 +109,13 @@ class _SignInPageState extends State<SignInPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      'Register Now',
-                      style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
-                    )
+                    GestureDetector(
+                        onTap: widget.showRegisterpage,
+                        child: Text(
+                          'Register Now',
+                          style: TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ))
                   ],
                 )
               ],
