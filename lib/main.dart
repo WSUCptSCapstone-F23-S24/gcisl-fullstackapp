@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/login/email_login.dart';
 import 'pallete.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
@@ -8,7 +11,11 @@ import 'pages/messages.dart';
 import 'pages/analytics.dart';
 import 'main_widgets/appbar.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
+
   runApp(const MyApp());
 }
 
@@ -18,19 +25,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Granger Cobb Institute for Senior Living',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
-        canvasColor: Color.fromARGB(255, 199, 195, 195),
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Palette.ktoCrimson,
-              displayColor: Palette.ktoCrimson,
-            ),
-      ),
-      home: const MyHomePage(title: 'Cobb Connect'),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Granger Cobb Institute for Senior Living',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
+          canvasColor: Color.fromARGB(255, 199, 195, 195),
+          textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Palette.ktoCrimson,
+                displayColor: Palette.ktoCrimson,
+              ),
+        ),
+        home: EmailLogin()
+        //home: const MyHomePage(title: 'Cobb Connect'),
+        );
   }
 }
 
