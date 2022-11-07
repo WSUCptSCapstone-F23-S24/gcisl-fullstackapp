@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/auth/auth_page.dart';
 import 'package:gcisl_app/pages/signin.dart';
@@ -12,7 +14,11 @@ import 'pages/messages.dart';
 import 'pages/analytics.dart';
 import 'main_widgets/appbar.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
+
   runApp(const MyApp());
 }
 
