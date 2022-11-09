@@ -3,16 +3,56 @@
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/main.dart';
 import 'package:gcisl_app/pages/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showRegisterpage;
-  const SignInPage({Key? key, required this.showRegisterpage}) : super(key: key);
+  const SignInPage({Key? key, required this.showRegisterpage})
+      : super(key: key);
 
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _emailControllor = TextEditingController();
+  final _passwordControllor = TextEditingController();
+
+  _login() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailControllor.text, password: _passwordControllor.text);
+
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => HomePage()));
+    } on FirebaseAuthException catch (e) {
+      var message = '';
+      switch (e.code) {
+        case 'invalid-email':
+          message = "Invalid email";
+          break;
+        case 'user-diabled':
+          message = "Invalid user";
+          break;
+        case 'user-not-found':
+          message = "no account with this email";
+          break;
+        case 'wrong-password':
+          message = "Wrong password";
+          break;
+      }
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(message),
+            );
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +83,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _emailControllor,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -66,6 +107,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _passwordControllor,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         obscureText: true,
@@ -84,10 +126,11 @@ class _SignInPageState extends State<SignInPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MyHomePage(title : 'Cobb Connect')),
-                      );
+                      _login();
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => MyHomePage(title : 'Cobb Connect')),
+                      // );
                     },
                     child: Container(
                       padding: EdgeInsets.all(20),
