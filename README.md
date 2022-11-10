@@ -94,11 +94,11 @@ Through VS code IDE:
 
 #### Sprint 1:
 - Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
-- Video: [link]()
+- Video: [link](https://drive.google.com/drive/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw?usp=sharing)
 
 #### Sprint 2: 
 - Documentation: [Sprint 2 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/files/9978046/Sprint.2.Report.pdf)
-- [Video](https://drive.google.com/file/d/1K8YirQ48EENAOknpA_obqysCO-332uCK/view?usp=sharing)
+- Video: [link](https://drive.google.com/drive/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw?usp=sharing)
 
 ## Team Members
 Users:
