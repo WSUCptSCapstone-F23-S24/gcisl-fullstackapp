@@ -31,8 +31,14 @@ More help with installing flutter can be found [here](https://docs.flutter.dev/g
 ***Firebase*** - #TODO
 - You can access the online database editor on the [Firebase website](https://console.firebase.google.com/u/1/project/cobb-connect/overview)
 - To run firebase commands locally, you need to install the [Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli)
+  - Some firebase commands will require you to first run: ```Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine)```
 
-(Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine)
+***Adding Firebase Path*** - This is required to run firebase commands in terminal
+- Open your system properties advanced window by searching 'env' and selecting 'Edit the System environment variables'
+- Select Environment Variables
+- In the user variables window, select the line with "PATH"
+- Click Edit
+- Add a new row and enter "C:\Users\(username)\AppData\Roaming\npm" (If you stored firebase somewhere else, enter that path instead) 
 
 ### Add-Ons
 
