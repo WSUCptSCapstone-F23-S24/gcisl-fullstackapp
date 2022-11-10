@@ -24,8 +24,8 @@ class _SignInPageState extends State<SignInPage> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailControllor.text, password: _passwordControllor.text);
 
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MyHomePage(title: "Cobb Connect")));
     } on FirebaseAuthException catch (e) {
       var message = '';
       switch (e.code) {
