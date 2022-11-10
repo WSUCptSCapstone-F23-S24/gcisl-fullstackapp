@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -57,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var _post = TextEditingController();
+  List<String> _postList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -120,11 +121,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             hintText: 'Create Post...',
                             suffixIcon: IconButton(
                               splashRadius: 10,
-                              onPressed: _post.clear,
+                              onPressed: () =>
+                                  setState(() => _postList.add(_post.text)),
                               icon: Icon(Icons.clear),
                             ),
                           ),
                         ),
+                        // ListView.builder(
+                        //   itemCount: _postList.length,
+                        //   scrollDirection: Axis.horizontal,
+                        //   shrinkWrap: true,
+                        //   itemBuilder: (context, index) =>
+                        //       Text(_postList[index]),
+                        // ),
                       ],
                     ),
                   ),
