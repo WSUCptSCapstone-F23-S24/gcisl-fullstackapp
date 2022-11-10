@@ -25,7 +25,7 @@ The motivation behind this project was the Granger Cobb Institute for Senior Liv
 - Select Environment Variables
 - In the user variables window, select the line with "PATH"
 - Click Edit
-- Add a new row and enter "C:\flutter\bin" (If you stored flutter somewhere else, enter that path instead) 
+- Add a new row and enter ```C:\flutter\bin``` (If you stored flutter somewhere else, enter that path instead) 
 More help with installing flutter can be found [here](https://docs.flutter.dev/get-started/install/windows#update-your-path)
 
 ***Firebase*** - #TODO
@@ -38,7 +38,7 @@ More help with installing flutter can be found [here](https://docs.flutter.dev/g
 - Select Environment Variables
 - In the user variables window, select the line with "PATH"
 - Click Edit
-- Add a new row and enter "C:\Users\(username)\AppData\Roaming\npm" (If you stored firebase somewhere else, enter that path instead) 
+- Add a new row and enter ```C:\Users\(username)\AppData\Roaming\npm``` (If you stored firebase somewhere else, enter that path instead) 
 
 ### Add-Ons
 
