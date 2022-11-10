@@ -29,6 +29,8 @@ The motivation behind this project was the Granger Cobb Institute for Senior Liv
 More help with installing flutter can be found [here](https://docs.flutter.dev/get-started/install/windows#update-your-path)
 
 ***Firebase*** - #TODO
+- You can access the online database editor on the [Firebase website](https://console.firebase.google.com/u/1/project/cobb-connect/overview)
+- To run firebase commands locally, you need to install the [Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli)
 
 (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine)
 
