@@ -90,16 +90,17 @@ Through VS code IDE:
 - Press enter, and then ensure you are checked out to ths new branch you made at the bottom left
 
 
-## Additional Documentation
+## Sprints
 
 #### Sprint 1:
-- [Video]()
-- [Document](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
+- Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
+- Video: [link]()
 
 #### Sprint 2: 
-- [Document](https://docs.google.com/document/d/1dmyOQp-IGi5cSqrRVYt_F5E-tsMMuSJSVbtnSMsGeyI/edit#)
+- Documentation [Sprint 2 Report](https://docs.google.com/document/d/1dmyOQp-IGi5cSqrRVYt_F5E-tsMMuSJSVbtnSMsGeyI/edit#)
 - [Video](https://drive.google.com/file/d/1K8YirQ48EENAOknpA_obqysCO-332uCK/view?usp=sharing)
 
+## Team Members
 Users:
 - [Tom Arad](https://github.com/Tom1779)
 - [Nathan Bunge](https://github.com/nathanbunge)
