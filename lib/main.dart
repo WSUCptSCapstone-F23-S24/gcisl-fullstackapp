@@ -56,6 +56,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _post = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           height: 10,
                         ),
                         TextField(
+                          controller: _post,
                           maxLines: 4,
                           cursorColor: Colors.black,
                           style: TextStyle(color: Colors.black),
@@ -115,6 +118,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 borderRadius: BorderRadius.circular(15)),
                             hintStyle: TextStyle(color: Colors.white),
                             hintText: 'Create Post...',
+                            suffixIcon: IconButton(
+                              splashRadius: 10,
+                              onPressed: _post.clear,
+                              icon: Icon(Icons.clear),
+                            ),
                           ),
                         ),
                       ],
