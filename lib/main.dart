@@ -1,7 +1,5 @@
-// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields
 
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +39,9 @@ class MyApp extends StatelessWidget {
               displayColor: Palette.ktoCrimson,
             ),
       ),
-      home: const AuthPage(),
+      home: const MyHomePage(
+        title: "Cobb Connect",
+      ),
     );
   }
 }
@@ -56,6 +56,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _post = TextEditingController();
+  List<String> _postList = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,34 +94,47 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
                 flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Palette.ktoCrimson.withOpacity(0.1),
-                          width: 2)),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text("feed"),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          maxLines: 4,
-                          cursorColor: Colors.black,
-                          style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.black12,
-                            border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            hintStyle: TextStyle(color: Colors.white),
-                            hintText: 'Create Post...',
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Feed"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        controller: _post,
+                        maxLines: 4,
+                        cursorColor: Colors.black,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.black12,
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          hintStyle: TextStyle(color: Colors.white),
+                          hintText: 'Create Post...',
+                          suffixIcon: IconButton(
+                            splashRadius: 10,
+                            onPressed: () => setState(() {
+                              if (_post.text.isEmpty) {
+                                return;
+                              }
+                              _postList.add(_post.text);
+                              _post.clear();
+                            }),
+                            icon: Icon(Icons.send_sharp),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      ListView.builder(
+                        itemCount: _postList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => Text(_postList[index]),
+                      ),
+                      SizedBox(height: 20),
+                      Text("\u{1F6D1} nothing more to show "),
+                    ],
                   ),
                 )),
             Expanded(
