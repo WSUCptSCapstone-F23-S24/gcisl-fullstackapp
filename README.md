@@ -54,8 +54,9 @@ For VS code, you will want to add extensions to make it easier to read code
 
 
 ## Functionality
-
-Currently the application has no real functionality as it only displays the launch page and the color theme.
+-User sign-in page
+-User registration page
+-Appbar
 
 
 ## Known Problems
@@ -83,6 +84,7 @@ Through VS code IDE:
 
 Sprints:
 - [Sprint 1](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
+- [Sprint 2](https://docs.google.com/document/d/1dmyOQp-IGi5cSqrRVYt_F5E-tsMMuSJSVbtnSMsGeyI/edit#)
 
 Users:
 - [Tom Arad](https://github.com/Tom1779)
