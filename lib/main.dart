@@ -2,8 +2,6 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/auth/auth_page.dart';
 import 'package:gcisl_app/pages/signin.dart';
@@ -41,7 +39,9 @@ class MyApp extends StatelessWidget {
               displayColor: Palette.ktoCrimson,
             ),
       ),
-      home: const AuthPage(),
+      home: const MyHomePage(
+        title: "Cobb Connect",
+      ),
     );
   }
 }
@@ -127,13 +127,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        // ListView.builder(
-                        //   itemCount: _postList.length,
-                        //   scrollDirection: Axis.horizontal,
-                        //   shrinkWrap: true,
-                        //   itemBuilder: (context, index) =>
-                        //       Text(_postList[index]),
-                        // ),
+                        ListView.builder(
+                          itemCount: _postList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) =>
+                              Text(_postList[index]),
+                        ),
                       ],
                     ),
                   ),
