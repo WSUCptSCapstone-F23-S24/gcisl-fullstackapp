@@ -97,7 +97,7 @@ Through VS code IDE:
 - Video: [link]()
 
 #### Sprint 2: 
-- Documentation [Sprint 2 Report](https://docs.google.com/document/d/1dmyOQp-IGi5cSqrRVYt_F5E-tsMMuSJSVbtnSMsGeyI/edit#)
+- Documentation: [Sprint 2 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/files/9978046/Sprint.2.Report.pdf)
 - [Video](https://drive.google.com/file/d/1K8YirQ48EENAOknpA_obqysCO-332uCK/view?usp=sharing)
 
 ## Team Members
