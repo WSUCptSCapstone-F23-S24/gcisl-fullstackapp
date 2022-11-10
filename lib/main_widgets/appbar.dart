@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, unused_import, unnecessary_const, duplicate_ignore, unnecessary_new, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/pallete.dart';
 import '../pages/home.dart';
 import '../pages/profile.dart';
 import '../pages/messages.dart';
@@ -22,7 +23,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -40,7 +41,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 1),
                       icon: Icon(
                         Icons.portrait_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Profile',
@@ -55,7 +56,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 2),
                       icon: Icon(
                         Icons.message_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Messages',
@@ -70,7 +71,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 3),
                       icon: Icon(
                         Icons.analytics_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Analytics',
@@ -115,7 +116,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -133,7 +134,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 0),
                       icon: Icon(
                         Icons.home_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Home',
@@ -149,7 +150,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 2),
                       icon: Icon(
                         Icons.message_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Messages',
@@ -164,7 +165,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 3),
                       icon: Icon(
                         Icons.analytics_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Analytics',
@@ -209,7 +210,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -227,7 +228,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 0),
                       icon: Icon(
                         Icons.home_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Home',
@@ -243,7 +244,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 1),
                       icon: Icon(
                         Icons.portrait_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Profile',
@@ -259,7 +260,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 3),
                       icon: Icon(
                         Icons.analytics_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Analytics',
@@ -304,7 +305,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -322,7 +323,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 0),
                       icon: Icon(
                         Icons.home_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Home',
@@ -338,7 +339,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 1),
                       icon: Icon(
                         Icons.portrait_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Profile',
@@ -353,7 +354,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 2),
                       icon: Icon(
                         Icons.message_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Messages',
@@ -397,7 +398,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                         fontSize: 20,
                       ),
                     ),
@@ -416,7 +417,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 0),
                       icon: Icon(
                         Icons.home_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Home',
@@ -432,7 +433,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 1),
                       icon: Icon(
                         Icons.portrait_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Profile',
@@ -447,7 +448,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 2),
                       icon: Icon(
                         Icons.message_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Messages',
@@ -462,7 +463,7 @@ AppBar HeaderNav(BuildContext context, String title) {
                       onPressed: () => selectedItem(context, 3),
                       icon: Icon(
                         Icons.analytics_rounded,
-                        color: Color.fromARGB(255, 199, 195, 195),
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Analytics',

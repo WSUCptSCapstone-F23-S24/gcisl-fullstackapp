@@ -33,15 +33,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
-        canvasColor: Color.fromARGB(255, 199, 195, 195),
+        canvasColor: Colors.white,
         textTheme: Theme.of(context).textTheme.apply(
               bodyColor: Palette.ktoCrimson,
               displayColor: Palette.ktoCrimson,
             ),
       ),
-      home: const MyHomePage(
-        title: "Cobb Connect",
-      ),
+      home: const AuthPage(),
     );
   }
 }
@@ -66,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: HeaderNav(context, widget.title),
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
-        color: Color.fromARGB(255, 199, 195, 195),
+        color: Palette.ktoGray,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -112,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           fillColor: Colors.black12,
                           border: UnderlineInputBorder(
                               borderRadius: BorderRadius.circular(15)),
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.black),
                           hintText: 'Create Post...',
                           suffixIcon: IconButton(
                             splashRadius: 10,
