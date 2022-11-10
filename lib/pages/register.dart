@@ -11,6 +11,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _emailControllor = TextEditingController();
+  final _passwordControllor = TextEditingController();
+  final _confirmPasswordControllor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //Wecolme Back
-                Text(
+                const Text(
                   'Welcome to Cobb Connect!',
                   style: TextStyle(
                       color: Colors.black,
@@ -40,10 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        controller: _emailControllor,
+                        validator: _requiredValidator,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
                         ),
@@ -62,11 +68,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        controller: _passwordControllor,
+                        validator: _requiredValidator,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Password',
                         ),
@@ -86,11 +94,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        controller: _confirmPasswordControllor,
+                        validator: _confirmPassword,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Re-enter Password',
                         ),
@@ -145,5 +155,22 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ));
+  }
+
+  String? _requiredValidator(String? text) {
+    if (text == null || text.trim().isEmpty) {
+      return 'This Field is Required';
+    }
+    return null;
+  }
+
+  String? _confirmPassword(String? confirmPass) {
+    if (confirmPass == null || confirmPass.trim().isEmpty) {
+      return 'This Field is Required';
+    }
+    if (_passwordControllor.text != confirmPass) {
+      return "Passwords do not match";
+    }
+    return null;
   }
 }
