@@ -23,7 +23,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                       title,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 199, 195, 195),
-                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -47,7 +46,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Profile',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -63,7 +61,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Messages',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -80,7 +77,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         // ignore: unnecessary_const
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -120,7 +116,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                       title,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 199, 195, 195),
-                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -144,7 +139,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Home',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -161,7 +155,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Messages',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -178,7 +171,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         // ignore: unnecessary_const
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -218,7 +210,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                       title,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 199, 195, 195),
-                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -242,7 +233,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Home',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -259,7 +249,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Profile',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -277,7 +266,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         // ignore: unnecessary_const
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -317,7 +305,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                       title,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 199, 195, 195),
-                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -341,7 +328,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Home',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -358,7 +344,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Profile',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -374,7 +359,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Messages',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -438,7 +422,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Home',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -455,7 +438,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Profile',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -471,7 +453,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         'Messages',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -488,7 +469,6 @@ AppBar HeaderNav(BuildContext context, String title) {
                         // ignore: unnecessary_const
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
                     ),
