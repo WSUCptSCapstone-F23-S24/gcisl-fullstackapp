@@ -7,7 +7,7 @@ import 'package:gcisl_app/auth/auth_page.dart';
 import 'package:gcisl_app/pages/signin.dart';
 import 'package:gcisl_app/pages/register.dart';
 
-import 'pallete.dart';
+import 'palette.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
 import 'pages/messages.dart';
