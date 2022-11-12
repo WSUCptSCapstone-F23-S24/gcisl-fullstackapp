@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,15 +14,19 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _formKey = GlobalKey<FormState>();
   final _emailControllor = TextEditingController();
   final _passwordControllor = TextEditingController();
   final _confirmPasswordControllor = TextEditingController();
+
+  var loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
+        body: Form(
+          key: _formKey,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 //Email textfield
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: Container(
@@ -47,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: TextFormField(
                         controller: _emailControllor,
                         validator: _requiredValidator,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -58,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 //Password textfield
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: Container(
@@ -71,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: TextFormField(
                         controller: _passwordControllor,
                         validator: _requiredValidator,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -84,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 //Confirm Password textfield
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: Container(
@@ -97,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: TextFormField(
                         controller: _confirmPasswordControllor,
                         validator: _confirmPassword,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -110,40 +117,49 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 //Register button
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'Register',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      debugPrint("pressed");
+                      if (_formKey.currentState != null &&
+                          _formKey.currentState!.validate()) {
+                        _register();
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    )),
+                      child: const Center(
+                          child: Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      )),
+                    ),
                   ),
                 ),
 
                 //Already a Member? Login
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Already a User? ',
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     GestureDetector(
                       onTap: widget.showSignInPage,
-                      child: Text(
+                      child: const Text(
                         'Login',
                         style: TextStyle(
                             color: Colors.blue, fontWeight: FontWeight.bold),
@@ -172,5 +188,75 @@ class _RegisterPageState extends State<RegisterPage> {
       return "Passwords do not match";
     }
     return null;
+  }
+
+  void _handleRegisterError(FirebaseAuthException e) {
+    String message = " ";
+    switch (e.code) {
+      case 'email-already-in-use':
+        message = "An account is already being used with this email";
+        break;
+      case 'invalid-email':
+        message = "Invalid Email";
+        break;
+      case 'operation-not-alowed':
+        message = "Error: Opporation not allowed";
+        break;
+      case 'weak-password':
+        message = "Password is too weak, please enter a longer one";
+        break;
+    }
+
+    showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+              title: const Text("Sign up failed"),
+              content: Text(message),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Ok"))
+              ],
+            )));
+  }
+
+  Future _register() async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      //try adding new user to authenticator
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailControllor.text, password: _passwordControllor.text);
+
+      //TODO: add user data to database
+      //DatabaseReference ref = FirebaseDatabase.instance.ref();
+
+      //show success message
+      await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Sign up Success"),
+                content:
+                    const Text("Your account was created, you can now login"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Ok"))
+                ],
+              ));
+
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      _handleRegisterError(e);
+      setState(() {
+        loading = false;
+      });
+    }
   }
 }
