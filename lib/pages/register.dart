@@ -249,13 +249,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 actions: [
                   TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.pop(context);
                       },
                       child: const Text("Ok"))
                 ],
               ));
 
-      Navigator.of(context).pop();
+      widget.showSignInPage();
     } on FirebaseAuthException catch (e) {
       _handleRegisterError(e);
       setState(() {
