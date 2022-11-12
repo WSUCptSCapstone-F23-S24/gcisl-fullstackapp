@@ -102,6 +102,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextFormField(
+                        onFieldSubmitted: (value) {
+                          debugPrint("pressed");
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            _register();
+                          }
+                        },
                         controller: _confirmPasswordControllor,
                         validator: _confirmPassword,
                         style: const TextStyle(color: Colors.black),
