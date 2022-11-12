@@ -157,8 +157,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    GestureDetector(
-                      onTap: widget.showSignInPage,
+                    ElevatedButton(
+                      onPressed: widget.showSignInPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                      ),
                       child: const Text(
                         'Login',
                         style: TextStyle(
