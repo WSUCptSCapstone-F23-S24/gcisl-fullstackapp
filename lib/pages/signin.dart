@@ -106,7 +106,10 @@ class _SignInPageState extends State<SignInPage> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        onFieldSubmitted: (value) {
+                          _login();
+                        },
                         controller: _passwordControllor,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -124,8 +127,8 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: GestureDetector(
-                    onTap: () {
+                  child: ElevatedButton(
+                    onPressed: () {
                       _login();
                       // Navigator.push(
                       //   context,
@@ -161,8 +164,10 @@ class _SignInPageState extends State<SignInPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    GestureDetector(
-                        onTap: widget.showRegisterpage,
+                    ElevatedButton(
+                        onPressed: widget.showRegisterpage,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white, elevation: 0),
                         child: Text(
                           'Register Now',
                           style: TextStyle(

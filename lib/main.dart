@@ -17,7 +17,7 @@ import 'main_widgets/appbar.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
+  Firebase.initializeApp(options: DefaultFirebaseOptions.web);
 
   runApp(const MyApp());
 }
