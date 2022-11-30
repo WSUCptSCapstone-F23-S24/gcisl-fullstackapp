@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -31,14 +31,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Granger Cobb Institute for Senior Living',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
-        canvasColor: Colors.white,
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Palette.ktoCrimson,
-              displayColor: Palette.ktoCrimson,
-            ),
-      ),
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
+          canvasColor: Colors.white,
+          textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Palette.ktoCrimson,
+                displayColor: Palette.ktoCrimson,
+              ),
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Colors.black,
+            selectionColor: Colors.blue,
+            selectionHandleColor: Palette.ktoCrimson,
+          )),
       home: const AuthPage(),
     );
   }
@@ -56,6 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _post = TextEditingController();
   List<String> _postList = [];
+  int _count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +105,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(
                         height: 10,
                       ),
-                      TextField(
+                      TextFormField(
                         controller: _post,
-                        maxLines: 4,
+                        minLines: 4,
+                        maxLines: null,
+                        onFieldSubmitted: (value) {
+                          if (_post.text.isEmpty) {
+                            return;
+                          }
+                          _postList.add(_post.text);
+                          _post.clear();
+                        },
                         cursorColor: Colors.black,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -118,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (_post.text.isEmpty) {
                                 return;
                               }
+                              // _post.text.trim();
                               _postList.add(_post.text);
                               _post.clear();
                             }),
@@ -128,7 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ListView.builder(
                         itemCount: _postList.length,
                         shrinkWrap: true,
-                        itemBuilder: (context, index) => Text(_postList[index]),
+                        itemBuilder: (context, index) => ListTile(
+                          title: SelectableText("post " +
+                              index.toString() +
+                              "\n" +
+                              _postList[index].trim()),
+                        ),
                       ),
                       SizedBox(height: 20),
                       Text("\u{1F6D1} nothing more to show "),
