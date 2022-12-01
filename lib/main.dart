@@ -109,13 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         controller: _post,
                         minLines: 4,
                         maxLines: null,
-                        onFieldSubmitted: (value) {
-                          if (_post.text.isEmpty) {
-                            return;
-                          }
-                          _postList.add(_post.text);
-                          _post.clear();
-                        },
                         cursorColor: Colors.black,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
