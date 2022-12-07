@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/palette.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showSignInPage;
@@ -60,6 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           border: InputBorder.none,
                           hintText: 'Email',
                         ),
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                   ),
@@ -85,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           border: InputBorder.none,
                           hintText: 'Password',
                         ),
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                   ),
@@ -125,9 +128,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Register button
                 const SizedBox(height: 20),
-                Padding(
+                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.ktoCrimson,
+                      minimumSize: const Size(0, 65),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0)),
+                    ),
                     onPressed: () {
                       debugPrint("pressed");
                       if (_formKey.currentState != null &&
@@ -135,22 +144,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         _register();
                       }
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
+                    child: const Center(
+                        child: Text(
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
                       ),
-                      child: const Center(
-                          child: Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      )),
-                    ),
+                    )),
                   ),
                 ),
 
