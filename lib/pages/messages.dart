@@ -5,7 +5,5 @@ import '../main_widgets/appbar.dart';
 
 class MessagesPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: HeaderNav(context, 'Messages'),
-      );
+  Widget build(BuildContext context) => Scaffold();
 }

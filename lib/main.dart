@@ -22,171 +22,74 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Granger Cobb Institute for Senior Living',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: Palette.ktoCrimson, secondary: Palette.ktoCrimson),
-          canvasColor: Colors.white,
-          textTheme: Theme.of(context).textTheme.apply(
-                bodyColor: Palette.ktoCrimson,
-                displayColor: Palette.ktoCrimson,
-              ),
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.black,
-            selectionColor: Colors.blue,
-            selectionHandleColor: Palette.ktoCrimson,
-          )),
-      home: const AuthPage(),
-    );
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
+class _MyAppState extends State<MyApp> {
+  int index = 0;
+  final screens = [
+    MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+    Text("dummy"),
+    MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+    ProfilePage(),
+    MessagesPage(),
+    AnalyticsPage(),
+    Text("dummey"),
+    AuthPage()
+  ];
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var _post = TextEditingController();
-  List<String> _postList = [];
-  int _count = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // extendBodyBehindAppBar: true,
-      appBar: HeaderNav(context, widget.title),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0,
-        color: Palette.ktoGray,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 5),
-              child: Image.asset(
-                'assets/GCISL_logo.png',
-                height: 50,
-                color: Palette.ktoCrimson,
+  Widget build(BuildContext context) => MaterialApp(
+        home: Scaffold(
+            body: screens[index],
+            appBar: AppBar(
+              flexibleSpace: NavigationBarTheme(
+                data: NavigationBarThemeData(
+                    indicatorColor: Palette.ktoCrimson.shade800),
+                child: NavigationBar(
+                    height: 60,
+                    selectedIndex: index,
+                    onDestinationSelected: (index) =>
+                        setState(() => this.index = index),
+                    destinations: [
+                      Container(
+                        child: NavigationDestination(
+                            icon: Icon(Icons.ac_unit), label: "Cobb Connect"),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 100, left: 100),
+                      ),
+                      Container(
+                        child: NavigationDestination(
+                            icon: Icon(Icons.house_outlined), label: "Home"),
+                      ),
+                      Container(
+                        child: NavigationDestination(
+                            icon: Icon(Icons.person_add_alt_1_outlined),
+                            label: "Profile"),
+                      ),
+                      Container(
+                        child: NavigationDestination(
+                            icon: Icon(Icons.email_outlined),
+                            label: "Messages"),
+                      ),
+                      Container(
+                        child: NavigationDestination(
+                            icon: Icon(Icons.graphic_eq_outlined),
+                            label: "Analytics"),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 100, left: 100),
+                      ),
+                      Container(
+                          child: NavigationDestination(
+                              icon: Icon(Icons.person_off_outlined),
+                              label: "Sign in"))
+                    ]),
               ),
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        margin: EdgeInsets.only(top: 20),
-        alignment: Alignment.topCenter,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(),
-            ),
-            Expanded(
-                flex: 2,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Feed"),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        controller: _post,
-                        minLines: 4,
-                        maxLines: null,
-                        cursorColor: Colors.black,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.black12,
-                          border: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          hintStyle: TextStyle(color: Colors.black),
-                          hintText: 'Create Post...',
-                          suffixIcon: IconButton(
-                            splashRadius: 10,
-                            onPressed: () => setState(() {
-                              if (_post.text.isEmpty) {
-                                return;
-                              }
-                              // _post.text.trim();
-                              _postList.add(_post.text);
-                              _post.clear();
-                            }),
-                            icon: Icon(Icons.send_sharp),
-                          ),
-                        ),
-                      ),
-                      ListView.builder(
-                        itemCount: _postList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) => ListTile(
-                          title: SelectableText("post " +
-                              index.toString() +
-                              "\n" +
-                              _postList[index].trim()),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text("\u{1F6D1} nothing more to show "),
-                    ],
-                  ),
-                )),
-            Expanded(
-              flex: 1,
-              child: Column(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void selectedItem(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ),
-        );
-        break;
-      case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(),
-          ),
-        );
-        break;
-      case 2:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MessagesPage(),
-          ),
-        );
-        break;
-      case 3:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => AnalyticsPage(),
-          ),
-        );
-        break;
-    }
-  }
+            )),
+      );
 }

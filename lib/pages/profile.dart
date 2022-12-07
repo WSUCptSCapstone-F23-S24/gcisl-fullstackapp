@@ -6,7 +6,6 @@ import '../main_widgets/appbar.dart';
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: HeaderNav(context, 'Profile'),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(

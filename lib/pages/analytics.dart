@@ -20,7 +20,6 @@ class _AnalyticsPage extends State<AnalyticsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: HeaderNav(context, 'Analytics'),
         body: GoogleMap(
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
