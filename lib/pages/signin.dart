@@ -5,6 +5,7 @@ import 'package:gcisl_app/main.dart';
 import 'package:gcisl_app/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:gcisl_app/palette.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showRegisterpage;
@@ -64,7 +65,7 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 //Wecolme Back
                 Text(
-                  'Welcome Back!',
+                  'Sign in',
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -125,9 +126,15 @@ class _SignInPageState extends State<SignInPage> {
 
                 //sign in button
                 SizedBox(height: 20),
-                Padding(
+                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.ktoCrimson,
+                      minimumSize: const Size(0, 65),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0)),
+                    ),
                     onPressed: () {
                       _login();
                       // Navigator.push(
@@ -135,22 +142,15 @@ class _SignInPageState extends State<SignInPage> {
                       //   MaterialPageRoute(builder: (context) => MyHomePage(title : 'Cobb Connect')),
                       // );
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
+                    child: Center(
+                        child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
                       ),
-                      child: Center(
-                          child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      )),
-                    ),
+                    )),
                   ),
                 ),
 
