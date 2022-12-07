@@ -92,6 +92,7 @@ class _SignInPageState extends State<SignInPage> {
                           hintText: 'Email',
                           hoverColor: Colors.black,
                         ),
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                   ),
