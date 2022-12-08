@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
