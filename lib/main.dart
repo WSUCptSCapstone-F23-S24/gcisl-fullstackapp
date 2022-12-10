@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -47,8 +47,8 @@ class _MyAppState extends State<MyApp> {
             body: screens[index],
             appBar: AppBar(
               flexibleSpace: NavigationBarTheme(
-                data: NavigationBarThemeData(
-                    indicatorColor: Palette.ktoCrimson.shade800),
+                data:
+                    NavigationBarThemeData(indicatorColor: Palette.ktoCrimson),
                 child: NavigationBar(
                     height: 60,
                     selectedIndex: index,
@@ -57,7 +57,8 @@ class _MyAppState extends State<MyApp> {
                     destinations: [
                       Container(
                         child: NavigationDestination(
-                            icon: Icon(Icons.ac_unit), label: "Cobb Connect"),
+                            icon: ImageIcon(AssetImage("cougar.png"), size: 30),
+                            label: "Cobb Connect"),
                       ),
                       Container(
                         padding: EdgeInsets.only(right: 100, left: 100),
