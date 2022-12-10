@@ -1,9 +1,23 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class ProfilePage extends StatelessWidget {
+  //need to add user ID from authenticator
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users/123");
+
+  //controllers
+  final _firstNameControl = TextEditingController();
+  final _lastNameControl = TextEditingController();
+  final _emailControl = TextEditingController();
+  final _phoneControl = TextEditingController();
+  final _companyControl = TextEditingController();
+  final _locationControl = TextEditingController();
+  final _positionControl = TextEditingController();
+  final _experienceControl = TextEditingController();
   @override
   Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.white,
@@ -24,6 +38,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _firstNameControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -48,6 +63,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _lastNameControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -55,6 +71,7 @@ class ProfilePage extends StatelessWidget {
                           hintText: 'Last Name',
                           hoverColor: Colors.black,
                         ),
+
                       ),
                     ),
                   ),
@@ -72,6 +89,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _emailControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -95,6 +113,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _phoneControl,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -119,6 +138,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _companyControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -130,6 +150,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
+
 
                 //Location
                 SizedBox(height: 20),
@@ -143,6 +164,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _locationControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -154,7 +176,6 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 //Position
                 SizedBox(height: 20),
                 Padding(
@@ -167,6 +188,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _positionControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -178,6 +200,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
+
 
                 //Experience
                 SizedBox(height: 20),
@@ -191,6 +214,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
+                        controller: _experienceControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -203,22 +227,30 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
 
+
                 //Save button
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => MyHomePage(title : 'Cobb Connect')),
-                      // );
-                    },
+                    ref.set({
+                      "first name": _firstNameControl.text,
+                      "last name": _lastNameControl.text,
+                      "email": _emailControl.text,
+                      "phone": _phoneControl.text,
+                      "company": _companyControl.text,
+                      "location": _locationControl.text,
+                      "position": _positionControl.text,
+                      "experience": _experienceControl.text
+                    });
+                  },
                     child: Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(12),
+
                       ),
                       child: Center(
                           child: Text(
