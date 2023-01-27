@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_interpolation_to_compose_strings
 
 import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
@@ -74,13 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           hintStyle: TextStyle(color: Colors.black),
                           hintText: 'Create Post...',
                           suffixIcon: IconButton(
-                            splashRadius: 10,
+                            splashRadius: 20,
                             onPressed: () => setState(() {
                               if (_post.text.isEmpty) {
                                 return;
                               }
                               // _post.text.trim();
-                              _postList.add(_post.text);
+                              //_postList.add(_post.text);
+                              _postList.insert(0, _post.text);
                               _post.clear();
                             }),
                             icon: Icon(Icons.send_sharp),
@@ -91,10 +92,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemCount: _postList.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) => ListTile(
-                          title: SelectableText("post " +
-                              index.toString() +
-                              "\n" +
-                              _postList[index].trim()),
+                          leading: Icon(Icons.portrait_rounded),
+                          title: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: SelectableText("post " +
+                                    index.toString() +
+                                    "\n" +
+                                    _postList[index].trim()),
+                              ),
+                              Divider(
+                                height: 20.0,
+                              ) // add value for height or leave it blank for default
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
