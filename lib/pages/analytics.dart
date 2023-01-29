@@ -8,6 +8,9 @@ import '../main_widgets/appbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AnalyticsPage extends StatefulWidget {
   @override
@@ -27,21 +30,26 @@ class _AnalyticsPage extends State<AnalyticsPage> {
     var markerIdVal = specId;
     final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
-        markerId: markerId,
-        position: LatLng(spec['location'].latitude, spec['location'].longitude),
-        infoWindow:
-            InfoWindow(title: spec['first name'] + ' ' + spec['last name']));
+      markerId: markerId,
+      position: LatLng(spec['location'].latitude, spec['location'].longitude),
+      // infoWindow:
+      //     InfoWindow(title: spec['first name'] + ' ' + spec['last name'])
+    );
     setState(() {
       markers[markerId] = marker;
     });
   }
 
+
   getMarkerData() async {
     FirebaseFirestore.instance.collection('users').get().then((userData) {
+      print(userData.docs);
       if (userData.docs.isNotEmpty) {
         for (int i = 0; i < userData.docs.length; i++) {
-          initMarker(userData.docs[i], userData.docs[i]);
+          initMarker(userData.docs[i].data, i);
         }
+      } else {
+        print("userData.docs is empty");
       }
     });
   }
