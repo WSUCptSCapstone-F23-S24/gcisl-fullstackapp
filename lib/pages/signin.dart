@@ -22,11 +22,12 @@ class _SignInPageState extends State<SignInPage> {
 
   _login() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailControllor.text, password: _passwordControllor.text);
+      UserCredential uID = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _emailControllor.text, password: _passwordControllor.text);
 
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MyHomePage(title: "Cobb Connect")));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => MyApp()));
     } on FirebaseAuthException catch (e) {
       var message = '';
       switch (e.code) {
