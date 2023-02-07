@@ -4,6 +4,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/palette.dart';
 import '../main_widgets/appbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -73,17 +74,34 @@ class _AnalyticsPage extends State<AnalyticsPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Container(
-          width: 500,
-          height: 400,
-          child: GoogleMap(
-            onMapCreated: _onMapCreated,
-            markers: Set<Marker>.of(markers.values),
-            initialCameraPosition: CameraPosition(
-              target: _center,
-              zoom: 1,
-            ),
-            minMaxZoomPreference: MinMaxZoomPreference(1, 10),
-          ),
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+          color: Palette.ktoCrimson,
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(children: [
+                  Container(
+                    width: 400,
+                    height: 300,
+                    child: GoogleMap(
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: _center,
+                        zoom: 1,
+                      ),
+                      markers: {
+                        Marker(markerId: MarkerId("person"), position: _center)
+                      },
+                      minMaxZoomPreference: MinMaxZoomPreference(1, 10),
+                    ),
+                  ),
+                ]),
+                Spacer(),
+                Row(
+                  children: [Text("data")],
+                )
+              ]),
         ),
       );
 }

@@ -88,19 +88,29 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
+                      Divider(),
                       ListView.builder(
                         itemCount: _postList.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) => ListTile(
-                          leading: Icon(Icons.portrait_rounded),
+                          leading: Icon(Icons.portrait_rounded,
+                              color: Palette.ktoCrimson),
                           title: Column(
                             children: <Widget>[
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: SelectableText("post " +
-                                    index.toString() +
-                                    "\n" +
-                                    _postList[index].trim()),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Palette.ktoCrimson,
+                                    ),
+                                  ),
+                                  child: SelectableText("post " +
+                                      index.toString() +
+                                      "\n" +
+                                      _postList[index].trim()),
+                                ),
                               ),
                               Divider(
                                 height: 20.0,

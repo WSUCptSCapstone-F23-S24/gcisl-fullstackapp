@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field, prefer_interpolation_to_compose_strings, avoid_unnecessary_containers
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int index = 0;
+
+  var uID = FirebaseAuth.instance.currentUser;
+
   final screens = [
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     Text("dummy"),
@@ -87,8 +91,12 @@ class _MyAppState extends State<MyApp> {
                       ),
                       Container(
                           child: NavigationDestination(
-                              icon: Icon(Icons.person_off_outlined),
-                              label: "Sign in"))
+                              icon: FirebaseAuth.instance.currentUser == null
+                                  ? Icon(Icons.person_off_outlined)
+                                  : Icon(Icons.settings),
+                              label: FirebaseAuth.instance.currentUser == null
+                                  ? "Sign in"
+                                  : "Settings"))
                     ]),
               ),
             )),
