@@ -40,23 +40,16 @@ class _AnalyticsPage extends State<AnalyticsPage> {
     });
   }
 
-
-  getMarkerData() async {
-    FirebaseFirestore.instance.collection('users').get().then((userData) {
-      print(userData.docs);
-      if (userData.docs.isNotEmpty) {
-        for (int i = 0; i < userData.docs.length; i++) {
-          initMarker(userData.docs[i].data, i);
-        }
-      } else {
-        print("userData.docs is empty");
-      }
-    });
+  getUserData() async {
+    DatabaseReference r = FirebaseDatabase.instance.ref("users");
+    DatabaseEvent e = await r.once();
+    print(e.snapshot.value);
   }
 
   @override
   void initState() {
-    getMarkerData();
+    //getMarkerData();
+    getUserData();
     super.initState();
   }
 
