@@ -7,7 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 class ProfilePage extends StatelessWidget {
   //need to add user ID from authenticator
-  DatabaseReference ref = FirebaseDatabase.instance.ref("users/123");
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
   //controllers
   final _firstNameControl = TextEditingController();
@@ -71,7 +71,6 @@ class ProfilePage extends StatelessWidget {
                           hintText: 'Last Name',
                           hoverColor: Colors.black,
                         ),
-
                       ),
                     ),
                   ),
@@ -151,7 +150,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
 
-
                 //Location
                 SizedBox(height: 20),
                 Padding(
@@ -201,7 +199,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
 
-
                 //Experience
                 SizedBox(height: 20),
                 Padding(
@@ -227,30 +224,30 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
 
-
                 //Save button
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                    ref.set({
-                      "first name": _firstNameControl.text,
-                      "last name": _lastNameControl.text,
-                      "email": _emailControl.text,
-                      "phone": _phoneControl.text,
-                      "company": _companyControl.text,
-                      "location": _locationControl.text,
-                      "position": _positionControl.text,
-                      "experience": _experienceControl.text
-                    });
-                  },
+                      var userID = _emailControl.text; //maybe use a hash code?
+                      ref = FirebaseDatabase.instance.ref("users/$userID");
+                      ref.set({
+                        "first name": _firstNameControl.text,
+                        "last name": _lastNameControl.text,
+                        "email": _emailControl.text,
+                        "phone": _phoneControl.text,
+                        "company": _companyControl.text,
+                        "location": _locationControl.text,
+                        "position": _positionControl.text,
+                        "experience": _experienceControl.text
+                      });
+                    },
                     child: Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(12),
-
                       ),
                       child: Center(
                           child: Text(
