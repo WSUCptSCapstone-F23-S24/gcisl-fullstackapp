@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -46,10 +45,18 @@ class _AnalyticsPage extends State<AnalyticsPage> {
     print(e.snapshot.value);
   }
 
+  getAllNames() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("users");
+
+    Query query = ref.orderByChild("first name");
+    DataSnapshot e = await query.get();
+    //need some way to get names extracted from the map that is stored in e.value
+  }
+
   @override
   void initState() {
     //getMarkerData();
-    getUserData();
+    getAllNames();
     super.initState();
   }
 
