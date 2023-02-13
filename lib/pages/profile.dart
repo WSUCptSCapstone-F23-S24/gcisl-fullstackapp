@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocode/geocode.dart';
 
 class ProfilePage extends StatelessWidget {
   //need to add user ID from authenticator
@@ -22,41 +22,60 @@ class ProfilePage extends StatelessWidget {
   final _positionControl = TextEditingController();
   final _experienceControl = TextEditingController();
 
+  uploadData(double? lat, double? long) {
+    //set userid to hashcode of email
+    var userID = _emailControl.text.hashCode;
+
+    //add to firebase database
+    ref = FirebaseDatabase.instance.ref("users/$userID");
+    try {
+      ref.set({
+        "first name": _firstNameControl.text,
+        "last name": _lastNameControl.text,
+        "email": _emailControl.text,
+        "phone": _phoneControl.text,
+        "company": _companyControl.text,
+        "street address": _location1Control.text,
+        "city address": _location2Control.text,
+        "state address": _location3Control.text,
+        "lat": lat,
+        "long": long,
+        "position": _positionControl.text,
+        "experience": _experienceControl.text
+      });
+      print("sucess!");
+    } catch (e) {
+      print(e);
+      print("not uploaded");
+    }
+  }
+
+//function to save data to backend
   saveData() async {
     //get lat and log values
-    double lat = 0;
-    double long = 0;
+    double? lat = 0;
+    double? long = 0;
+
+    GeoCode geoCode = GeoCode();
+
+    String addy =
+        "${_location1Control.text.trim()}, ${_location2Control.text.trim()}, ${_location3Control.text.trim()}";
+
+    print(addy);
+
     try {
-      final query = _location1Control.text +
-          _location2Control.text +
-          _location3Control.text;
+      Coordinates coordinates = await geoCode.forwardGeocoding(address: addy);
 
-      var addresses = await Geocoder.local.findAddressesFromQuery(query);
-      var first = addresses.first;
-      print("${first.featureName} : ${first.coordinates}");
-
-      lat = addresses.first.coordinates.latitude;
-      long = addresses.first.coordinates.latitude;
+      lat = coordinates.latitude;
+      long = coordinates.longitude;
+      print("Latitude: ${lat}");
+      print("Longitude: ${long}");
+      print("uploading to database...");
+      uploadData(lat, long);
     } catch (e) {
-      print("error in getting address coordinates");
+      print(e);
+      print("invalid address, please try again");
     }
-
-    var userID = _emailControl.text; //maybe use a hash code?
-    ref = FirebaseDatabase.instance.ref("users/$userID");
-    ref.set({
-      "first name": _firstNameControl.text,
-      "last name": _lastNameControl.text,
-      "email": _emailControl.text,
-      "phone": _phoneControl.text,
-      "company": _companyControl.text,
-      "street address": _location1Control.text,
-      "city address": _location2Control.text,
-      "state address": _location3Control.text,
-      "lat": lat,
-      "long": long,
-      "position": _positionControl.text,
-      "experience": _experienceControl.text
-    });
   }
 
   @override
@@ -318,7 +337,9 @@ class ProfilePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      saveData();
+                    },
                     child: Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(

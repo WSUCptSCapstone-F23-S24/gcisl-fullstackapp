@@ -42,7 +42,7 @@ dependencies:
   google_maps_flutter_web: ^0.3.2+2
   geolocator: ^9.0.2
   cloud_firestore: ^4.3.1
-  geocoder: ^0.2.1
+  geocode: 1.0.2
 
 
 dev_dependencies:

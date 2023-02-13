@@ -177,13 +177,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  geocoder:
+  geocode:
     dependency: "direct main"
     description:
-      name: geocoder
+      name: geocode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.1"
+    version: "1.0.2"
   geolocator:
     dependency: "direct main"
     description:
@@ -275,6 +275,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.15.1"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.5"
   http_parser:
     dependency: transitive
     description:
