@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,18 +17,20 @@ class ProfilePage extends StatelessWidget {
   final _emailControl = TextEditingController();
   final _phoneControl = TextEditingController();
   final _companyControl = TextEditingController();
-  final _location1Control = TextEditingController();
+  //final _location1Control = TextEditingController();
   final _location2Control = TextEditingController();
   final _location3Control = TextEditingController();
   final _positionControl = TextEditingController();
   final _experienceControl = TextEditingController();
 
+  //upload profile data to backend
   uploadData(double? lat, double? long) {
     //set userid to hashcode of email
     var userID = _emailControl.text.hashCode;
 
     //add to firebase database
     ref = FirebaseDatabase.instance.ref("users/$userID");
+
     try {
       ref.set({
         "first name": _firstNameControl.text,
@@ -35,13 +38,14 @@ class ProfilePage extends StatelessWidget {
         "email": _emailControl.text,
         "phone": _phoneControl.text,
         "company": _companyControl.text,
-        "street address": _location1Control.text,
+        //"street address": _location1Control.text,
         "city address": _location2Control.text,
         "state address": _location3Control.text,
         "lat": lat,
         "long": long,
         "position": _positionControl.text,
-        "experience": _experienceControl.text
+        "experience": _experienceControl.text,
+        "date added": ServerValue.timestamp
       });
       print("sucess!");
     } catch (e) {
@@ -50,8 +54,8 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-//function to save data to backend
-  saveData() async {
+//get lat long to save data to backend
+  getLatLong() async {
     //get lat and log values
     double? lat = 0;
     double? long = 0;
@@ -59,7 +63,7 @@ class ProfilePage extends StatelessWidget {
     GeoCode geoCode = GeoCode();
 
     String addy =
-        "${_location1Control.text.trim()}, ${_location2Control.text.trim()}, ${_location3Control.text.trim()}";
+        "${_location2Control.text.trim()}, ${_location3Control.text.trim()}";
 
     print(addy);
 
@@ -222,30 +226,6 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
-                        controller: _location1Control,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Street Address',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Location
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
                         controller: _location2Control,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -338,7 +318,7 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                      saveData();
+                      getLatLong();
                     },
                     child: Container(
                       padding: EdgeInsets.all(20),
