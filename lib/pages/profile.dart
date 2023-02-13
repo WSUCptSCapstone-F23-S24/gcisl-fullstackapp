@@ -54,7 +54,7 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-//get lat long to save data to backend
+  //get lat long to save data to backend
   getLatLong() async {
     //get lat and log values
     double? lat = 0;
