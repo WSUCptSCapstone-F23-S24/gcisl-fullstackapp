@@ -48,9 +48,18 @@ class _AnalyticsPage extends State<AnalyticsPage> {
 
   getAllNames() async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("users");
+    List<String> userIDs = []; //use this to collect the names
+    await FirebaseDatabase.instance.ref('users').get().then(
+          (snapshot) => snapshot.children.forEach((element) {
+            //print(element.ref);
+            //print(element.value);
+            print(element.child("first name").value);
+            print(element.child("last name").value);
+          }),
+        );
 
-    Query query = ref.orderByChild("first name");
-    DataSnapshot e = await query.get();
+    //Query query = ref.orderByChild("first name");
+    //DataSnapshot e = await query.get();
     //need some way to get names extracted from the map that is stored in e.value
   }
 
