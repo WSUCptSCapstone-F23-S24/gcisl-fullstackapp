@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../main_widgets/appbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:geocode/geocode.dart';
 
 class ProfilePage extends StatelessWidget {
   //need to add user ID from authenticator
@@ -15,9 +16,68 @@ class ProfilePage extends StatelessWidget {
   final _emailControl = TextEditingController();
   final _phoneControl = TextEditingController();
   final _companyControl = TextEditingController();
-  final _locationControl = TextEditingController();
+  final _location1Control = TextEditingController();
+  final _location2Control = TextEditingController();
+  final _location3Control = TextEditingController();
   final _positionControl = TextEditingController();
   final _experienceControl = TextEditingController();
+
+  uploadData(double? lat, double? long) {
+    //set userid to hashcode of email
+    var userID = _emailControl.text.hashCode;
+
+    //add to firebase database
+    ref = FirebaseDatabase.instance.ref("users/$userID");
+    try {
+      ref.set({
+        "first name": _firstNameControl.text,
+        "last name": _lastNameControl.text,
+        "email": _emailControl.text,
+        "phone": _phoneControl.text,
+        "company": _companyControl.text,
+        "street address": _location1Control.text,
+        "city address": _location2Control.text,
+        "state address": _location3Control.text,
+        "lat": lat,
+        "long": long,
+        "position": _positionControl.text,
+        "experience": _experienceControl.text
+      });
+      print("sucess!");
+    } catch (e) {
+      print(e);
+      print("not uploaded");
+    }
+  }
+
+//function to save data to backend
+  saveData() async {
+    //get lat and log values
+    double? lat = 0;
+    double? long = 0;
+
+    GeoCode geoCode = GeoCode();
+
+    String addy =
+        "${_location1Control.text.trim()}, ${_location2Control.text.trim()}, ${_location3Control.text.trim()}";
+
+    print(addy);
+
+    try {
+      Coordinates coordinates = await geoCode.forwardGeocoding(address: addy);
+
+      lat = coordinates.latitude;
+      long = coordinates.longitude;
+      print("Latitude: ${lat}");
+      print("Longitude: ${long}");
+      print("uploading to database...");
+      uploadData(lat, long);
+    } catch (e) {
+      print(e);
+      print("invalid address, please try again");
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.white,
@@ -162,12 +222,60 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextField(
-                        controller: _locationControl,
+                        controller: _location1Control,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Location',
+                          hintText: 'Street Address',
+                          hoverColor: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                //Location
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 300),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: TextField(
+                        controller: _location2Control,
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'City',
+                          hoverColor: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                //Location
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 300),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: TextField(
+                        controller: _location3Control,
+                        style: TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'State',
                           hoverColor: Colors.black,
                         ),
                       ),
@@ -230,18 +338,7 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                      var userID = _emailControl.text; //maybe use a hash code?
-                      ref = FirebaseDatabase.instance.ref("users/$userID");
-                      ref.set({
-                        "first name": _firstNameControl.text,
-                        "last name": _lastNameControl.text,
-                        "email": _emailControl.text,
-                        "phone": _phoneControl.text,
-                        "company": _companyControl.text,
-                        "location": _locationControl.text,
-                        "position": _positionControl.text,
-                        "experience": _experienceControl.text
-                      });
+                      saveData();
                     },
                     child: Container(
                       padding: EdgeInsets.all(20),
