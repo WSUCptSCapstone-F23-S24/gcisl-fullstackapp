@@ -22,6 +22,7 @@ class ProfilePage extends StatelessWidget {
   final _positionControl = TextEditingController();
   final _experienceControl = TextEditingController();
 
+  //upload profile data to backend
   uploadData(double? lat, double? long) {
     //set userid to hashcode of email
     var userID = _emailControl.text.hashCode;
@@ -50,8 +51,8 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-//function to save data to backend
-  saveData() async {
+//get lat long to save data to backend
+  getLatLong() async {
     //get lat and log values
     double? lat = 0;
     double? long = 0;
@@ -338,7 +339,7 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                      saveData();
+                      getLatLong();
                     },
                     child: Container(
                       padding: EdgeInsets.all(20),
