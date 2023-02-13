@@ -65,8 +65,6 @@ class _AnalyticsPage extends State<AnalyticsPage> {
 
   @override
   void initState() {
-    //getMarkerData();
-    getAllNames();
     super.initState();
   }
 

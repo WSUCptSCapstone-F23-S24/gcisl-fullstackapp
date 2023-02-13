@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:gcisl_app/pages/signout.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/auth/auth_page.dart';
@@ -43,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     MessagesPage(),
     AnalyticsPage(),
     Text("dummey"),
-    AuthPage()
+    FirebaseAuth.instance.currentUser == null ? AuthPage() : SignOut()
   ];
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -92,11 +93,11 @@ class _MyAppState extends State<MyApp> {
                       Container(
                           child: NavigationDestination(
                               icon: FirebaseAuth.instance.currentUser == null
-                                  ? Icon(Icons.person_off_outlined)
-                                  : Icon(Icons.settings),
+                                  ? Icon(Icons.person_outline)
+                                  : Icon(Icons.person_off_outlined),
                               label: FirebaseAuth.instance.currentUser == null
                                   ? "Sign in"
-                                  : "Settings"))
+                                  : "Sign Out"))
                     ]),
               ),
             )),
