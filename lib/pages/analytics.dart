@@ -33,14 +33,17 @@ class _AnalyticsPage extends State<AnalyticsPage> {
   }
 
   void initMarker(element) async {
-    var markerIdVal = element.child("first name").value;
+    var markerIdVal = element.key;
     final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
-      markerId: markerId,
-      position: LatLng(element.child("lat").value, element.child("long").value),
-      infoWindow:
-          InfoWindow(title: element.child("first name").value.toString() + " ".toString() + element.child("last name").value.toString())
-    );
+        markerId: markerId,
+        position:
+            LatLng(element.child("lat").value, element.child("long").value),
+        infoWindow: InfoWindow(
+            title: element.child("first name").value.toString() +
+                " ".toString() +
+                element.child("last name").value.toString(),
+            snippet: element.child("phone").value.toString()));
     setState(() {
       markers[markerId] = marker;
     });
