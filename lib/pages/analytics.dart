@@ -26,46 +26,33 @@ class _AnalyticsPage extends State<AnalyticsPage> {
     mapController = controller;
   }
 
-  void initMarker(spec, specId) async {
-    var markerIdVal = specId;
+  @override
+  void initState() {
+    getMarkerData();
+    super.initState();
+  }
+
+  void initMarker(element) async {
+    var markerIdVal = element.child("first name").value;
     final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
       markerId: markerId,
-      position: LatLng(spec['location'].latitude, spec['location'].longitude),
-      // infoWindow:
-      //     InfoWindow(title: spec['first name'] + ' ' + spec['last name'])
+      position: LatLng(element.child("lat").value, element.child("long").value),
+      infoWindow:
+          InfoWindow(title: element.child("first name").value.toString() + " ".toString() + element.child("last name").value.toString())
     );
     setState(() {
       markers[markerId] = marker;
     });
   }
 
-  getUserData() async {
-    DatabaseReference r = FirebaseDatabase.instance.ref("users");
-    DatabaseEvent e = await r.once();
-    print(e.snapshot.value);
-  }
-
-  getAllNames() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref("users");
-    List<String> userIDs = []; //use this to collect the names
-    await FirebaseDatabase.instance.ref('users').get().then(
-          (snapshot) => snapshot.children.forEach((element) {
-            //print(element.ref);
-            //print(element.value);
-            print(element.child("first name").value);
-            print(element.child("last name").value);
-          }),
-        );
-
-    //Query query = ref.orderByChild("first name");
-    //DataSnapshot e = await query.get();
-    //need some way to get names extracted from the map that is stored in e.value
-  }
-
-  @override
-  void initState() {
-    super.initState();
+  getMarkerData() async {
+    await FirebaseDatabase.instance
+        .ref('users')
+        .get()
+        .then((snapshot) => snapshot.children.forEach((element) {
+              initMarker(element);
+            }));
   }
 
   Set<Marker> getMarker() {
@@ -89,25 +76,25 @@ class _AnalyticsPage extends State<AnalyticsPage> {
               children: [
                 Row(children: [
                   Container(
-                    width: 400,
-                    height: 300,
+                    width: 800,
+                    height: 800,
+                    padding:
+                        EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),
                     child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
                         target: _center,
                         zoom: 1,
                       ),
-                      markers: {
-                        Marker(markerId: MarkerId("person"), position: _center)
-                      },
+                      markers: Set<Marker>.of(markers.values),
                       minMaxZoomPreference: MinMaxZoomPreference(1, 10),
                     ),
                   ),
                 ]),
-                Spacer(),
-                Row(
-                  children: [Text("data")],
-                )
+                // Spacer(),
+                // Row(
+                //   children: [Text("data")],
+                // )
               ]),
         ),
       );
