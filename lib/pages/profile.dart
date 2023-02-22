@@ -66,6 +66,17 @@ class ProfilePage extends StatelessWidget {
     return null;
   }
 
+  String? _validateMobile(String? text) {
+    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    RegExp regExp = new RegExp(patttern);
+    if (text?.length == 0) {
+      return 'Please enter mobile number';
+    } else if (!regExp.hasMatch(text!)) {
+      return 'Please enter valid mobile number';
+    }
+    return null;
+  }
+
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -212,7 +223,7 @@ class ProfilePage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextFormField(
-                        validator: _requiredValidator,
+                        validator: _validateMobile,
                         controller: _phoneControl,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: Colors.black),
