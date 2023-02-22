@@ -9,7 +9,10 @@ import '../main_widgets/appbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geocode/geocode.dart';
 
+import '../palette.dart';
+
 class ProfilePage extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
   //need to add user ID from authenticator
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
@@ -56,6 +59,13 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
+  String? _requiredValidator(String? text) {
+    if (text == null || text.trim().isEmpty) {
+      return 'This Field is Required';
+    }
+    return null;
+  }
+
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -78,6 +88,16 @@ class ProfilePage extends StatelessWidget {
       print("Longitude: ${long}");
       print("uploading to database...");
       uploadData(lat, long);
+
+      String message = "Sucess!";
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(message),
+            );
+          });
     } catch (e) {
       print(e);
       print("invalid address, please try again");
@@ -97,7 +117,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: Form(
+        key: _formKey,
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -113,7 +134,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _firstNameControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -138,7 +160,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _lastNameControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -163,7 +186,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _emailControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -187,7 +211,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _phoneControl,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: Colors.black),
@@ -212,7 +237,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _companyControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -237,7 +263,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _location2Control,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -261,7 +288,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _location3Control,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -285,7 +313,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _positionControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -310,7 +339,8 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: _requiredValidator,
                         controller: _experienceControl,
                         style: TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -326,30 +356,37 @@ class ProfilePage extends StatelessWidget {
 
                 //Save button
                 SizedBox(height: 20),
-                Padding(
+                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
-                    onPressed: () {
-                      getLatLong(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                          child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      )),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.ktoCrimson,
+                      minimumSize: const Size(0, 65),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0)),
                     ),
+                    onPressed: () {
+                      //if valid form, send request to get lat long
+                      if (_formKey.currentState != null &&
+                          _formKey.currentState!.validate()) {
+                        getLatLong(context);
+                      } else {
+                        print("form was not valid");
+                      }
+                    },
+                    child: const Center(
+                        child: Text(
+                      'Save',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    )),
                   ),
                 ),
+                //space for after the save button
+                SizedBox(height: 50),
               ],
             ),
           ),
