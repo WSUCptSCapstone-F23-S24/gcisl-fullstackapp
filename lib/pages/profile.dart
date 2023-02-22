@@ -1,5 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
 
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +57,7 @@ class ProfilePage extends StatelessWidget {
   }
 
   //get lat long to save data to backend
-  getLatLong() async {
+  getLatLong(context) async {
     //get lat and log values
     double? lat = 0;
     double? long = 0;
@@ -79,6 +81,16 @@ class ProfilePage extends StatelessWidget {
     } catch (e) {
       print(e);
       print("invalid address, please try again");
+
+      String message = "invalid address, please try again";
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(message),
+            );
+          });
     }
   }
 
@@ -318,7 +330,7 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 300),
                   child: ElevatedButton(
                     onPressed: () {
-                      getLatLong();
+                      getLatLong(context);
                     },
                     child: Container(
                       padding: EdgeInsets.all(20),
