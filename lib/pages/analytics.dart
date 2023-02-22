@@ -36,7 +36,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
   }
 
   void initMarker(element) async {
-    var markerIdVal = element.child("first name").value;
+    var markerIdVal = element.key;
     final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
         markerId: markerId,
@@ -47,6 +47,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
             title: element.child("first name").value.toString() +
                 " ".toString() +
                 element.child("last name").value.toString()));
+
     setState(() {
       markers[markerId] = marker;
     });
