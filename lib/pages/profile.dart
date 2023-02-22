@@ -77,6 +77,61 @@ class ProfilePage extends StatelessWidget {
     return null;
   }
 
+  showErrorAlertDialog(BuildContext context, String message) {
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Profile not uploaded"),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showSucessAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("To Home Page"),
+      onPressed: () {
+        //TODO this should refresh and go to home page
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(""),
+      content: Text("Sucess! Profile Uploaded"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -100,28 +155,14 @@ class ProfilePage extends StatelessWidget {
       print("uploading to database...");
       uploadData(lat, long);
 
-      String message = "Sucess!";
-
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(message),
-            );
-          });
+      showSucessAlertDialog(context);
     } catch (e) {
       print(e);
-      print("invalid address, please try again");
 
-      String message = "invalid address, please try again";
+      String message = "Invalid address, please try again";
+      print(message);
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(message),
-            );
-          });
+      showErrorAlertDialog(context, message);
     }
   }
 
