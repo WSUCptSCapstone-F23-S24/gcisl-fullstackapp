@@ -83,124 +83,132 @@ class _AnalyticsPage extends State<AnalyticsPage> {
           body: Container(
         padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
         color: Palette.ktoCrimson,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              margin: EdgeInsets.fromLTRB(
-                  0, 0, 0, MediaQuery.of(context).size.height * 0.25),
-              width: MediaQuery.of(context).size.width * 0.30,
-              height: MediaQuery.of(context).size.height * 0.9,
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                      height: 20,
-                      child: Column(children: [
-                        Expanded(
-                          child: Text("Find People",
-                              style: TextStyle(fontSize: 20)),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                  margin: EdgeInsets.fromLTRB(
+                      0, 0, 0, MediaQuery.of(context).size.height * 0.01),
+                  width: MediaQuery.of(context).size.width * 0.30,
+                  height: MediaQuery.of(context).size.height * 0.95,
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                          height: 20,
+                          child: Column(children: [
+                            Expanded(
+                              child: Text("Find People",
+                                  style: TextStyle(fontSize: 20)),
+                            ),
+                          ]),
                         ),
-                      ]),
-                    ),
-                    Divider(height: 0),
-                    ListView.builder(
-                        itemCount: userInfo.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              color: _selectedIndex == index
-                                  ? Palette.ktoGray
-                                  : Colors.white,
-                              child: ListTile(
-                                leading: Icon(Icons.portrait_rounded,
-                                    color: Palette.ktoCrimson),
-                                title: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
+                        Divider(height: 0),
+                        ListView.builder(
+                            itemCount: userInfo.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                  color: _selectedIndex == index
+                                      ? Palette.ktoGray
+                                      : Colors.white,
+                                  child: ListTile(
+                                    leading: Icon(Icons.portrait_rounded,
+                                        color: Palette.ktoCrimson),
+                                    title: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                            child: Text(userInfo[index][0] +
-                                                "\n" +
-                                                userInfo[index][1])),
-                                        Spacer(flex: 1),
-                                        Expanded(
-                                          child: Text(userInfo[index][2] +
-                                              ", " +
-                                              userInfo[index][3]),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                                child: Text(userInfo[index][0] +
+                                                    "\n" +
+                                                    userInfo[index][1])),
+                                            Spacer(flex: 1),
+                                            Expanded(
+                                              child: Text(userInfo[index][2] +
+                                                  ", " +
+                                                  userInfo[index][3]),
+                                            )
+                                          ],
+                                        ),
+                                        Divider(
+                                          height: 0,
                                         )
                                       ],
                                     ),
-                                    Divider(
-                                      height: 0,
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = index;
-                                  });
-                                  mapController.animateCamera(
-                                      CameraUpdate.newCameraPosition(
-                                          CameraPosition(
-                                    target: LatLng(
-                                        userInfo[index][4], userInfo[index][5]),
-                                    zoom: 10,
-                                  )));
-                                },
-                              ));
-                        })
-                  ],
-                ),
-              )),
-          Spacer(flex: 1),
-          Column(children: [
-            Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, 0, 0, MediaQuery.of(context).size.height * 0.25),
-                width: MediaQuery.of(context).size.width * 0.40,
-                height: MediaQuery.of(context).size.height * 0.48,
-                padding: EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),
-                child: Stack(children: [
-                  GoogleMap(
-                    onMapCreated: _onMapCreated,
-                    // mapType: MapType.normal, //for changing map appearance
-                    initialCameraPosition: CameraPosition(
-                      target: _center,
-                      zoom: 1.7,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = index;
+                                      });
+                                      mapController.animateCamera(
+                                          CameraUpdate.newCameraPosition(
+                                              CameraPosition(
+                                        target: LatLng(userInfo[index][4],
+                                            userInfo[index][5]),
+                                        zoom: 10,
+                                      )));
+                                    },
+                                  ));
+                            })
+                      ],
                     ),
-                    markers: Set<Marker>.of(markers.values),
-                    minMaxZoomPreference: MinMaxZoomPreference(1, 23),
-                    cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                        southwest: LatLng(-90, -180),
-                        northeast: LatLng(90, 180))),
-                  ),
-                  Align(
-                      alignment: Alignment(-0.97, 0.85),
-                      child: FloatingActionButton(
-                        onPressed: () => {
-                          mapController.animateCamera(
-                              CameraUpdate.newCameraPosition(CameraPosition(
-                            target: _center,
-                            zoom: 1.5,
-                          )))
-                        },
-                        backgroundColor: Palette.ktoGray,
-                        child: Icon(Icons.gps_fixed_rounded),
-                      ))
-                ])),
-            Container(
-              color: Colors.black,
-              child: Text("hey"),
-            ),
-          ]),
-        ]),
+                  )),
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    width: MediaQuery.of(context).size.width * 0.60,
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    padding:
+                        EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),
+                    child: Stack(children: [
+                      GoogleMap(
+                        onMapCreated: _onMapCreated,
+                        // mapType: MapType.normal, //for changing map appearance
+                        initialCameraPosition: CameraPosition(
+                          target: _center,
+                          zoom: 1.9,
+                        ),
+                        markers: Set<Marker>.of(markers.values),
+                        minMaxZoomPreference: MinMaxZoomPreference(1, 23),
+                        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+                            southwest: LatLng(-90, -180),
+                            northeast: LatLng(90, 180))),
+                      ),
+                      Align(
+                          alignment: Alignment(-0.97, 0.85),
+                          child: FloatingActionButton(
+                            onPressed: () => {
+                              mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(CameraPosition(
+                                target: _center,
+                                zoom: 1.5,
+                              )))
+                            },
+                            backgroundColor: Palette.ktoGray,
+                            child: Icon(Icons.gps_fixed_rounded),
+                          ))
+                    ])),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  height: MediaQuery.of(context).size.height * 0.22,
+                  color: Colors.black,
+                  child: Text(
+                      "hey"), //todo: create an updatable widget which displays the
+                  // information of currently selected person
+                ),
+              ]),
+            ]),
       ));
 }
