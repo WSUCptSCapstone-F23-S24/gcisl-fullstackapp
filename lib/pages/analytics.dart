@@ -74,6 +74,10 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                 element.child("state address").value.toString(),
                 double.tryParse(element.child("lat").value.toString()),
                 double.tryParse(element.child("long").value.toString()),
+                double.tryParse(element.child("phone").value.toString()),
+                element.child("email").value.toString(),
+                element.child("experience").value.toString(),
+                element.child("position").value.toString(),
               ]);
             }));
   }
@@ -201,26 +205,33 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                           ))
                     ])),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
-                  height: MediaQuery.of(context).size.height * 0.22,
-                  color: Colors.white,
-                  child: Expanded(
-                      child: Text(
-                    userInfo[_selectedIndex][0] +
-                        "\n" +
-                        userInfo[_selectedIndex][1] +
-                        "\n" +
-                        userInfo[_selectedIndex][2] +
-                        "\n" +
-                        userInfo[_selectedIndex][3].toString() +
-                        "\n" +
-                        userInfo[_selectedIndex][4].toString() +
-                        "\n" +
-                        userInfo[_selectedIndex][5].toString(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  )),
-                ),
+                    width: MediaQuery.of(context).size.width * 0.60,
+                    height: MediaQuery.of(context).size.height * 0.22,
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                          userInfo[_selectedIndex][0] +
+                              "\n" +
+                              userInfo[_selectedIndex][1] +
+                              "\n" +
+                              userInfo[_selectedIndex][2] +
+                              "\n" +
+                              userInfo[_selectedIndex][3].toString() +
+                              "\n" +
+                              userInfo[_selectedIndex][6].toString() +
+                              "\n" +
+                              userInfo[_selectedIndex][7].toString() +
+                              "\n" +
+                              userInfo[_selectedIndex][8].toString() +
+                              "\n" +
+                              userInfo[_selectedIndex][9].toString(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )),
+                      ],
+                    )),
               ]),
             ]),
       ));
