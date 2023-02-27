@@ -203,10 +203,23 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.60,
                   height: MediaQuery.of(context).size.height * 0.22,
-                  color: Colors.black,
-                  child: Text(
-                      "hey"), //todo: create an updatable widget which displays the
-                  // information of currently selected person
+                  color: Colors.white,
+                  child: Expanded(
+                      child: Text(
+                    userInfo[_selectedIndex][0] +
+                        "\n" +
+                        userInfo[_selectedIndex][1] +
+                        "\n" +
+                        userInfo[_selectedIndex][2] +
+                        "\n" +
+                        userInfo[_selectedIndex][3].toString() +
+                        "\n" +
+                        userInfo[_selectedIndex][4].toString() +
+                        "\n" +
+                        userInfo[_selectedIndex][5].toString(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
                 ),
               ]),
             ]),
