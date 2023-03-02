@@ -211,13 +211,13 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                     child: Row(
                       children: [
                         Expanded(
-                            child: Text(
+                            child: Text( 
                           userInfo[_selectedIndex][0] +
-                              "\n" +
+                              " " +
                               userInfo[_selectedIndex][1] +
                               "\n" +
                               userInfo[_selectedIndex][2] +
-                              "\n" +
+                              ", " +
                               userInfo[_selectedIndex][3].toString() +
                               "\n" +
                               userInfo[_selectedIndex][6].toString() +
@@ -228,7 +228,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                               "\n" +
                               userInfo[_selectedIndex][9].toString(),
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                              fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.center,
                         )),
                       ],
                     )),
