@@ -105,7 +105,11 @@ Through VS code IDE:
 - Video: [link](https://drive.google.com/drive/u/0/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw)
 
 #### Sprint 4: 
-- Documentation: [Sprint 4 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/files/9978046/Sprint.4.Report.pdf)
+- Documentation: [Sprint 4 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/blob/main/Documents/Sprint%204%20Report.pdf)
+- Video: [link](https://drive.google.com/drive/u/0/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw)
+
+#### Sprint 5:
+- Documentation [Sprint 5 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/blob/main/Documents/Sprint%205%20Report.pdf)
 - Video: [link](https://drive.google.com/drive/u/0/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw)
 
 ## Team Members
