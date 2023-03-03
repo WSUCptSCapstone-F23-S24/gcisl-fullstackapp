@@ -1,10 +1,8 @@
 // ignore_for_file: file_names, prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class AnalyticsPage extends StatefulWidget {
   @override
@@ -46,8 +44,24 @@ class _AnalyticsPage extends State<AnalyticsPage> {
         infoWindow: InfoWindow(
             title: element.child("first name").value.toString() +
                 " ".toString() +
-                element.child("last name").value.toString()));
-
+                element.child("last name").value.toString()),
+        onTap: () {
+          for (var e = 0; e < userInfo.length; e++) {
+            if (userInfo[e][0] ==
+                    element.child("first name").value.toString() &&
+                userInfo[e][1] == element.child("last name").value.toString() &&
+                userInfo[e][6] ==
+                    double.tryParse(element.child("phone").value.toString())) {
+              mapController.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(userInfo[e][4], userInfo[e][5]),
+                      zoom: 10)));
+              setState(() {
+                _selectedIndex = e;
+              });
+            }
+          }
+        });
     setState(() {
       markers[markerId] = marker;
     });
@@ -57,6 +71,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
     await FirebaseDatabase.instance
         .ref('users')
         .get()
+        // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
               initMarker(element);
             }));
@@ -136,14 +151,29 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
-                                                child: Text(userInfo[index][0] +
-                                                    "\n" +
-                                                    userInfo[index][1])),
+                                                child: Text(
+                                              userInfo[index][0] +
+                                                  "\n" +
+                                                  userInfo[index][1],
+                                              style: TextStyle(
+                                                  color: _selectedIndex == index
+                                                      ? Color.fromARGB(
+                                                          255, 217, 10, 51)
+                                                      : Colors.black),
+                                            )),
                                             Spacer(flex: 1),
                                             Expanded(
-                                              child: Text(userInfo[index][2] +
-                                                  ", " +
-                                                  userInfo[index][3]),
+                                              child: Text(
+                                                userInfo[index][2] +
+                                                    ", " +
+                                                    userInfo[index][3],
+                                                style: TextStyle(
+                                                    color: _selectedIndex ==
+                                                            index
+                                                        ? Color.fromARGB(
+                                                            255, 217, 10, 51)
+                                                        : Colors.black),
+                                              ),
                                             )
                                           ],
                                         ),
@@ -169,70 +199,83 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                       ],
                     ),
                   )),
-              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    width: MediaQuery.of(context).size.width * 0.60,
-                    height: MediaQuery.of(context).size.height * 0.65,
-                    padding:
-                        EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),
-                    child: Stack(children: [
-                      GoogleMap(
-                        onMapCreated: _onMapCreated,
-                        // mapType: MapType.normal, //for changing map appearance
-                        initialCameraPosition: CameraPosition(
-                          target: _center,
-                          zoom: 1.9,
-                        ),
-                        markers: Set<Marker>.of(markers.values),
-                        minMaxZoomPreference: MinMaxZoomPreference(1, 23),
-                        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                            southwest: LatLng(-90, -180),
-                            northeast: LatLng(90, 180))),
-                      ),
-                      Align(
-                          alignment: Alignment(-0.97, 0.85),
-                          child: FloatingActionButton(
-                            onPressed: () => {
-                              mapController.animateCamera(
-                                  CameraUpdate.newCameraPosition(CameraPosition(
+              SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                          //margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          width: MediaQuery.of(context).size.width * 0.60,
+                          height: MediaQuery.of(context).size.height * 0.65,
+                          /*padding:
+                          EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),*/
+                          child: Stack(children: [
+                            GoogleMap(
+                              onMapCreated: _onMapCreated,
+                              // mapType: MapType.normal, //for changing map appearance
+                              initialCameraPosition: CameraPosition(
                                 target: _center,
-                                zoom: 1.5,
-                              )))
-                            },
-                            backgroundColor: Palette.ktoGray,
-                            child: Icon(Icons.gps_fixed_rounded),
-                          ))
-                    ])),
-                Container(
-                    width: MediaQuery.of(context).size.width * 0.60,
-                    height: MediaQuery.of(context).size.height * 0.22,
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Text( 
-                          userInfo[_selectedIndex][0] +
-                              " " +
-                              userInfo[_selectedIndex][1] +
-                              "\n" +
-                              userInfo[_selectedIndex][2] +
-                              ", " +
-                              userInfo[_selectedIndex][3].toString() +
-                              "\n" +
-                              userInfo[_selectedIndex][6].toString() +
-                              "\n" +
-                              userInfo[_selectedIndex][7].toString() +
-                              "\n" +
-                              userInfo[_selectedIndex][8].toString() +
-                              "\n" +
-                              userInfo[_selectedIndex][9].toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16), textAlign: TextAlign.center,
-                        )),
-                      ],
-                    )),
-              ]),
+                                zoom: 1.9,
+                              ),
+                              markers: Set<Marker>.of(markers.values),
+                              minMaxZoomPreference: MinMaxZoomPreference(1, 23),
+                              cameraTargetBounds: CameraTargetBounds(
+                                  LatLngBounds(
+                                      southwest: LatLng(-90, -180),
+                                      northeast: LatLng(90, 180))),
+                            ),
+                            Align(
+                                alignment: Alignment(-0.97, 0.85),
+                                child: FloatingActionButton(
+                                  onPressed: () => {
+                                    mapController.animateCamera(
+                                        CameraUpdate.newCameraPosition(
+                                            CameraPosition(
+                                      target: _center,
+                                      zoom: 1.5,
+                                    )))
+                                  },
+                                  backgroundColor: Palette.ktoGray,
+                                  child: Icon(Icons.gps_fixed_rounded),
+                                ))
+                          ])),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.60,
+                        height: MediaQuery.of(context).size.height * 0.22,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black, width: 2)),
+                        child: Row(
+                          children: [
+                            if (userInfo.isNotEmpty)
+                              //fixes error when changing to analytics page due
+                              //to container trying to access list before it is initiazlied
+                              Expanded(
+                                  child: Text(
+                                userInfo[_selectedIndex][0] +
+                                    " " +
+                                    userInfo[_selectedIndex][1] +
+                                    "\n" +
+                                    userInfo[_selectedIndex][2] +
+                                    ", " +
+                                    userInfo[_selectedIndex][3].toString() +
+                                    "\n" +
+                                    userInfo[_selectedIndex][6].toString() +
+                                    "\n" +
+                                    userInfo[_selectedIndex][7].toString() +
+                                    "\n" +
+                                    userInfo[_selectedIndex][8].toString() +
+                                    "\n" +
+                                    userInfo[_selectedIndex][9].toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                textAlign: TextAlign.center,
+                              )),
+                          ],
+                        ),
+                      )
+                    ]),
+              ),
             ]),
       ));
 }
