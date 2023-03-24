@@ -1,7 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 
@@ -230,6 +227,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
+                    // ignore: prefer_const_constructors
                     child: Text("Ok"))
               ],
             )));
@@ -245,6 +243,7 @@ class _RegisterPageState extends State<RegisterPage> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailControllor.text, password: _passwordControllor.text);
 
+      // ignore: todo
       //TODO: add user data to database
       //DatabaseReference ref = FirebaseDatabase.instance.ref();
 

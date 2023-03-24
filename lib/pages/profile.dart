@@ -1,12 +1,7 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, must_be_immutable, avoid_print, unnecessary_new
 
-import 'dart:html';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import '../main_widgets/appbar.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:geocode/geocode.dart';
 
 import '../palette.dart';
@@ -69,6 +64,7 @@ class ProfilePage extends StatelessWidget {
   String? _validateMobile(String? text) {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = new RegExp(patttern);
+    // ignore: prefer_is_empty
     if (text?.length == 0) {
       return 'Please enter mobile number';
     } else if (!regExp.hasMatch(text!)) {
@@ -109,6 +105,7 @@ class ProfilePage extends StatelessWidget {
     Widget okButton = TextButton(
       child: Text("To Home Page"),
       onPressed: () {
+        // ignore: todo
         //TODO this should refresh and go to home page
         Navigator.of(context).pop();
       },
@@ -150,8 +147,8 @@ class ProfilePage extends StatelessWidget {
 
       lat = coordinates.latitude;
       long = coordinates.longitude;
-      print("Latitude: ${lat}");
-      print("Longitude: ${long}");
+      //print("Latitude: ${lat}");
+      //print("Longitude: ${long}");
       print("uploading to database...");
       uploadData(lat, long);
 

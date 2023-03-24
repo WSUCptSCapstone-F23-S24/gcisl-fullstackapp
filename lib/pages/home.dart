@@ -1,7 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_interpolation_to_compose_strings
 
 import 'package:flutter/material.dart';
-import '../main_widgets/appbar.dart';
+
 import '../palette.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -14,9 +14,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // ignore: prefer_final_fields
   var _post = TextEditingController();
+  // ignore: prefer_final_fields
   List<String> _postList = [];
-  int _count = 0;
+  //int _count = 0;
 
   @override
   Widget build(BuildContext context) {

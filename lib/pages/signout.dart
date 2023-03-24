@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:gcisl_app/main.dart';
-import 'package:gcisl_app/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:gcisl_app/palette.dart';
+import 'package:flutter/material.dart';
 
 class SignOut extends StatelessWidget {
   const SignOut({super.key});
