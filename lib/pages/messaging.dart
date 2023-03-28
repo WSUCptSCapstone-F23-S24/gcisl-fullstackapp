@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
+import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -36,15 +37,18 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendMessage(String message) {
-    _messagesRef
-        .child(_selectedUser)
-        .push()
-        .set({"message": message, "sender": _currentUser});
-    _messagesRef.parent
-        ?.child(_selectedUser)
-        .child(_currentUser)
-        .push()
-        .set({"message": message, "sender": _currentUser});
+    final now = DateTime.now();
+    final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+    _messagesRef.child(_selectedUser).push().set({
+      "message": message,
+      "sender": _currentUser,
+      "timestamp": formattedDate
+    });
+    _messagesRef.parent?.child(_selectedUser).child(_currentUser).push().set({
+      "message": message,
+      "sender": _currentUser,
+      "timestamp": formattedDate
+    });
     setState(() {
       //_messages.add(message);
     });
@@ -53,6 +57,15 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessage(Message message) {
     bool isCurrentUser = message.sender == _currentUser;
+    final now = DateTime.now();
+    final messageTime = DateTime.fromMillisecondsSinceEpoch(message.timestamp);
+    final isSameDay = messageTime.day == now.day &&
+        messageTime.month == now.month &&
+        messageTime.year == now.year;
+    print(message.message);
+    print(messageTime.day);
+    print(now.day);
+    final dateFormat = isSameDay ? 'h:mm a' : 'MMM d, h:mm a';
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -65,24 +78,39 @@ class _ChatPageState extends State<ChatPage> {
             ),
           if (!isCurrentUser) SizedBox(width: 10.0),
           Expanded(
-            child: Align(
-              alignment:
-                  isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0),
-                decoration: BoxDecoration(
-                  color: isCurrentUser ? Colors.blue : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Text(
-                  message.message,
-                  style: TextStyle(
-                    color: isCurrentUser ? Colors.white : Colors.black,
-                    fontSize: 16.0,
+            child: Column(
+              crossAxisAlignment: isCurrentUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isCurrentUser ? Colors.blue : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Text(
+                    message.message,
+                    style: TextStyle(
+                      color: isCurrentUser ? Colors.white : Colors.black,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(height: 5.0),
+                Text(
+                  DateFormat(dateFormat).format(messageTime),
+                  style: TextStyle(
+                    color: isCurrentUser
+                        ? Color.fromARGB(179, 166, 166, 166)
+                        : Colors.black54,
+                    fontSize: 12.0,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -102,9 +130,12 @@ class _ChatPageState extends State<ChatPage> {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
-              int timestamp = DateTime.now().millisecondsSinceEpoch;
+              String timestampString =
+                  event.snapshot.child("timestamp").value.toString();
+              DateTime timestamp = DateTime.parse(timestampString);
+              int timestampInt = timestamp.millisecondsSinceEpoch;
               _messages.add(new Message(
-                  message: message, sender: sender, timestamp: timestamp));
+                  message: message, sender: sender, timestamp: timestampInt));
               print(message);
             });
           });
