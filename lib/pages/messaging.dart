@@ -15,8 +15,8 @@ class _ChatPageState extends State<ChatPage> {
   late DatabaseReference _usersRef;
   final TextEditingController _textController = TextEditingController();
   List<Message> _messages = [];
-  List<String> _users = [];
-  String _selectedUser = "0";
+  List<User> _users = [];
+  User? _selectedUser;
   String _currentUser = "";
 
   @override
@@ -30,8 +30,11 @@ class _ChatPageState extends State<ChatPage> {
     _usersRef = database.reference().child("users");
     _usersRef.onChildAdded.listen((event) {
       setState(() {
-        String checkString = event.snapshot.key.toString();
-        _users.add(checkString);
+        String firstName = event.snapshot.child("first name").value.toString();
+        String lastName = event.snapshot.child("last name").value.toString();
+        String fullname = firstName + " " + lastName;
+        String checkStringID = event.snapshot.key.toString();
+        _users.add(User(Name: fullname, ID: checkStringID));
       });
     });
   }
@@ -39,12 +42,16 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage(String message) {
     final now = DateTime.now();
     final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
-    _messagesRef.child(_selectedUser).push().set({
+    _messagesRef.child(_selectedUser!.ID).push().set({
       "message": message,
       "sender": _currentUser,
       "timestamp": formattedDate
     });
-    _messagesRef.parent?.child(_selectedUser).child(_currentUser).push().set({
+    _messagesRef.parent
+        ?.child(_selectedUser!.ID)
+        .child(_currentUser)
+        .push()
+        .set({
       "message": message,
       "sender": _currentUser,
       "timestamp": formattedDate
@@ -118,15 +125,15 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildUserTile(String user) {
+  Widget _buildUserTile(User user) {
     return ListTile(
-      title: Text(user),
+      title: Text(user.Name),
       tileColor: Colors.white,
       onTap: () {
         setState(() {
           _selectedUser = user;
           _messages.clear();
-          _messagesRef.child(_selectedUser).onChildAdded.listen((event) {
+          _messagesRef.child(_selectedUser!.ID).onChildAdded.listen((event) {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
@@ -160,7 +167,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedUser.isNotEmpty ? _selectedUser : 'Chat'),
+        title: Text(_selectedUser != null ? _selectedUser!.Name : 'Chat'),
         backgroundColor: Palette.ktoCrimson,
         actions: <Widget>[
           IconButton(
@@ -230,4 +237,11 @@ class Message {
 
   Message(
       {required this.message, required this.sender, required this.timestamp});
+}
+
+class User {
+  final String Name;
+  final String ID;
+
+  User({required this.Name, required this.ID});
 }
