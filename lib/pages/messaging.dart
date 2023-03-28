@@ -13,16 +13,17 @@ class _ChatPageState extends State<ChatPage> {
   late DatabaseReference _messagesRef;
   late DatabaseReference _usersRef;
   final TextEditingController _textController = TextEditingController();
-  List<String> _messages = [];
+  List<Message> _messages = [];
   List<String> _users = [];
   String _selectedUser = "0";
-  late String _currentUser;
+  String _currentUser = "";
 
   @override
   void initState() {
     super.initState();
     // Get current user's ID
-    _currentUser = FirebaseAuth.instance.currentUser!.uid;
+    _currentUser =
+        FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
 
     _messagesRef = database.reference().child("messages").child(_currentUser);
     _usersRef = database.reference().child("users");
@@ -50,7 +51,8 @@ class _ChatPageState extends State<ChatPage> {
     _textController.clear();
   }
 
-  Widget _buildMessage(String message, bool isCurrentUser) {
+  Widget _buildMessage(Message message) {
+    bool isCurrentUser = message.sender == _currentUser;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -74,7 +76,7 @@ class _ChatPageState extends State<ChatPage> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Text(
-                  message,
+                  message.message,
                   style: TextStyle(
                     color: isCurrentUser ? Colors.white : Colors.black,
                     fontSize: 16.0,
@@ -91,7 +93,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildUserTile(String user) {
     return ListTile(
       title: Text(user),
-      tileColor: Palette.ktoCrimson.shade500,
+      tileColor: Colors.white,
       onTap: () {
         setState(() {
           _selectedUser = user;
@@ -100,7 +102,9 @@ class _ChatPageState extends State<ChatPage> {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
-              _messages.add(message);
+              int timestamp = DateTime.now().millisecondsSinceEpoch;
+              _messages.add(new Message(
+                  message: message, sender: sender, timestamp: timestamp));
               print(message);
             });
           });
@@ -143,7 +147,8 @@ class _ChatPageState extends State<ChatPage> {
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (BuildContext context, int index) {
-                return _buildMessage(_messages[index], false);
+                bool isCurrentUser = _selectedUser == _currentUser;
+                return _buildMessage(_messages[index]);
               },
             ),
           ),
@@ -185,4 +190,13 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+}
+
+class Message {
+  final String message;
+  final String sender;
+  final int timestamp;
+
+  Message(
+      {required this.message, required this.sender, required this.timestamp});
 }
