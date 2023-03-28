@@ -43,6 +43,9 @@ dependencies:
   geolocator: ^9.0.2
   cloud_firestore: ^4.3.1
   geocode: 1.0.2
+  firebase_messaging: ^14.3.0
+  firebase_in_app_messaging: ^0.7.0+16
+  intl: ^0.17.0
 
 
 dev_dependencies:
