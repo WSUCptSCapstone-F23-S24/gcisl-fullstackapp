@@ -1,5 +1,5 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_interpolation_to_compose_strings
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../palette.dart';
@@ -14,16 +14,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // ignore: prefer_final_fields
-  var _post = TextEditingController();
-  // ignore: prefer_final_fields
+  final _post = TextEditingController();
   List<String> _postList = [];
-  //int _count = 0;
+
+  final DatabaseReference _database =
+      FirebaseDatabase.instance.reference().child('posts');
+
+  @override
+  void initState() {
+    super.initState();
+    _database.onChildAdded.listen(_onNewPostAdded);
+  }
+
+  void _onNewPostAdded(DatabaseEvent event) {
+    final newPost = event.snapshot.child("text").value.toString();
+    setState(() {
+      _postList.insert(0, newPost);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // extendBodyBehindAppBar: true,
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
         color: Palette.ktoGray,
@@ -32,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(right: 5),
+              margin: const EdgeInsets.only(right: 5),
               child: Image.asset(
                 'assets/GCISL_logo.png',
                 height: 50,
@@ -42,94 +54,65 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: Container(
-        margin: EdgeInsets.only(top: 20),
-        alignment: Alignment.topCenter,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _post,
+                decoration: InputDecoration(
+                  hintText: 'Create a new post',
+                  border: OutlineInputBorder(),
+                ),
+              ),
             ),
-            Expanded(
-                flex: 2,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Feed"),
-                      SizedBox(
-                        height: 10,
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                final newPost = _post.text.trim();
+                if (newPost.isNotEmpty) {
+                  _database.push().set({'text': newPost}).then((_) {
+                    setState(() {
+                      _post.text = '';
+                    });
+                  });
+                }
+              },
+              child: Text('Post'),
+            ),
+            SizedBox(height: 16),
+            if (_postList.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _postList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Card(
+                      child: ListTile(
+                        title: Text(_postList[index]),
                       ),
-                      TextFormField(
-                        controller: _post,
-                        minLines: 4,
-                        maxLines: null,
-                        cursorColor: Colors.black,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.black12,
-                          border: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          hintStyle: TextStyle(color: Colors.black),
-                          hintText: 'Create Post...',
-                          suffixIcon: IconButton(
-                            splashRadius: 20,
-                            onPressed: () => setState(() {
-                              if (_post.text.isEmpty) {
-                                return;
-                              }
-                              // _post.text.trim();
-                              //_postList.add(_post.text);
-                              _postList.insert(0, _post.text);
-                              _post.clear();
-                            }),
-                            icon: Icon(Icons.send_sharp),
-                          ),
-                        ),
-                      ),
-                      Divider(),
-                      ListView.builder(
-                        itemCount: _postList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) => ListTile(
-                          leading: Icon(Icons.portrait_rounded,
-                              color: Palette.ktoCrimson),
-                          title: Column(
-                            children: <Widget>[
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Palette.ktoCrimson,
-                                    ),
-                                  ),
-                                  child: SelectableText("post " +
-                                      index.toString() +
-                                      "\n" +
-                                      _postList[index].trim()),
-                                ),
-                              ),
-                              Divider(
-                                height: 20.0,
-                              ) // add value for height or leave it blank for default
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text("\u{1F6D1} nothing more to show "),
-                    ],
+                    ),
+                  );
+                },
+              ),
+            if (_postList.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'No posts yet.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                )),
-            Expanded(
-              flex: 1,
-              child: Column(),
-            ),
+                ),
+              ),
           ],
         ),
       ),
