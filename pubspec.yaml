@@ -46,7 +46,7 @@ dependencies:
   firebase_messaging: ^14.3.0
   firebase_in_app_messaging: ^0.7.0+16
   intl: ^0.17.0
-
+  twilio_flutter : ^0.0.9
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -11,6 +12,10 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final FirebaseDatabase database = FirebaseDatabase.instance;
+  final TwilioFlutter twilioFlutter = TwilioFlutter(
+      accountSid: 'ACc5dbf5ac4cc1f273fa52fbfd688d0633',
+      authToken: 'b8a3ef6fa3f1e7016deb5940f05d4015',
+      twilioNumber: '+18886705313');
   late DatabaseReference _messagesRef;
   late DatabaseReference _usersRef;
   final TextEditingController _textController = TextEditingController();
@@ -60,6 +65,9 @@ class _ChatPageState extends State<ChatPage> {
       //_messages.add(message);
     });
     _textController.clear();
+    twilioFlutter.sendSMS(
+        toNumber: _messagesRef.child(_selectedUser!.ID).child("phone").toString(),
+        messageBody: 'You have a new message from Cobb Connect');
   }
 
   Widget _buildMessage(Message message) {
