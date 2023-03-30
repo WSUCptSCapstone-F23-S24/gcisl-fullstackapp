@@ -15,7 +15,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _post = TextEditingController();
-  List<String> _postList = [];
+  List _postList = [];
+  String? emailHash;
+  String? user_name;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.reference().child('posts');
@@ -23,14 +25,42 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+    getCurrentUser().then((value) {
+      setState(() {
+        user_name = value;
+      });
+    });
     _database.onChildAdded.listen(_onNewPostAdded);
   }
 
   void _onNewPostAdded(DatabaseEvent event) {
     final newPost = event.snapshot.child("text").value.toString();
-    setState(() {
-      _postList.insert(0, newPost);
-    });
+    String? userName = event.snapshot.child("user_name").value.toString();
+    if (userName == "null") {
+      userName = "anonymous";
+    }
+    if (mounted) {
+      setState(() {
+        _postList.insert(0, [newPost, userName]);
+      });
+    }
+  }
+
+  Future<String?> getCurrentUser() async {
+    String? name;
+    await FirebaseDatabase.instance
+        .ref('users')
+        .get()
+        // ignore: avoid_function_literals_in_foreach_calls
+        .then((snapshot) => snapshot.children.forEach((element) {
+              if (element.key.toString() == emailHash) {
+                name = element.child("first name").value.toString() +
+                    " " +
+                    element.child("last name").value.toString();
+              }
+            }));
+    return name;
   }
 
   @override
@@ -73,13 +103,19 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 final newPost = _post.text.trim();
                 if (newPost.isNotEmpty) {
-                  _database.push().set({'text': newPost}).then((_) {
+                  _database
+                      .push()
+                      .set({'text': newPost, 'user_name': user_name}).then((_) {
                     setState(() {
                       _post.text = '';
                     });
                   });
                 }
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Palette.ktoCrimson, // replace with your desired color
+              ),
               child: Text('Post'),
             ),
             SizedBox(height: 16),
@@ -96,7 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     child: Card(
                       child: ListTile(
-                        title: Text(_postList[index]),
+                        title: Text(_postList[index][0]),
+                        subtitle: Text(_postList[index][1] ?? "anonymous"),
                       ),
                     ),
                   );
@@ -113,6 +150,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+            SizedBox(height: 16),
+            Text(
+              'You Have Reached the End \u{1F60A}',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
