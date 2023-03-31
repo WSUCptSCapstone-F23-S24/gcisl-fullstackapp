@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../palette.dart';
 
@@ -37,12 +38,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onNewPostAdded(DatabaseEvent event) {
     final newPost = event.snapshot.child("text").value.toString();
     String? userName = event.snapshot.child("user_name").value.toString();
+    String? timestamp = event.snapshot.child("timestamp").value.toString();
     if (userName == "null") {
       userName = "anonymous";
     }
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName]);
+        _postList.insert(0, [newPost, userName, timestamp]);
       });
     }
   }
@@ -85,80 +87,119 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _post,
-                decoration: InputDecoration(
-                  hintText: 'Create a new post',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                final newPost = _post.text.trim();
-                if (newPost.isNotEmpty) {
-                  _database
-                      .push()
-                      .set({'text': newPost, 'user_name': user_name}).then((_) {
-                    setState(() {
-                      _post.text = '';
-                    });
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    Palette.ktoCrimson, // replace with your desired color
-              ),
-              child: Text('Post'),
-            ),
-            SizedBox(height: 16),
-            if (_postList.isNotEmpty)
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _postList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(_postList[index][0]),
-                        subtitle: Text(_postList[index][1] ?? "anonymous"),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            if (_postList.isEmpty)
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'No posts yet.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                child: SizedBox(
+                  width: 900,
+                  child: TextField(
+                    maxLines: 4,
+                    controller: _post,
+                    decoration: InputDecoration(
+                      hintText: user_name != null
+                          ? 'What\'s on your mind, $user_name?'
+                          : 'Create a new post',
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
                 ),
               ),
-            SizedBox(height: 16),
-            Text(
-              'You Have Reached the End \u{1F60A}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  final newPost = _post.text.trim();
+                  if (newPost.isNotEmpty) {
+                    final timestamp =
+                        DateTime.now().millisecondsSinceEpoch.toString();
+                    _database.push().set({
+                      'text': newPost,
+                      'user_name': user_name,
+                      'timestamp': timestamp
+                    }).then((_) {
+                      setState(() {
+                        _post.text = '';
+                      });
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Palette.ktoCrimson, // replace with your desired color
+                ),
+                child: const Text('Post'),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              if (_postList.isNotEmpty)
+                Container(
+                  width: 900,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.5),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _postList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: Card(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: Text(_postList[index][0]),
+                                  subtitle:
+                                      Text(_postList[index][1] ?? "anonymous"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, bottom: 8),
+                                  child: Text(
+                                    DateFormat('MM-dd-yyyy HH:mm').format(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            int.parse(_postList[index][2]))),
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ));
+                    },
+                  ),
+                ),
+              if (_postList.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'No posts yet.',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 16),
+              const Text(
+                'You Have Reached the End \u{1F60A}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
