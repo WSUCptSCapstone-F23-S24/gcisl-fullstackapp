@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -140,13 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                     width: 900,
                     margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -155,19 +149,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 8,
+                              vertical: 15,
                             ),
-                            child: Card(
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: Text(_postList[index][0]),
-                                    subtitle: Text(
-                                        _postList[index][1] ?? "anonymous"),
+                            child: Column(children: [
+                              Card(
+                                child: Column(children: [
+                                  Text(
+                                    _postList[index][1] ?? "anonymous",
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Palette.ktoCrimson,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
                                   ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Container(
+                                    constraints: BoxConstraints(minHeight: 75),
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          title: Text(_postList[index][0]),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 16, bottom: 8),
+                                      left: 16,
+                                    ),
                                     child: Text(
                                       DateFormat('MM-dd-yyyy HH:mm').format(
                                           DateTime.fromMillisecondsSinceEpoch(
@@ -177,9 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                     ),
                                   ),
-                                ],
+                                ]),
                               ),
-                            ));
+                            ]));
                       },
                     ),
                   ),
