@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List _postList = [];
   String? emailHash;
   String? user_name;
+  int _displayedPosts = 50;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.reference().child('posts');
@@ -133,52 +136,66 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
-                Container(
-                  width: 900,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey.withOpacity(0.5),
-                      width: 1,
+                Column(children: [
+                  Container(
+                    width: 900,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.5),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _postList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Text(_postList[index][0]),
-                                  subtitle:
-                                      Text(_postList[index][1] ?? "anonymous"),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, bottom: 8),
-                                  child: Text(
-                                    DateFormat('MM-dd-yyyy HH:mm').format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            int.parse(_postList[index][2]))),
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: min(_postList.length, _displayedPosts),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            child: Card(
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(_postList[index][0]),
+                                    subtitle: Text(
+                                        _postList[index][1] ?? "anonymous"),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16, bottom: 8),
+                                    child: Text(
+                                      DateFormat('MM-dd-yyyy HH:mm').format(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              int.parse(_postList[index][2]))),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ));
-                    },
+                                ],
+                              ),
+                            ));
+                      },
+                    ),
                   ),
-                ),
+                  if (_postList.length > _displayedPosts)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _displayedPosts += 50;
+                          });
+                        },
+                        child: const Text('Load More'),
+                      ),
+                    ),
+                ]),
               if (_postList.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
