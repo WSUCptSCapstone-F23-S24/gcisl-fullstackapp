@@ -19,13 +19,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _post = TextEditingController();
-  List _postList = [];
+  final List _postList = [];
   String? emailHash;
-  String? user_name;
+  String? username;
   int _displayedPosts = 50;
 
   final DatabaseReference _database =
-      FirebaseDatabase.instance.reference().child('posts');
+      FirebaseDatabase.instance.ref().child('posts');
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
     getCurrentUser().then((value) {
       setState(() {
-        user_name = value;
+        username = value;
       });
     });
     _database.onChildAdded.listen(_onNewPostAdded);
@@ -103,8 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     maxLines: 4,
                     controller: _post,
                     decoration: InputDecoration(
-                      hintText: user_name != null
-                          ? 'What\'s on your mind, $user_name?'
+                      hintText: username != null
+                          ? 'What\'s on your mind, $username?'
                           : 'Create a new post',
                       border: const OutlineInputBorder(),
                     ),
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         DateTime.now().millisecondsSinceEpoch.toString();
                     _database.push().set({
                       'text': newPost,
-                      'user_name': user_name,
+                      'user_name': username,
                       'timestamp': timestamp
                     }).then((_) {
                       setState(() {
@@ -167,7 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     height: 8,
                                   ),
                                   Container(
-                                    constraints: BoxConstraints(minHeight: 75),
+                                    constraints:
+                                        const BoxConstraints(minHeight: 75),
                                     child: Column(
                                       children: [
                                         ListTile(
@@ -182,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       left: 16,
                                     ),
                                     child: Text(
-                                      DateFormat('MM-dd-yyyy HH:mm').format(
+                                      DateFormat('MM/dd/yyyy HH:mm').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               int.parse(_postList[index][2]))),
                                       style: const TextStyle(
