@@ -124,7 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(
                               height: 200,
                               child: EmojiPicker(
-                                config: const Config(columns: 7),
+                                config: const Config(
+                                  columns: 10,
+                                  iconColor: Palette.ktoCrimson,
+                                  emojiSizeMax: 20,
+                                ),
                                 onEmojiSelected: (category, emoji) {
                                   final em = emoji.emoji;
                                   final cursorPosition =
@@ -155,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 color: Palette.ktoCrimson,
                               ),
                               onPressed: _toggleEmojiPicker,
+                              splashRadius: 20,
                             ),
                           ],
                         ),
