@@ -1,6 +1,6 @@
-import 'dart:html';
 import 'dart:math';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final List _postList = [];
   String? emailHash;
   String? username;
-  int _displayedPosts = 50;
+  int _displayedPosts = 30;
+  bool _showEmojiPicker = false;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -69,6 +70,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return name;
   }
 
+  void _toggleEmojiPicker() {
+    setState(() {
+      _showEmojiPicker = !_showEmojiPicker;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,17 +104,67 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(
+                child: Container(
                   width: 900,
-                  child: TextField(
-                    maxLines: 4,
-                    controller: _post,
-                    decoration: InputDecoration(
-                      hintText: username != null
-                          ? 'What\'s on your mind, $username?'
-                          : 'Create a new post',
-                      border: const OutlineInputBorder(),
-                    ),
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          TextField(
+                            maxLines: 4,
+                            controller: _post,
+                            decoration: InputDecoration(
+                              hintText: username != null
+                                  ? 'What\'s on your mind, $username?'
+                                  : 'Create a new post',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                          if (_showEmojiPicker)
+                            SizedBox(
+                              height: 200,
+                              child: EmojiPicker(
+                                config: const Config(
+                                  columns: 10,
+                                  iconColor: Palette.ktoCrimson,
+                                  emojiSizeMax: 20,
+                                ),
+                                onEmojiSelected: (category, emoji) {
+                                  final em = emoji.emoji;
+                                  final cursorPosition =
+                                      _post.selection.base.offset;
+                                  final textBeforeCursor =
+                                      _post.text.substring(0, cursorPosition);
+                                  final textAfterCursor =
+                                      _post.text.substring(cursorPosition);
+                                  final newText =
+                                      '$textBeforeCursor$em$textAfterCursor';
+                                  setState(() {
+                                    _post.text = newText;
+                                  });
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                      Positioned.fill(
+                        left: 845,
+                        top: 65,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.emoji_emotions,
+                                color: Palette.ktoCrimson,
+                              ),
+                              onPressed: _toggleEmojiPicker,
+                              splashRadius: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -133,7 +190,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   backgroundColor:
                       Palette.ktoCrimson, // replace with your desired color
                 ),
-                child: const Text('Post'),
+                child: const Text(
+                  'Post',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
@@ -154,6 +214,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Column(children: [
                               Card(
                                 child: Column(children: [
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
                                   Text(
                                     _postList[index][1] ?? "anonymous",
                                     style: const TextStyle(
@@ -198,15 +261,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   if (_postList.length > _displayedPosts)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _displayedPosts += 50;
-                          });
-                        },
-                        child: const Text('Load More'),
+                    SizedBox(
+                      width: 125,
+                      height: 65,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Card(
+                          color: Palette.ktoCrimson,
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _displayedPosts += 30;
+                              });
+                            },
+                            child: const Text(
+                              'Load More',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 19),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                 ]),
