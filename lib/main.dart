@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gcisl_app/pages/messaging.dart';
+import 'package:gcisl_app/pages/newprofile.dart';
 import 'package:gcisl_app/pages/signout.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
