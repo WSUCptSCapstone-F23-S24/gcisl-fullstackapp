@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gcisl_app/pages/messaging.dart';
+import 'package:gcisl_app/pages/newprofile.dart';
 import 'package:gcisl_app/pages/signout.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
-          ProfilePage(),
+          NewProfilePage(),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
-          ProfilePage(),
+          NewProfilePage(),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
