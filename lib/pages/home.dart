@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:html';
 import 'dart:async';
+import 'package:uuid/uuid.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -85,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Function to open image picker
-  Future<void> _pickImage() {
+  Future<void> _pickImage() async {
     final completer = Completer<void>();
     InputElement input = FileUploadInputElement() as InputElement
       ..accept = 'image/*';
@@ -93,16 +94,15 @@ class _MyHomePageState extends State<MyHomePage> {
     input.click();
     input.onChange.listen((event) {
       final file = input.files!.first;
-      ;
       final reader = FileReader();
       reader.readAsDataUrl(file);
       reader.onLoadEnd.listen((event) async {
-        var snapshot = await fs.ref().child('file.png').putBlob(file);
+        String filename = Uuid().v1() + file.type.toString();
+        var snapshot = await fs.ref().child(filename).putBlob(file);
         var imageUrl = await snapshot.ref.getDownloadURL();
 
         setState(() {
           downloadUrl = imageUrl;
-          print(downloadUrl);
         });
 
         completer.complete();
