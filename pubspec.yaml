@@ -47,6 +47,8 @@ dependencies:
   firebase_in_app_messaging: ^0.7.0+16
   intl: ^0.17.0
   emoji_picker_flutter: ^1.5.2
+  image_picker: ^0.8.7+1
+  firebase_storage: ^11.1.0
   flutter_google_places: ^0.3.0
   google_maps_webservice: ^0.0.20-nullsafety.5
   country_list_pick: ^1.0.1+6

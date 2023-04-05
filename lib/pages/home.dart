@@ -1,10 +1,16 @@
+import 'dart:io';
 import 'dart:math';
+import 'dart:html';
+import 'dart:async';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_sorted_list.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../palette.dart';
 
@@ -24,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? username;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
+  var downloadUrl = null;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -44,12 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final newPost = event.snapshot.child("text").value.toString();
     String? userName = event.snapshot.child("user_name").value.toString();
     String? timestamp = event.snapshot.child("timestamp").value.toString();
+    String? image = event.snapshot.child("image").value.toString();
     if (userName == "null") {
       userName = "anonymous";
     }
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName, timestamp]);
+        _postList.insert(0, [newPost, userName, timestamp, image]);
       });
     }
   }
@@ -74,6 +82,33 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _showEmojiPicker = !_showEmojiPicker;
     });
+  }
+
+  // Function to open image picker
+  Future<void> _pickImage() {
+    final completer = Completer<void>();
+    InputElement input = FileUploadInputElement() as InputElement
+      ..accept = 'image/*';
+    FirebaseStorage fs = FirebaseStorage.instance;
+    input.click();
+    input.onChange.listen((event) {
+      final file = input.files!.first;
+      ;
+      final reader = FileReader();
+      reader.readAsDataUrl(file);
+      reader.onLoadEnd.listen((event) async {
+        var snapshot = await fs.ref().child('file.png').putBlob(file);
+        var imageUrl = await snapshot.ref.getDownloadURL();
+
+        setState(() {
+          downloadUrl = imageUrl;
+          print(downloadUrl);
+        });
+
+        completer.complete();
+      });
+    });
+    return completer.future;
   }
 
   @override
@@ -104,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
+                child: SizedBox(
                   width: 900,
                   child: Stack(
                     children: <Widget>[
@@ -126,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: EmojiPicker(
                                 config: const Config(
                                   columns: 10,
-                                  iconColor: Palette.ktoCrimson,
                                   emojiSizeMax: 20,
+                                  checkPlatformCompatibility: true,
                                 ),
                                 onEmojiSelected: (category, emoji) {
                                   final em = emoji.emoji;
@@ -168,6 +203,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              downloadUrl == null
+                  ? const Text('No image selected.')
+                  : SizedBox(
+                      height: 300,
+                      child: Image.network(
+                        downloadUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+              FloatingActionButton(
+                onPressed: () => _pickImage(),
+                tooltip: 'Pick from gallery',
+                child: const Icon(Icons.photo_library),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -178,10 +227,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     _database.push().set({
                       'text': newPost,
                       'user_name': username,
-                      'timestamp': timestamp
+                      'timestamp': timestamp,
+                      'image': downloadUrl
                     }).then((_) {
                       setState(() {
                         _post.text = '';
+                        downloadUrl = null;
+                        _showEmojiPicker = false;
                       });
                     });
                   }
@@ -235,11 +287,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                     child: Column(
                                       children: [
                                         ListTile(
-                                          title: Text(_postList[index][0]),
+                                          title: Text(
+                                            _postList[index][0],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
+                                  _postList[index][3] == "null"
+                                      ? const SizedBox(height: 0)
+                                      : Column(
+                                          children: [
+                                            const SizedBox(height: 8),
+                                            SizedBox(
+                                              child: Image.network(
+                                                _postList[index][3],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                   const SizedBox(height: 8),
                                   Padding(
                                     padding: const EdgeInsets.only(
