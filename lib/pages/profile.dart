@@ -1,77 +1,35 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, must_be_immutable, avoid_print, unnecessary_new
+import 'dart:html';
 
+import 'package:csc_picker/csc_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geocode/geocode.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../palette.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  //need to add user ID from authenticator
+  String? _firstName,
+      _lastName,
+      _phone,
+      _address,
+      cityValue,
+      stateValue,
+      countryValue,
+      _company,
+      _position;
+  TextEditingController _emailController = TextEditingController();
+  String kGoogleApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
+  String kGeocodeApiKey = "107386370667758157619x4253";
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
-
-  //controllers
-  final _firstNameControl = TextEditingController();
-  final _lastNameControl = TextEditingController();
-  final _emailControl = TextEditingController();
-  final _phoneControl = TextEditingController();
-  final _companyControl = TextEditingController();
-  //final _location1Control = TextEditingController();
-  final _location2Control = TextEditingController();
-  final _location3Control = TextEditingController();
-  final _positionControl = TextEditingController();
-  final _experienceControl = TextEditingController();
-
-  //upload profile data to backend
-  uploadData(double? lat, double? long) {
-    //set userid to hashcode of email
-    var userID = _emailControl.text.hashCode;
-
-    //add to firebase database
-    ref = FirebaseDatabase.instance.ref("users/$userID");
-
-    try {
-      ref.set({
-        "first name": _firstNameControl.text,
-        "last name": _lastNameControl.text,
-        "email": _emailControl.text,
-        "phone": _phoneControl.text,
-        "company": _companyControl.text,
-        //"street address": _location1Control.text,
-        "city address": _location2Control.text,
-        "state address": _location3Control.text,
-        "lat": lat,
-        "long": long,
-        "position": _positionControl.text,
-        "experience": _experienceControl.text,
-        "date added": ServerValue.timestamp
-      });
-      print("sucess!");
-    } catch (e) {
-      print(e);
-      print("not uploaded");
-    }
-  }
-
-  String? _requiredValidator(String? text) {
-    if (text == null || text.trim().isEmpty) {
-      return 'This Field is Required';
-    }
-    return null;
-  }
-
-  String? _validateMobile(String? text) {
-    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-    RegExp regExp = new RegExp(patttern);
-    // ignore: prefer_is_empty
-    if (text?.length == 0) {
-      return 'Please enter mobile number';
-    } else if (!regExp.hasMatch(text!)) {
-      return 'Please enter valid mobile number';
-    }
-    return null;
-  }
+  bool _isLoading = false;
 
   showErrorAlertDialog(BuildContext context, String message) {
     // set up the button
@@ -129,27 +87,60 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  //upload profile data to backend
+  uploadData(double? lat, double? long) {
+    print("uploading to database...");
+    //set userid to hashcode of email
+    var userID = _emailController.text.hashCode;
+
+    //add to firebase database
+    ref = FirebaseDatabase.instance.ref("users/$userID");
+
+    try {
+      ref.set({
+        "first name": _firstName,
+        "last name": _lastName,
+        "email": _emailController.text,
+        "phone": _phone,
+        "company": _company,
+        //"street address": _location1Control.text,
+        "city address": cityValue,
+        "state address": stateValue,
+        "country address": countryValue,
+        "lat": lat,
+        "long": long,
+        "position": _position,
+        "experience": "1",
+        "date added": ServerValue.timestamp
+      });
+      print("sucess!");
+    } catch (e) {
+      print(e);
+      print("not uploaded");
+    }
+  }
+
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
     double? lat = 0;
     double? long = 0;
 
-    GeoCode geoCode = GeoCode();
+    GeoCode geoCode = GeoCode(apiKey: kGeocodeApiKey);
 
-    String addy =
-        "${_location2Control.text.trim()}, ${_location3Control.text.trim()}";
+    String addy = "${cityValue}, ${stateValue}, ${countryValue}";
 
     print(addy);
 
     try {
       Coordinates coordinates = await geoCode.forwardGeocoding(address: addy);
-
+      //List<Location> locations = await locationFromAddress(addy);
+      //Location local = locations[0];
       lat = coordinates.latitude;
       long = coordinates.longitude;
       //print("Latitude: ${lat}");
       //print("Longitude: ${long}");
-      print("uploading to database...");
+
       uploadData(lat, long);
 
       showSucessAlertDialog(context);
@@ -164,281 +155,232 @@ class ProfilePage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      backgroundColor: Colors.white,
-      body: Form(
-        key: _formKey,
-        child: Center(
+  void initState() {
+    super.initState();
+    // Check if user is logged in using Firebase Authentication
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _emailController.text = user.email!;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Palette.ktoCrimson,
+        title: const Text('Create Profile'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(80, 20, 80, 20),
+        child: Form(
+          key: _formKey,
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                //First Name
-                SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _firstNameControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'First Name',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'First Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your first name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _firstName = value;
+                  },
                 ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Last Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your last name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _lastName = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email address';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _emailController.text = value!;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Phone'),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _phone = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                CSCPicker(
+                  ///Enable disable state dropdown [OPTIONAL PARAMETER]
+                  showStates: true,
 
-                //Last Name
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _lastNameControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Last Name',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  /// Enable disable city drop down [OPTIONAL PARAMETER]
+                  showCities: true,
 
-                //Email textfield
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _emailControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Email',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Phone Number
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _validateMobile,
-                        controller: _phoneControl,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Phone Number',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Company
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _companyControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Company',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+                  flagState: CountryFlag.DISABLE,
 
-                //Location
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _location2Control,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'City',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Location
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _location3Control,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'State',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                //Position
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _positionControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Position',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+                  dropdownDecoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.white,
+                      border:
+                          Border.all(color: Colors.grey.shade300, width: 1)),
 
-                //Experience
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        validator: _requiredValidator,
-                        controller: _experienceControl,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Experience',
-                          hoverColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+                  disabledDropdownDecoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.grey.shade300,
+                      border:
+                          Border.all(color: Colors.grey.shade300, width: 1)),
 
-                //Save button
-                SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Palette.ktoCrimson,
-                      minimumSize: const Size(0, 65),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0)),
-                    ),
-                    onPressed: () {
-                      //if valid form, send request to get lat long
-                      if (_formKey.currentState != null &&
-                          _formKey.currentState!.validate()) {
-                        getLatLong(context);
-                      } else {
-                        print("form was not valid");
-                      }
-                    },
-                    child: const Center(
-                        child: Text(
-                      'Save',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    )),
+                  ///placeholders for dropdown search field
+                  countrySearchPlaceholder: "Country",
+                  stateSearchPlaceholder: "State",
+                  citySearchPlaceholder: "City",
+
+                  ///labels for dropdown
+                  countryDropdownLabel: "Country",
+                  stateDropdownLabel: "State",
+                  cityDropdownLabel: "City",
+
+                  ///Default Country
+                  defaultCountry: CscCountry.United_States,
+
+                  ///Disable country dropdown (Note: use it with default country)
+                  //disableCountry: true,
+
+                  ///selected item style [OPTIONAL PARAMETER]
+                  selectedItemStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
                   ),
+
+                  ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+                  dropdownHeadingStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
+
+                  ///DropdownDialog Item style [OPTIONAL PARAMETER]
+                  dropdownItemStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
+
+                  ///Dialog box radius [OPTIONAL PARAMETER]
+                  dropdownDialogRadius: 10.0,
+
+                  ///Search bar radius [OPTIONAL PARAMETER]
+                  searchBarRadius: 10.0,
+
+                  ///triggers once country selected in dropdown
+                  onCountryChanged: (value) {
+                    setState(() {
+                      ///store value in country variable
+                      countryValue = value;
+                    });
+                  },
+
+                  ///triggers once state selected in dropdown
+                  onStateChanged: (value) {
+                    setState(() {
+                      ///store value in state variable
+                      stateValue = value;
+                    });
+                  },
+
+                  ///triggers once city selected in dropdown
+                  onCityChanged: (value) {
+                    setState(() {
+                      ///store value in city variable
+                      cityValue = value;
+                    });
+                  },
+
+                  ///Show only specific countries using country filter
+                  // countryFilter: ["United States", "Canada", "Mexico"],
                 ),
-                //space for after the save button
-                SizedBox(height: 50),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Company'),
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your company';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _company = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Position'),
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your position at the Company';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _position = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                ElevatedButton(
+                  onPressed: _isLoading
+                      ? null // disable button while loading
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            // send to fireabse
+                            await getLatLong(context);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.ktoCrimson),
+                  child: _isLoading
+                      ? const CircularProgressIndicator() // show progress icon while loading
+                      : const Text('Save'),
+                ),
               ],
             ),
           ),
         ),
-      ));
+      ),
+    );
+  }
 }

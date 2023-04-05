@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
 
   var uID = FirebaseAuth.instance.currentUser;
 
-  final screens = [
+  var screens = [
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     Text("dummy"),
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
@@ -45,12 +45,37 @@ class _MyAppState extends State<MyApp> {
     ChatPage(),
     AnalyticsPage(),
     Text("dummey"),
-    FirebaseAuth.instance.currentUser == null
-        ? SignInPage(
-            showRegisterpage: () {},
-          )
-        : SignOut()
+    AuthPage()
   ];
+
+  void _updateScreens() {
+    setState(() {
+      if (FirebaseAuth.instance.currentUser == null) {
+        screens = [
+          MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+          Text("dummy"),
+          MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+          ProfilePage(),
+          ChatPage(),
+          AnalyticsPage(),
+          Text("dummey"),
+          AuthPage()
+        ];
+      } else {
+        screens = [
+          MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+          Text("dummy"),
+          MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+          ProfilePage(),
+          ChatPage(),
+          AnalyticsPage(),
+          Text("dummey"),
+          SignOut(),
+        ];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => MaterialApp(
         home: Scaffold(
@@ -62,8 +87,10 @@ class _MyAppState extends State<MyApp> {
                 child: NavigationBar(
                     height: 60,
                     selectedIndex: index,
-                    onDestinationSelected: (index) =>
-                        setState(() => this.index = index),
+                    onDestinationSelected: (index) {
+                      _updateScreens();
+                      setState(() => this.index = index);
+                    },
                     destinations: [
                       Container(
                         child: NavigationDestination(
@@ -97,12 +124,13 @@ class _MyAppState extends State<MyApp> {
                       ),
                       Container(
                           child: NavigationDestination(
-                              icon: FirebaseAuth.instance.currentUser == null
-                                  ? Icon(Icons.person_outline)
-                                  : Icon(Icons.person_off_outlined),
-                              label: FirebaseAuth.instance.currentUser == null
-                                  ? "Sign in"
-                                  : "Sign Out"))
+                        icon: FirebaseAuth.instance.currentUser == null
+                            ? Icon(Icons.person_outline)
+                            : Icon(Icons.person_off_outlined),
+                        label: FirebaseAuth.instance.currentUser == null
+                            ? "Sign in"
+                            : "Sign Out",
+                      ))
                     ]),
               ),
             )),

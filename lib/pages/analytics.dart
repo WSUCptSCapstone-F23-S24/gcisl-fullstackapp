@@ -91,7 +91,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                 double.tryParse(element.child("long").value.toString()),
                 double.tryParse(element.child("phone").value.toString()),
                 element.child("email").value.toString(),
-                element.child("experience").value.toString(),
+                element.child("company").value.toString(),
                 element.child("position").value.toString(),
               ]);
             }));
