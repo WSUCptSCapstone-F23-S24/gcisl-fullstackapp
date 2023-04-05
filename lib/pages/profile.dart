@@ -168,206 +168,215 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Palette.ktoCrimson,
-        title: Text('Create Profile'),
+        title: const Text('Create Profile'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(80, 20, 80, 20),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: 'First Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your first name';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _firstName = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Last Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your last name';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _lastName = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email address';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _emailController.text = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Phone'),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _phone = value;
-                },
-              ),
-              SizedBox(height: 16.0),
-              CSCPicker(
-                ///Enable disable state dropdown [OPTIONAL PARAMETER]
-                showStates: true,
-
-                /// Enable disable city drop down [OPTIONAL PARAMETER]
-                showCities: true,
-
-                ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-                flagState: CountryFlag.DISABLE,
-
-                ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-                dropdownDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey.shade300, width: 1)),
-
-                ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-                disabledDropdownDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Colors.grey.shade300,
-                    border: Border.all(color: Colors.grey.shade300, width: 1)),
-
-                ///placeholders for dropdown search field
-                countrySearchPlaceholder: "Country",
-                stateSearchPlaceholder: "State",
-                citySearchPlaceholder: "City",
-
-                ///labels for dropdown
-                countryDropdownLabel: "Country",
-                stateDropdownLabel: "State",
-                cityDropdownLabel: "City",
-
-                ///Default Country
-                defaultCountry: CscCountry.United_States,
-
-                ///Disable country dropdown (Note: use it with default country)
-                //disableCountry: true,
-
-                ///selected item style [OPTIONAL PARAMETER]
-                selectedItemStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'First Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your first name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _firstName = value;
+                  },
                 ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Last Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your last name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _lastName = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email address';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _emailController.text = value!;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Phone'),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _phone = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                CSCPicker(
+                  ///Enable disable state dropdown [OPTIONAL PARAMETER]
+                  showStates: true,
 
-                ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-                dropdownHeadingStyle: TextStyle(
+                  /// Enable disable city drop down [OPTIONAL PARAMETER]
+                  showCities: true,
+
+                  ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+                  flagState: CountryFlag.DISABLE,
+
+                  ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+                  dropdownDecoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.white,
+                      border:
+                          Border.all(color: Colors.grey.shade300, width: 1)),
+
+                  ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+                  disabledDropdownDecoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: Colors.grey.shade300,
+                      border:
+                          Border.all(color: Colors.grey.shade300, width: 1)),
+
+                  ///placeholders for dropdown search field
+                  countrySearchPlaceholder: "Country",
+                  stateSearchPlaceholder: "State",
+                  citySearchPlaceholder: "City",
+
+                  ///labels for dropdown
+                  countryDropdownLabel: "Country",
+                  stateDropdownLabel: "State",
+                  cityDropdownLabel: "City",
+
+                  ///Default Country
+                  defaultCountry: CscCountry.United_States,
+
+                  ///Disable country dropdown (Note: use it with default country)
+                  //disableCountry: true,
+
+                  ///selected item style [OPTIONAL PARAMETER]
+                  selectedItemStyle: const TextStyle(
                     color: Colors.black,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold),
+                    fontSize: 14,
+                  ),
 
-                ///DropdownDialog Item style [OPTIONAL PARAMETER]
-                dropdownItemStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
+                  ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+                  dropdownHeadingStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
+
+                  ///DropdownDialog Item style [OPTIONAL PARAMETER]
+                  dropdownItemStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
+
+                  ///Dialog box radius [OPTIONAL PARAMETER]
+                  dropdownDialogRadius: 10.0,
+
+                  ///Search bar radius [OPTIONAL PARAMETER]
+                  searchBarRadius: 10.0,
+
+                  ///triggers once country selected in dropdown
+                  onCountryChanged: (value) {
+                    setState(() {
+                      ///store value in country variable
+                      countryValue = value;
+                    });
+                  },
+
+                  ///triggers once state selected in dropdown
+                  onStateChanged: (value) {
+                    setState(() {
+                      ///store value in state variable
+                      stateValue = value;
+                    });
+                  },
+
+                  ///triggers once city selected in dropdown
+                  onCityChanged: (value) {
+                    setState(() {
+                      ///store value in city variable
+                      cityValue = value;
+                    });
+                  },
+
+                  ///Show only specific countries using country filter
+                  // countryFilter: ["United States", "Canada", "Mexico"],
                 ),
-
-                ///Dialog box radius [OPTIONAL PARAMETER]
-                dropdownDialogRadius: 10.0,
-
-                ///Search bar radius [OPTIONAL PARAMETER]
-                searchBarRadius: 10.0,
-
-                ///triggers once country selected in dropdown
-                onCountryChanged: (value) {
-                  setState(() {
-                    ///store value in country variable
-                    countryValue = value;
-                  });
-                },
-
-                ///triggers once state selected in dropdown
-                onStateChanged: (value) {
-                  setState(() {
-                    ///store value in state variable
-                    stateValue = value;
-                  });
-                },
-
-                ///triggers once city selected in dropdown
-                onCityChanged: (value) {
-                  setState(() {
-                    ///store value in city variable
-                    cityValue = value;
-                  });
-                },
-
-                ///Show only specific countries using country filter
-                // countryFilter: ["United States", "Canada", "Mexico"],
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Company'),
-                maxLines: 1,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your company';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _company = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Position'),
-                maxLines: 1,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your position at the Company';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _position = value;
-                },
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _isLoading
-                    ? null // disable button while loading
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          // send to fireabse
-                          await getLatLong(context);
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.ktoCrimson),
-                child: _isLoading
-                    ? CircularProgressIndicator() // show progress icon while loading
-                    : Text('Save'),
-              ),
-            ],
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Company'),
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your company';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _company = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Position'),
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your position at the Company';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _position = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                ElevatedButton(
+                  onPressed: _isLoading
+                      ? null // disable button while loading
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            // send to fireabse
+                            await getLatLong(context);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.ktoCrimson),
+                  child: _isLoading
+                      ? const CircularProgressIndicator() // show progress icon while loading
+                      : const Text('Save'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
