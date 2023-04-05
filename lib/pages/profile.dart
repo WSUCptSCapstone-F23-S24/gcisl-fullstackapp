@@ -27,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _position;
   TextEditingController _emailController = TextEditingController();
   String kGoogleApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
+  String kGeocodeApiKey = "107386370667758157619x4253";
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
   bool _isLoading = false;
 
@@ -125,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double? lat = 0;
     double? long = 0;
 
-    GeoCode geoCode = GeoCode();
+    GeoCode geoCode = GeoCode(apiKey: kGeocodeApiKey);
 
     String addy = "${cityValue}, ${stateValue}, ${countryValue}";
 
