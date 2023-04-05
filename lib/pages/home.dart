@@ -203,6 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
               downloadUrl == null
                   ? const Text('No image selected.')
                   : SizedBox(
@@ -212,6 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
+              const SizedBox(height: 6),
               FloatingActionButton(
                 onPressed: () => _pickImage(),
                 tooltip: 'Pick from gallery',
@@ -221,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ElevatedButton(
                 onPressed: () {
                   final newPost = _post.text.trim();
-                  if (newPost.isNotEmpty) {
+                  if (newPost.isNotEmpty || downloadUrl != null) {
                     final timestamp =
                         DateTime.now().millisecondsSinceEpoch.toString();
                     _database.push().set({
@@ -298,11 +300,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ? const SizedBox(height: 0)
                                       : Column(
                                           children: [
-                                            const SizedBox(height: 8),
+                                            const SizedBox(height: 2),
                                             SizedBox(
                                               child: Image.network(
                                                 _postList[index][3],
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.contain,
                                               ),
                                             ),
                                           ],
