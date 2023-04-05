@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../palette.dart';
 
@@ -24,6 +26,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String? username;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
+  File? _image;
+  var downloadUrl = null;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -76,6 +80,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Function to open image picker
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
+                child: SizedBox(
                   width: 900,
                   child: Stack(
                     children: <Widget>[
@@ -126,8 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: EmojiPicker(
                                 config: const Config(
                                   columns: 10,
-                                  iconColor: Palette.ktoCrimson,
                                   emojiSizeMax: 20,
+                                  checkPlatformCompatibility: true,
                                 ),
                                 onEmojiSelected: (category, emoji) {
                                   final em = emoji.emoji;
@@ -168,6 +182,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              _image == null
+                  ? const Text('No image selected.')
+                  : SizedBox(
+                      height: 300,
+                      child: Image.network(
+                        _image!.path,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+              FloatingActionButton(
+                onPressed: () => _pickImage(ImageSource.gallery),
+                tooltip: 'Pick from gallery',
+                child: const Icon(Icons.photo_library),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -178,10 +206,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     _database.push().set({
                       'text': newPost,
                       'user_name': username,
-                      'timestamp': timestamp
+                      'timestamp': timestamp,
                     }).then((_) {
                       setState(() {
                         _post.text = '';
+                        _image = null;
+                        _showEmojiPicker = false;
                       });
                     });
                   }
@@ -235,7 +265,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     child: Column(
                                       children: [
                                         ListTile(
-                                          title: Text(_postList[index][0]),
+                                          title: Text(
+                                            _postList[index][0],
+                                          ),
                                         ),
                                       ],
                                     ),
