@@ -45,17 +45,16 @@
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function(engineInitializer) {
-        let config = {
-          renderer: "html",
-        }
-        return engineInitializer.initializeEngine(config);
-      }).then(function(appRunner) {
-        return appRunner.runApp();
-      });
+  onEntrypointLoaded: async function(engineInitializer) {
+    // Run-time engine configuration
+    let config = {
+      renderer: "html",
+    }
+    let appRunner = await engineInitializer.initializeEngine(config);
+
+    await appRunner.runApp();
+  }
+});
     });
   </script>
 </body>

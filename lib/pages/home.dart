@@ -278,22 +278,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                       fontSize: 16,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Container(
-                                    constraints:
-                                        const BoxConstraints(minHeight: 75),
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          title: Text(
-                                            _postList[index][0],
-                                          ),
+                                  _postList[index][0] == ""
+                                      ? Container(
+                                          constraints: const BoxConstraints(
+                                              minHeight: 75),
+                                        )
+                                      : Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            Container(
+                                              constraints: const BoxConstraints(
+                                                  minHeight: 75),
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    title: Text(
+                                                      _postList[index][0],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
                                   _postList[index][3] == "null"
                                       ? const SizedBox(height: 0)
                                       : MouseRegion(
