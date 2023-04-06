@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'dart:html';
 import 'dart:async';
@@ -7,11 +6,10 @@ import 'package:uuid/uuid.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_sorted_list.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
+import 'image.dart';
 
 import '../palette.dart';
 
@@ -298,16 +296,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   _postList[index][3] == "null"
                                       ? const SizedBox(height: 0)
-                                      : Column(
-                                          children: [
-                                            const SizedBox(height: 2),
-                                            SizedBox(
-                                              child: Image.network(
-                                                _postList[index][3],
-                                                fit: BoxFit.contain,
-                                              ),
+                                      : MouseRegion(
+                                          cursor: SystemMouseCursors.click,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    ImageDialog(
+                                                        imageUrl:
+                                                            _postList[index]
+                                                                [3]),
+                                              );
+                                            },
+                                            child: Column(
+                                              children: [
+                                                //const SizedBox(height: 2),
+                                                SizedBox(
+                                                  child: Image.network(
+                                                    _postList[index][3],
+                                                    fit: BoxFit.scaleDown,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
                                   const SizedBox(height: 8),
                                   Padding(
