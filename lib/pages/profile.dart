@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
   showSucessAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = TextButton(
-      child: Text("To Home Page"),
+      child: Text(""),
       onPressed: () {
         // ignore: todo
         //TODO this should refresh and go to home page
@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
-      content: Text("Sucess! Profile Uploaded"),
+      content: Text("Sucess! Profile Updated"),
       actions: [
         okButton,
       ],
