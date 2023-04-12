@@ -34,6 +34,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int index = 0;
+  bool hideLabels = false;
 
   var uID = FirebaseAuth.instance.currentUser;
 
@@ -77,62 +78,83 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        home: Scaffold(
-            body: screens[index],
-            appBar: AppBar(
-              flexibleSpace: NavigationBarTheme(
-                data:
-                    NavigationBarThemeData(indicatorColor: Palette.ktoCrimson),
-                child: NavigationBar(
-                    height: 60,
-                    selectedIndex: index,
-                    onDestinationSelected: (index) {
-                      _updateScreens();
-                      setState(() => this.index = index);
-                    },
-                    destinations: [
-                      Container(
-                        child: NavigationDestination(
-                            icon: ImageIcon(AssetImage("cougar.png"), size: 30),
-                            label: "Cobb Connect"),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 100, left: 100),
-                      ),
-                      Container(
-                        child: NavigationDestination(
-                            icon: Icon(Icons.house_outlined), label: "Home"),
-                      ),
-                      Container(
-                        child: NavigationDestination(
-                            icon: Icon(Icons.person_add_alt_1_outlined),
-                            label: "Profile"),
-                      ),
-                      Container(
-                        child: NavigationDestination(
-                            icon: Icon(Icons.email_outlined),
-                            label: "Messages"),
-                      ),
-                      Container(
-                        child: NavigationDestination(
-                            icon: Icon(Icons.graphic_eq_outlined),
-                            label: "Analytics"),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 100, left: 100),
-                      ),
-                      Container(
+  Widget build(BuildContext context) => MaterialApp(home: LayoutBuilder(
+        builder: (context, constraints) {
+          var screenWidth = constraints.maxWidth;
+          // You can access the current window width using constraints.maxWidth
+          // and update your UI or execute a function accordingly
+          if (screenWidth < 600) {
+            // Set a flag to true if screen width is below 1000
+            hideLabels = true;
+          } else {
+            // Set the flag to false if screen width is 1000 or above
+            hideLabels = false;
+          }
+          return Scaffold(
+              body: screens[index],
+              appBar: AppBar(
+                flexibleSpace: NavigationBarTheme(
+                  data: NavigationBarThemeData(
+                      indicatorColor: Palette.ktoCrimson),
+                  child: NavigationBar(
+                      height: 60,
+                      selectedIndex: index,
+                      onDestinationSelected: (index) {
+                        _updateScreens();
+                        setState(() => this.index = index);
+                      },
+                      destinations: [
+                        Container(
                           child: NavigationDestination(
-                        icon: FirebaseAuth.instance.currentUser == null
-                            ? Icon(Icons.person_outline)
-                            : Icon(Icons.person_off_outlined),
-                        label: FirebaseAuth.instance.currentUser == null
-                            ? "Sign in"
-                            : "Sign Out",
-                      ))
-                    ]),
-              ),
-            )),
-      );
+                            icon: ImageIcon(AssetImage("assets/cougar.png"),
+                                size: 30),
+                            label: hideLabels
+                                ? ""
+                                : "Cobb Connect", // hide label if hideLabels is true
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(right: 100, left: 100),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                            icon: Icon(Icons.house_outlined),
+                            label: hideLabels ? "" : "Home",
+                          ),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                              icon: Icon(Icons.person_add_alt_1_outlined),
+                              label: hideLabels ? "" : "Profile"),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                              icon: Icon(Icons.email_outlined),
+                              label: hideLabels ? "" : "Messages"),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                            icon: Icon(Icons.graphic_eq_outlined),
+                            label: hideLabels ? "" : "Analytics",
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(right: 100, left: 100),
+                        ),
+                        Container(
+                            child: NavigationDestination(
+                          icon: FirebaseAuth.instance.currentUser == null
+                              ? Icon(Icons.person_outline)
+                              : Icon(Icons.person_off_outlined),
+                          label: hideLabels
+                              ? ""
+                              : FirebaseAuth.instance.currentUser == null
+                                  ? "Sign in"
+                                  : "Sign Out",
+                        ))
+                      ]),
+                ),
+              ));
+        },
+      ));
 }
