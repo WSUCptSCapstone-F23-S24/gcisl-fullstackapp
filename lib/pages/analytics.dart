@@ -28,8 +28,8 @@ class _AnalyticsPage extends State<AnalyticsPage> {
         .then((onValue) {
       customIcon = onValue;
     });
-    getMarkerData();
     getUserData();
+    getMarkerData();
     super.initState();
   }
 
@@ -78,11 +78,12 @@ class _AnalyticsPage extends State<AnalyticsPage> {
   }
 
   getUserData() async {
+    List user = [];
     await FirebaseDatabase.instance
         .ref('users')
         .get()
         .then((snapshot) => snapshot.children.forEach((element) {
-              userInfo.add([
+              user.add([
                 element.child("first name").value.toString(),
                 element.child("last name").value.toString(),
                 element.child("city address").value.toString(),
@@ -95,6 +96,8 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                 element.child("position").value.toString(),
               ]);
             }));
+
+    userInfo = user;
   }
 
   @override
@@ -117,8 +120,8 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          height: 20,
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          height: 30,
                           child: Column(children: [
                             Expanded(
                               child: Text("Find People",
@@ -126,7 +129,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                             ),
                           ]),
                         ),
-                        Divider(height: 0),
+                        //Divider(height: 0),
                         ListView.builder(
                             itemCount: userInfo.length,
                             shrinkWrap: true,
