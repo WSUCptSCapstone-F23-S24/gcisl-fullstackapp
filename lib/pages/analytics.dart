@@ -244,10 +244,10 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                           ])),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.60,
-                        height: MediaQuery.of(context).size.height * 0.22,
+                        height: MediaQuery.of(context).size.height * 0.2198,
                         decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black, width: 2)),
+                            color: Palette.ktoGray,
+                            border: Border.all(color: Colors.black, width: 1)),
                         child: Row(
                           children: [
                             if (userInfo.isNotEmpty)
