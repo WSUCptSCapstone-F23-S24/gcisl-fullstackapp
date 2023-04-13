@@ -4,6 +4,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -23,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
       cityValue,
       stateValue,
       countryValue,
+      zipValue,
       _company,
       _position;
   TextEditingController _emailController = TextEditingController();
@@ -61,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
   showSucessAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = TextButton(
-      child: Text("To Home Page"),
+      child: Text(""),
       onPressed: () {
         // ignore: todo
         //TODO this should refresh and go to home page
@@ -72,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
-      content: Text("Sucess! Profile Uploaded"),
+      content: Text("Sucess! Profile Updated"),
       actions: [
         okButton,
       ],
@@ -107,6 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
         "city address": cityValue,
         "state address": stateValue,
         "country address": countryValue,
+        "zip address": zipValue,
         "lat": lat,
         "long": long,
         "position": _position,
@@ -125,10 +128,15 @@ class _ProfilePageState extends State<ProfilePage> {
     //get lat and log values
     double? lat = 0;
     double? long = 0;
+    String addy = "";
 
     GeoCode geoCode = GeoCode(apiKey: kGeocodeApiKey);
 
-    String addy = "${cityValue}, ${stateValue}, ${countryValue}";
+    if (zipValue == null) {
+      addy = "${cityValue}, ${stateValue}, ${countryValue}";
+    } else {
+      addy = "${cityValue}, ${stateValue}, ${countryValue}, ${zipValue}";
+    }
 
     print(addy);
 
@@ -212,6 +220,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email address';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },
@@ -324,6 +336,30 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   ///Show only specific countries using country filter
                   // countryFilter: ["United States", "Canada", "Mexico"],
+                ),
+                const SizedBox(height: 20.0),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Zip Code',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a zip code';
+                    }
+                    if (value.length != 5) {
+                      return 'Zip code must be 5 digits';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    zipValue = value;
+                  },
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
