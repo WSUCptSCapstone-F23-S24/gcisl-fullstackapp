@@ -337,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       left: 16,
                                     ),
                                     child: Text(
-                                      DateFormat('MM/dd/yyyy HH:mm').format(
+                                      DateFormat('MM/dd/yyyy hh:mm a').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               int.parse(_postList[index][2]))),
                                       style: const TextStyle(
