@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Text(
+                                  SelectableText(
                                     _postList[index][1] ?? "anonymous",
                                     style: const TextStyle(
                                       decoration: TextDecoration.underline,
@@ -315,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               child: Column(
                                                 children: [
                                                   ListTile(
-                                                    title: Text(
+                                                    title: SelectableText(
                                                       _postList[index][0],
                                                     ),
                                                   ),
@@ -357,7 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     padding: const EdgeInsets.only(
                                       left: 16,
                                     ),
-                                    child: Text(
+                                    child: SelectableText(
                                       DateFormat('MM/dd/yyyy hh:mm a').format(
                                           DateTime.fromMillisecondsSinceEpoch(
                                               int.parse(_postList[index][2]))),
