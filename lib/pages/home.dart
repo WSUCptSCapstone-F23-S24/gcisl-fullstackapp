@@ -92,19 +92,40 @@ class _MyHomePageState extends State<MyHomePage> {
     input.click();
     input.onChange.listen((event) {
       final file = input.files!.first;
-      final reader = FileReader();
-      reader.readAsDataUrl(file);
-      reader.onLoadEnd.listen((event) async {
-        String filename = Uuid().v1() + file.type.toString();
-        var snapshot = await fs.ref().child(filename).putBlob(file);
-        var imageUrl = await snapshot.ref.getDownloadURL();
+      if (file.type.startsWith('image/')) {
+        final reader = FileReader();
+        reader.readAsDataUrl(file);
+        reader.onLoadEnd.listen((event) async {
+          String filename = Uuid().v1() + file.type.toString();
+          var snapshot = await fs.ref().child(filename).putBlob(file);
+          var imageUrl = await snapshot.ref.getDownloadURL();
 
-        setState(() {
-          downloadUrl = imageUrl;
+          setState(() {
+            downloadUrl = imageUrl;
+          });
+
+          completer.complete();
         });
-
-        completer.complete();
-      });
+      } else {
+        // Show an error message or perform any other action for non-image files
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Please pick an image file.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     });
     return completer.future;
   }
