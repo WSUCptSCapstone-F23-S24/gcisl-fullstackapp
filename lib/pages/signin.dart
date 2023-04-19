@@ -73,52 +73,48 @@ class _SignInPageState extends State<SignInPage> {
 
                 //Email textfield
                 SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextField(
-                        controller: _emailControllor,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Email',
-                          hoverColor: Colors.black,
-                        ),
-                        textInputAction: TextInputAction.next,
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextField(
+                      controller: _emailControllor,
+                      style: TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Email',
+                        hoverColor: Colors.black,
                       ),
+                      textInputAction: TextInputAction.next,
                     ),
                   ),
                 ),
                 //Password textfield
                 SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        onFieldSubmitted: (value) {
-                          _login();
-                        },
-                        controller: _passwordControllor,
-                        style: TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Password',
-                        ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      onFieldSubmitted: (value) {
+                        _login();
+                      },
+                      controller: _passwordControllor,
+                      style: TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Password',
                       ),
                     ),
                   ),
@@ -127,7 +123,7 @@ class _SignInPageState extends State<SignInPage> {
                 //sign in button
                 SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Palette.ktoCrimson,

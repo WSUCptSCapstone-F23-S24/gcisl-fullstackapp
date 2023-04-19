@@ -40,84 +40,78 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Email textfield
                 const SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        controller: _emailControllor,
-                        validator: _requiredValidator,
-                        style: const TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Email',
-                        ),
-                        textInputAction: TextInputAction.next,
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _emailControllor,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Email',
                       ),
+                      textInputAction: TextInputAction.next,
                     ),
                   ),
                 ),
                 //Password textfield
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        controller: _passwordControllor,
-                        validator: _requiredValidator,
-                        style: const TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Password',
-                        ),
-                        textInputAction: TextInputAction.next,
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _passwordControllor,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Password',
                       ),
+                      textInputAction: TextInputAction.next,
                     ),
                   ),
                 ),
 
                 //Confirm Password textfield
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: TextFormField(
-                        onFieldSubmitted: (value) {
-                          debugPrint("pressed");
-                          if (_formKey.currentState != null &&
-                              _formKey.currentState!.validate()) {
-                            _register();
-                          }
-                        },
-                        controller: _confirmPasswordControllor,
-                        validator: _confirmPassword,
-                        style: const TextStyle(color: Colors.black),
-                        cursorColor: Colors.black,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Re-enter Password',
-                        ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      onFieldSubmitted: (value) {
+                        debugPrint("pressed");
+                        if (_formKey.currentState != null &&
+                            _formKey.currentState!.validate()) {
+                          _register();
+                        }
+                      },
+                      controller: _confirmPasswordControllor,
+                      validator: _confirmPassword,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Re-enter Password',
                       ),
                     ),
                   ),
@@ -126,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 //Register button
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 300),
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Palette.ktoCrimson,
