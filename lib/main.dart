@@ -33,10 +33,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  var uID = FirebaseAuth.instance.currentUser;
   int index = 0;
   bool hideLabels = false;
-
-  var uID = FirebaseAuth.instance.currentUser;
 
   var screens = [
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
@@ -90,6 +89,10 @@ class _MyAppState extends State<MyApp> {
             // Set the flag to false if screen width is 1000 or above
             hideLabels = false;
           }
+          // Set index to login if user not logged in
+          if (FirebaseAuth.instance.currentUser == null) {
+            index = 7;
+          }
           return Scaffold(
               body: screens[index],
               appBar: AppBar(
@@ -99,9 +102,13 @@ class _MyAppState extends State<MyApp> {
                   child: NavigationBar(
                       height: 60,
                       selectedIndex: index,
-                      onDestinationSelected: (index) {
+                      onDestinationSelected: (selectedindex) {
+                        // Don't allow users to go to other pages until signed in
+                        if (FirebaseAuth.instance.currentUser == null) {
+                          selectedindex = 7;
+                        }
                         _updateScreens();
-                        setState(() => this.index = index);
+                        setState(() => index = selectedindex);
                       },
                       destinations: [
                         Container(
