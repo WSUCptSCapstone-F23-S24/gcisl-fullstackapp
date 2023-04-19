@@ -74,7 +74,7 @@ class _SignInPageState extends State<SignInPage> {
                 //Email textfield
                 SizedBox(height: 50),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.white),
@@ -97,7 +97,7 @@ class _SignInPageState extends State<SignInPage> {
                 //Password textfield
                 SizedBox(height: 20),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.white),
@@ -123,7 +123,7 @@ class _SignInPageState extends State<SignInPage> {
                 //sign in button
                 SizedBox(height: 20),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Palette.ktoCrimson,

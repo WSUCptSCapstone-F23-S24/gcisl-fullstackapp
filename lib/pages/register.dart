@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 //Email textfield
                 const SizedBox(height: 50),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.white),
@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 //Password textfield
                 const SizedBox(height: 20),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.white),
@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 //Confirm Password textfield
                 const SizedBox(height: 20),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   decoration: BoxDecoration(
                       color: Colors.grey[200],
                       border: Border.all(color: Colors.white),
@@ -120,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 //Register button
                 const SizedBox(height: 20),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Palette.ktoCrimson,
