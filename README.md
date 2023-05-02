@@ -118,7 +118,7 @@ Through VS code IDE:
 
 #### Sprint 6:
 - Documentation [Sprint 6 Report .pdf](https://github.com/WSUCptSCapstone-Fall2022Spring2023/gcisl-fullstackapp/blob/main/Documents/Sprint%207%20Report.pdf)
-
+- Video: [link](https://drive.google.com/drive/u/0/folders/1NFspdjhucV4JWBQefZStS3eqPO0F5MAw)
 
 ## Team Members
 Users:
