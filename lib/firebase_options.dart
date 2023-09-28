@@ -44,14 +44,14 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAw25bD-0yenO4O1C4Xb4tqb60YvAo47A8',
-    appId: '1:361937343670:web:11b7fbbd448e8e9804c217',
-    messagingSenderId: '361937343670',
-    projectId: 'cobb-connect',
-    authDomain: 'cobb-connect.firebaseapp.com',
-    databaseURL: 'https://cobb-connect-default-rtdb.firebaseio.com',
-    storageBucket: 'cobb-connect.appspot.com',
-    measurementId: 'G-X3DJ6FYEE4',
+    apiKey: "AIzaSyB4RmcX7YKCYeem-6o--Y-cj_1sv4HgdDg",
+    authDomain: "cobb-connect-ef4c7.firebaseapp.com",
+    projectId: "cobb-connect-ef4c7",
+    storageBucket: "cobb-connect-ef4c7.appspot.com",
+    messagingSenderId: "774528275388",
+    appId: "1:774528275388:web:87c4741cbcc6cac99b91b9",
+    measurementId: "G-HHN6HSP755",
+    databaseURL: 'https://cobb-connect-ef4c7-default-rtdb.firebaseio.com/'
   );
 
   static const FirebaseOptions android = FirebaseOptions(
