@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List _postList = [];
   String? emailHash;
   String? username;
+  String? currentEmail;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
   var downloadUrl = null;
@@ -43,22 +44,36 @@ class _MyHomePageState extends State<MyHomePage> {
         username = value;
       });
     });
+    currentEmail = FirebaseAuth.instance.currentUser?.email;
     _database.onChildAdded.listen(_onNewPostAdded);
   }
 
   void _onNewPostAdded(DatabaseEvent event) {
+    String? uniquePostId = event.snapshot.key;
     final newPost = event.snapshot.child("text").value.toString();
     String? userName = event.snapshot.child("user_name").value.toString();
     String? timestamp = event.snapshot.child("timestamp").value.toString();
     String? image = event.snapshot.child("image").value.toString();
+    String? email = event.snapshot.child("email").value.toString();
     if (userName == "null") {
       userName = "anonymous";
     }
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName, timestamp, image]);
+        _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId]);
       });
     }
+  }
+
+  void deletePost(int postIndex, String postID)
+  {
+    DatabaseReference postRef = _database.child(postID);
+    postRef.set(null).then((_) {
+      print("Post Deleted");
+    }).catchError((error) {
+      print("Error: $error");
+    });
+    _postList.removeAt(postIndex);
   }
 
   Future<String?> getCurrentUser() async {
@@ -249,7 +264,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       'text': newPost,
                       'user_name': username,
                       'timestamp': timestamp,
-                      'image': downloadUrl
+                      'image': downloadUrl,
+                      'email' : currentEmail
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -299,6 +315,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                       fontSize: 16,
                                     ),
                                   ),
+                                  if (_postList[index][4] == currentEmail || currentEmail == "admin@wsu.edu")
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        deletePost(index,_postList[index][5]);
+                                        setState(() {});
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.red, // Customize button color
+                                      ),
+                                      child: const Text('Delete Post'),
+                                    ),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -366,11 +393,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                     ),
                                   ),
+                                  
                                 ]),
                               ),
                             ]));
                       },
                     ),
+                    
                   ),
                   if (_postList.length > _displayedPosts)
                     SizedBox(
