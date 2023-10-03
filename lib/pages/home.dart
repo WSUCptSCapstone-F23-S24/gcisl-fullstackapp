@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onNewPostAdded(DatabaseEvent event) {
     String? uniquePostId = event.snapshot.key;
+    String? uniquePostImageId = event.snapshot.child("image").key;
     final newPost = event.snapshot.child("text").value.toString();
     String? userName = event.snapshot.child("user_name").value.toString();
     String? timestamp = event.snapshot.child("timestamp").value.toString();
@@ -60,14 +61,31 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId]);
+        _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
       });
     }
   }
 
-  void deletePost(int postIndex, String postID)
+  void deletePost(int postIndex, String postID, String? potentialImage,String maybeURL)
   {
     DatabaseReference postRef = _database.child(postID);
+    print(potentialImage);
+    print(maybeURL);
+    if(potentialImage != null)
+    {
+      int lastIndex = maybeURL.lastIndexOf('/');
+      int questionMarkIndex = maybeURL.indexOf('?', lastIndex);
+
+      String imageId = maybeURL.substring(lastIndex + 1, questionMarkIndex).replaceAll("%2F", "/");
+      print(imageId);
+      Reference storageReference = FirebaseStorage.instance.ref().child(imageId);
+      try {
+        storageReference.delete();
+        print('File deleted successfully');
+      } catch (e) {
+        print('Error deleting file: $e');
+      }
+    }
     postRef.set(null).then((_) {
       print("Post Deleted");
     }).catchError((error) {
@@ -316,15 +334,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                   ),
                                   if (_postList[index][4] == currentEmail || currentEmail == "admin@wsu.edu")
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        deletePost(index,_postList[index][5]);
-                                        setState(() {});
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.red, // Customize button color
-                                      ),
-                                      child: const Text('Delete Post'),
+                                    Container(
+                                      width:75,
+                                      height:15,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          deletePost(index,_postList[index][5],_postList[index][6],_postList[index][3]);
+                                          setState(() {});
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12.0), // Adjust the value for desired roundness
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), // Adjust padding as needed
+                                          primary: Colors.red, // Customize button color
+                                        ),
+                                        child: Text(
+                                          'Delete',
+                                          style: TextStyle(fontSize: 9), // Adjust font size as needed
+                                        ),
+                                      )
                                     ),
                                   _postList[index][0] == ""
                                       ? Container(
