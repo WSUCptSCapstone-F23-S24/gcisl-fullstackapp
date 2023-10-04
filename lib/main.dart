@@ -15,6 +15,7 @@ import 'pages/home.dart';
 import 'pages/profile.dart';
 import 'pages/messages.dart';
 import 'pages/analytics.dart';
+import 'pages/admin.dart';
 import 'main_widgets/appbar.dart';
 
 Future<void> main() async {
@@ -69,6 +70,8 @@ class _MyAppState extends State<MyApp> {
           ProfilePage(),
           ChatPage(),
           AnalyticsPage(),
+          if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+            AdminPage(title: "Admin"),
           Text("dummey"),
           SignOut(),
         ];
@@ -92,6 +95,8 @@ class _MyAppState extends State<MyApp> {
           // Set index to login if user not logged in
           if (FirebaseAuth.instance.currentUser == null) {
             index = 7;
+            if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+              index += 1;
           }
           return Scaffold(
               body: screens[index],
@@ -106,6 +111,8 @@ class _MyAppState extends State<MyApp> {
                         // Don't allow users to go to other pages until signed in
                         if (FirebaseAuth.instance.currentUser == null) {
                           selectedindex = 7;
+                          if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+                            selectedindex += 1;
                         }
                         _updateScreens();
                         setState(() => index = selectedindex);
@@ -145,6 +152,13 @@ class _MyAppState extends State<MyApp> {
                             label: hideLabels ? "" : "Analytics",
                           ),
                         ),
+                        if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+                          Container(
+                            child: NavigationDestination(
+                              icon: Icon(Icons.add_chart),
+                              label: hideLabels ? "" : "Admin",
+                            ),
+                          ),
                         Container(
                           padding: EdgeInsets.only(right: 100, left: 100),
                         ),

@@ -6,3 +6,4 @@ import '../pages/home.dart';
 import '../pages/profile.dart';
 import '../pages/messages.dart';
 import '../pages/analytics.dart';
+import '../pages/admin.dart';
