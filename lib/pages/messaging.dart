@@ -26,8 +26,8 @@ class _ChatPageState extends State<ChatPage> {
     _currentUser =
         FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
 
-    _messagesRef = database.reference().child("messages").child(_currentUser);
-    _usersRef = database.reference().child("users");
+    _messagesRef = database.ref().child("messages").child(_currentUser);
+    _usersRef = database.ref().child("users");
     _usersRef.onChildAdded.listen((event) {
       setState(() {
         String firstName = event.snapshot.child("first name").value.toString();
@@ -157,7 +157,9 @@ class _ChatPageState extends State<ChatPage> {
       child: ListView.builder(
         itemCount: _users.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildUserTile(_users[index]);
+          if (_users[index].ID != _currentUser) {
+            return _buildUserTile(_users[index]);
+          }
         },
       ),
     );
