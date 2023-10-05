@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\lib",
+    "\\lib\\auth",
+    "\\lib\\main_widgets",
+    "\\lib\\pages",
+    "\\web"
+  ],
+  "SelectedNode": "\\lib\\pages\\profile.dart",
+  "PreviewInSolutionExplorer": false
+}

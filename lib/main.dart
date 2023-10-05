@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:gcisl_app/auth/auth_page.dart';
 import 'package:gcisl_app/pages/signin.dart';
 import 'package:gcisl_app/pages/register.dart';
+import 'package:gcisl_app/pages/public_profile.dart';
 
 import 'palette.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
+import 'pages/public_profile.dart';
 import 'pages/messages.dart';
 import 'pages/analytics.dart';
 import 'pages/admin.dart';
@@ -43,6 +45,7 @@ class _MyAppState extends State<MyApp> {
     Text("dummy"),
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     ProfilePage(),
+    ProfilePage1(),
     ChatPage(),
     AnalyticsPage(),
     Text("dummey"),
@@ -57,6 +60,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
+          ProfilePage1(),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -68,6 +72,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
+          ProfilePage1(),
           ChatPage(),
           AnalyticsPage(),
           if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
@@ -139,6 +144,11 @@ class _MyAppState extends State<MyApp> {
                         Container(
                           child: NavigationDestination(
                               icon: Icon(Icons.person_add_alt_1_outlined),
+                              label: hideLabels ? "" : "Edit Profile"),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                              icon: Icon(Icons.person_2_outlined),
                               label: hideLabels ? "" : "Profile"),
                         ),
                         Container(
