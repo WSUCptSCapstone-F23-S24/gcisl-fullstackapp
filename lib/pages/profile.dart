@@ -27,7 +27,17 @@ class _ProfilePageState extends State<ProfilePage> {
       zipValue,
       _company,
       _position;
+  String? emailHash;
+
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _zipcodeController = TextEditingController();
+  TextEditingController _companyController = TextEditingController();
+  TextEditingController _companyPositionController = TextEditingController();
+  TextEditingController _countryAddressController = TextEditingController();
+
   String kGoogleApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
   String kGeocodeApiKey = "452514987019605450571x112215";
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
@@ -162,12 +172,33 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  getCurrentUser() async {
+    await FirebaseDatabase.instance
+        .ref('users')
+        .get()
+        // ignore: avoid_function_literals_in_foreach_calls
+        .then((snapshot) => snapshot.children.forEach((element) {
+              if (element.key.toString() == emailHash) {
+                _firstNameController.text = element.child("first name").value.toString();
+                _lastNameController.text = element.child("last name").value.toString();
+                _phoneController.text = element.child("phone").value.toString();
+                _zipcodeController.text = element.child("zip address").value.toString();
+                _companyController.text = element.child("company").value.toString();
+                _companyPositionController.text = element.child("position").value.toString();
+                _countryAddressController.text = element.child("country address").value.toString();
+              }
+            }));
+  }
+
   @override
   void initState() {
+    getCurrentUser();
     super.initState();
     // Check if user is logged in using Firebase Authentication
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
+
+    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+    if (user != null) { 
       _emailController.text = user.email!;
     }
   }
@@ -188,7 +219,8 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'First Name'),
+                  decoration: InputDecoration(labelText: 'First Name'),
+                  controller: _firstNameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your first name';
@@ -201,7 +233,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Last Name'),
+                  decoration: InputDecoration(labelText: 'Last Name'),
+                  controller: _lastNameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your last name';
@@ -234,6 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 30.0),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Phone'),
+                  controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -346,6 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                   ),
+                  controller: _zipcodeController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
@@ -364,6 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 30.0),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Company'),
+                  controller: _companyController,
                   maxLines: 1,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -378,6 +414,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 30.0),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Position'),
+                  controller: _companyPositionController,
                   maxLines: 1,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
