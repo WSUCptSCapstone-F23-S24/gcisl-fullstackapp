@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List _postList = [];
   String? emailHash;
   String? username;
+  String? currentEmail;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
   var downloadUrl = null;
@@ -43,22 +44,54 @@ class _MyHomePageState extends State<MyHomePage> {
         username = value;
       });
     });
+    currentEmail = FirebaseAuth.instance.currentUser?.email;
     _database.onChildAdded.listen(_onNewPostAdded);
   }
 
   void _onNewPostAdded(DatabaseEvent event) {
+    String? uniquePostId = event.snapshot.key;
+    String? uniquePostImageId = event.snapshot.child("image").key;
     final newPost = event.snapshot.child("text").value.toString();
     String? userName = event.snapshot.child("user_name").value.toString();
     String? timestamp = event.snapshot.child("timestamp").value.toString();
     String? image = event.snapshot.child("image").value.toString();
+    String? email = event.snapshot.child("email").value.toString();
     if (userName == "null") {
       userName = "anonymous";
     }
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName, timestamp, image]);
+        _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
       });
     }
+  }
+
+  void deletePost(int postIndex, String postID, String? potentialImage,String maybeURL)
+  {
+    DatabaseReference postRef = _database.child(postID);
+    print(potentialImage);
+    print(maybeURL);
+    if(potentialImage != null)
+    {
+      int lastIndex = maybeURL.lastIndexOf('/');
+      int questionMarkIndex = maybeURL.indexOf('?', lastIndex);
+
+      String imageId = maybeURL.substring(lastIndex + 1, questionMarkIndex).replaceAll("%2F", "/");
+      print(imageId);
+      Reference storageReference = FirebaseStorage.instance.ref().child(imageId);
+      try {
+        storageReference.delete();
+        print('File deleted successfully');
+      } catch (e) {
+        print('Error deleting file: $e');
+      }
+    }
+    postRef.set(null).then((_) {
+      print("Post Deleted");
+    }).catchError((error) {
+      print("Error: $error");
+    });
+    _postList.removeAt(postIndex);
   }
 
   Future<String?> getCurrentUser() async {
@@ -249,7 +282,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       'text': newPost,
                       'user_name': username,
                       'timestamp': timestamp,
-                      'image': downloadUrl
+                      'image': downloadUrl,
+                      'email' : currentEmail
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -299,6 +333,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                       fontSize: 16,
                                     ),
                                   ),
+                                  if (_postList[index][4] == currentEmail || currentEmail == "admin@wsu.edu")
+                                    Container(
+                                      width:75,
+                                      height:15,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          deletePost(index,_postList[index][5],_postList[index][6],_postList[index][3]);
+                                          setState(() {});
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12.0), // Adjust the value for desired roundness
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), // Adjust padding as needed
+                                          primary: Colors.red, // Customize button color
+                                        ),
+                                        child: Text(
+                                          'Delete',
+                                          style: TextStyle(fontSize: 9), // Adjust font size as needed
+                                        ),
+                                      )
+                                    ),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -366,11 +422,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                     ),
                                   ),
+                                  
                                 ]),
                               ),
                             ]));
                       },
                     ),
+                    
                   ),
                   if (_postList.length > _displayedPosts)
                     SizedBox(

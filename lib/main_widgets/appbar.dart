@@ -7,3 +7,4 @@ import '../pages/profile.dart';
 import '../pages/public_profile.dart';
 import '../pages/messages.dart';
 import '../pages/analytics.dart';
+import '../pages/admin.dart';

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../palette.dart';
 
@@ -40,6 +42,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String kGoogleApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
   String kGeocodeApiKey = "452514987019605450571x112215";
+  String kGeolocationApiKey = "8b106f81fa8d4bbf9e9dbc9e3a212320";
+  String kRadarApiKey = "prj_live_sk_6a3bac229896963af319b7a5fe8da818d3f88707";
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
   bool _isLoading = false;
 
@@ -133,6 +137,36 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<Coordinates> queryGeoLocation(String? country, String? city, String? state, String? zipCode) async {
+    final apiUrl = Uri.parse('https://api.radar.io/v1/search/autocomplete');
+
+    String csvParameters = '$country,$city,$state';
+
+    if (zipCode != null) {
+      csvParameters += ',$zipCode';
+    }
+
+    final url = Uri.parse('$apiUrl?query=$csvParameters');
+
+    final response = await http.get(url,
+    headers: {
+      'Authorization': '$kRadarApiKey'
+    });
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final latitude = responseData["addresses"][0]['latitude'];
+      final longitude = responseData["addresses"][0]['longitude'];
+
+      final coordinates = Coordinates(
+        latitude: latitude,
+        longitude: longitude,
+      );
+      return coordinates;
+    } else {
+      throw Exception('Error: ${response.statusCode}, Response: ${response.body}');
+    }
+  }
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -140,18 +174,14 @@ class _ProfilePageState extends State<ProfilePage> {
     double? long = 0;
     String addy = "";
 
-    GeoCode geoCode = GeoCode(apiKey: kGeocodeApiKey);
-
-    if (zipValue == null) {
-      addy = "${cityValue}, ${stateValue}, ${countryValue}";
-    } else {
-      addy = "${cityValue}, ${stateValue}, ${countryValue}, ${zipValue}";
-    }
-
-    print(addy);
 
     try {
-      Coordinates coordinates = await geoCode.forwardGeocoding(address: addy);
+      Coordinates coordinates;
+      
+      
+      coordinates = await queryGeoLocation(countryValue,cityValue, stateValue,zipValue);
+      
+       
       //List<Location> locations = await locationFromAddress(addy);
       //Location local = locations[0];
       lat = coordinates.latitude;
