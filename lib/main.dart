@@ -48,6 +48,8 @@ class _MyAppState extends State<MyApp> {
     ProfilePage1(),
     ChatPage(),
     AnalyticsPage(),
+    if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+            AdminPage(title: "Admin"),
     Text("dummey"),
     AuthPage()
   ];
@@ -99,7 +101,7 @@ class _MyAppState extends State<MyApp> {
           }
           // Set index to login if user not logged in
           if (FirebaseAuth.instance.currentUser == null) {
-            index = 7;
+            index = 8;
             if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
               index += 1;
           }
@@ -115,7 +117,7 @@ class _MyAppState extends State<MyApp> {
                       onDestinationSelected: (selectedindex) {
                         // Don't allow users to go to other pages until signed in
                         if (FirebaseAuth.instance.currentUser == null) {
-                          selectedindex = 7;
+                          selectedindex = 8;
                           if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
                             selectedindex += 1;
                         }
