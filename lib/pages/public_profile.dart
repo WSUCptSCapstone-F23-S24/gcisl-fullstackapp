@@ -1,22 +1,84 @@
 import 'package:flutter/material.dart';
 
-class ProfilePage1 extends StatelessWidget {
-  const ProfilePage1({Key? key}) : super(key: key);
+import 'dart:html';
+
+import 'package:csc_picker/csc_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geocode/geocode.dart';
+import 'package:geocoding/geocoding.dart';
+
+import '../palette.dart';
+
+class ProfilePage1 extends StatefulWidget {
+  @override
+  _ProfilePage1State createState() => _ProfilePage1State();
+}
+
+class _ProfilePage1State extends State<ProfilePage1> {
+  String? _firstName,
+      _lastName,
+      _phone,
+      _address,
+      cityValue,
+      stateValue,
+      countryValue,
+      zipValue,
+      _company,
+      _position;
+  String? emailHash;
+
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _zipcodeController = TextEditingController();
+  TextEditingController _companyController = TextEditingController();
+  TextEditingController _companyPositionController = TextEditingController();
+  TextEditingController _countryAddressController = TextEditingController();
+
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users");
+
+  getCurrentUser() async {
+    await FirebaseDatabase.instance
+        .ref('users')
+        .get()
+        // ignore: avoid_function_literals_in_foreach_calls
+        .then((snapshot) => snapshot.children.forEach((element) {
+              if (element.key.toString() == emailHash) {
+               _nameController.text = element.child("first name").value.toString()
+                   + " "
+                   + element.child("last name").value.toString();
+              }
+            }));
+  }
+
+  @override
+  void initState() {
+    getCurrentUser();
+    super.initState();
+    // Check if user is logged in using Firebase Authentication
+    final user = FirebaseAuth.instance.currentUser;
+
+    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          const Expanded(flex: 2, child: _TopPortion()),
+          const Expanded(flex: 1, child: _TopPortion()),
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(6.0),
               child: Column(
                 children: [
-                  Text(
-                    "Richie Lorie",
+                  TextField(
+                    controller: _nameController,
+                    textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
                         .headline6
@@ -26,17 +88,10 @@ class ProfilePage1 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FloatingActionButton.extended(
-                        onPressed: () {},
-                        heroTag: 'follow',
-                        elevation: 0,
-                        label: const Text("Follow"),
-                        icon: const Icon(Icons.person_add_alt_1),
-                      ),
                       const SizedBox(width: 16.0),
                       FloatingActionButton.extended(
                         onPressed: () {},
-                        heroTag: 'mesage',
+                        heroTag: 'message',
                         elevation: 0,
                         backgroundColor: Colors.red,
                         label: const Text("Message"),
@@ -60,9 +115,7 @@ class _ProfileInfoRow extends StatelessWidget {
   const _ProfileInfoRow({Key? key}) : super(key: key);
 
   final List<ProfileInfoItem> _items = const [
-    ProfileInfoItem("Posts", 900),
-    ProfileInfoItem("Followers", 120),
-    ProfileInfoItem("Following", 200),
+    ProfileInfoItem("Posts", 0),
   ];
 
   @override
@@ -123,10 +176,7 @@ class _TopPortion extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(bottom: 50),
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [Color(0xff0043ba), Color(0xff006df1)]),
+              color: Palette.ktoCrimson,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(50),
                 bottomRight: Radius.circular(50),
@@ -147,7 +197,7 @@ class _TopPortion extends StatelessWidget {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80')),
+                            'https://www.booksie.com/files/profiles/22/mr-anonymous_230x230.png')),
                   ),
                 ),
                 Positioned(

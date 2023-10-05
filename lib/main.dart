@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
     Text("dummy"),
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     ProfilePage(),
+    ProfilePage1(),
     ChatPage(),
     AnalyticsPage(),
     Text("dummey"),
@@ -58,6 +59,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
+          ProfilePage1(),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -69,6 +71,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
+          ProfilePage1(),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -93,7 +96,7 @@ class _MyAppState extends State<MyApp> {
           }
           // Set index to login if user not logged in
           if (FirebaseAuth.instance.currentUser == null) {
-            index = 7;
+            index = 8;
           }
           return Scaffold(
               body: screens[index],
@@ -134,6 +137,11 @@ class _MyAppState extends State<MyApp> {
                         Container(
                           child: NavigationDestination(
                               icon: Icon(Icons.person_add_alt_1_outlined),
+                              label: hideLabels ? "" : "Edit Profile"),
+                        ),
+                        Container(
+                          child: NavigationDestination(
+                              icon: Icon(Icons.person_2_outlined),
                               label: hideLabels ? "" : "Profile"),
                         ),
                         Container(
