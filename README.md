@@ -93,7 +93,7 @@ Through VS code IDE:
 
 #### Sprint 1:
 - Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/19AO4LtnsS9xayqkGBoHLEvZZPomT7-d7fJNX8l-KBiM/edit?usp=sharing)
-- Video: [link](https://docs.google.com/document/d/19AO4LtnsS9xayqkGBoHLEvZZPomT7-d7fJNX8l-KBiM/edit?usp=sharing)
+- Video: [link](https://drive.google.com/file/d/1kXeur_cPgJcVlPbxYCckQIS09Ft-GwDv/view?usp=sharing)
 
 
 
