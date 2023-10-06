@@ -89,8 +89,15 @@ Through VS code IDE:
 - Name the branch according to the feature you will be working on
 - Press enter, and then ensure you are checked out to ths new branch you made at the bottom left
 
-
 ## Sprints
+
+#### Sprint 1:
+- Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/19AO4LtnsS9xayqkGBoHLEvZZPomT7-d7fJNX8l-KBiM/edit?usp=sharing)
+- Video: [link](https://docs.google.com/document/d/19AO4LtnsS9xayqkGBoHLEvZZPomT7-d7fJNX8l-KBiM/edit?usp=sharing)
+
+
+
+## PREVIOUS GROUP - Sprints
 
 #### Sprint 1:
 - Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/1cCOklNfAImu0Xad1_EF9sPirNQAw3hH_/edit?usp=sharing&ouid=114656888651691810315&rtpof=true&sd=true)
