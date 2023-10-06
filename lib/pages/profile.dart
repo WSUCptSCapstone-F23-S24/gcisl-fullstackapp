@@ -113,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ref = FirebaseDatabase.instance.ref("users/$userID");
 
     try {
-      ref.update({
+      ref.set({
         "first name": _firstName,
         "last name": _lastName,
         "email": _emailController.text,
