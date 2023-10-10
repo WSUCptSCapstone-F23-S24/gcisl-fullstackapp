@@ -32,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? emailHash;
 
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _userTypeController = TextEditingController();
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
@@ -113,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ref = FirebaseDatabase.instance.ref("users/$userID");
 
     try {
-      ref.set({
+      ref.update({
         "first name": _firstName,
         "last name": _lastName,
         "email": _emailController.text,
@@ -128,7 +129,8 @@ class _ProfilePageState extends State<ProfilePage> {
         "long": long,
         "position": _position,
         "experience": "1",
-        "date added": ServerValue.timestamp
+        "date added": ServerValue.timestamp,
+        "userType": _userTypeController.text
       });
       print("sucess!");
     } catch (e) {
@@ -137,7 +139,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<Coordinates> queryGeoLocation(String? country, String? city, String? state, String? zipCode) async {
+  Future<Coordinates> queryGeoLocation(
+      String? country, String? city, String? state, String? zipCode) async {
     final apiUrl = Uri.parse('https://api.radar.io/v1/search/autocomplete');
 
     String csvParameters = '$country,$city,$state';
@@ -148,10 +151,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final url = Uri.parse('$apiUrl?query=$csvParameters');
 
-    final response = await http.get(url,
-    headers: {
-      'Authorization': '$kRadarApiKey'
-    });
+    final response =
+        await http.get(url, headers: {'Authorization': '$kRadarApiKey'});
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
@@ -164,9 +165,11 @@ class _ProfilePageState extends State<ProfilePage> {
       );
       return coordinates;
     } else {
-      throw Exception('Error: ${response.statusCode}, Response: ${response.body}');
+      throw Exception(
+          'Error: ${response.statusCode}, Response: ${response.body}');
     }
   }
+
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -174,14 +177,12 @@ class _ProfilePageState extends State<ProfilePage> {
     double? long = 0;
     String addy = "";
 
-
     try {
       Coordinates coordinates;
-      
-      
-      coordinates = await queryGeoLocation(countryValue,cityValue, stateValue,zipValue);
-      
-       
+
+      coordinates =
+          await queryGeoLocation(countryValue, cityValue, stateValue, zipValue);
+
       //List<Location> locations = await locationFromAddress(addy);
       //Location local = locations[0];
       lat = coordinates.latitude;
@@ -209,13 +210,21 @@ class _ProfilePageState extends State<ProfilePage> {
         // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
               if (element.key.toString() == emailHash) {
-                _firstNameController.text = element.child("first name").value.toString();
-                _lastNameController.text = element.child("last name").value.toString();
+                _firstNameController.text =
+                    element.child("first name").value.toString();
+                _lastNameController.text =
+                    element.child("last name").value.toString();
                 _phoneController.text = element.child("phone").value.toString();
-                _zipcodeController.text = element.child("zip address").value.toString();
-                _companyController.text = element.child("company").value.toString();
-                _companyPositionController.text = element.child("position").value.toString();
-                _countryAddressController.text = element.child("country address").value.toString();
+                _zipcodeController.text =
+                    element.child("zip address").value.toString();
+                _companyController.text =
+                    element.child("company").value.toString();
+                _companyPositionController.text =
+                    element.child("position").value.toString();
+                _countryAddressController.text =
+                    element.child("country address").value.toString();
+                _userTypeController.text =
+                    element.child("userType").value.toString();
               }
             }));
   }
@@ -228,8 +237,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = FirebaseAuth.instance.currentUser;
 
     emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
-    if (user != null) { 
+    if (user != null) {
       _emailController.text = user.email!;
+
+      if (_userTypeController.text == "null") {
+        _userTypeController.text == "student";
+      }
     }
   }
 
@@ -454,6 +467,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   onSaved: (value) {
                     _position = value;
+                  },
+                ),
+                const SizedBox(height: 30.0),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Status'),
+                  controller: _userTypeController,
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your status';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _userTypeController.text = value!;
                   },
                 ),
                 const SizedBox(height: 30.0),
