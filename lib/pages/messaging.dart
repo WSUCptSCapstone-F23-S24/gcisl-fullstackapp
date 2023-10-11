@@ -15,7 +15,7 @@ class _ChatPageState extends State<ChatPage> {
   late DatabaseReference _usersRef;
   final TextEditingController _textController = TextEditingController();
   List<Message> _messages = [];
-  List<User> _users = [];
+  Set<User> _users = Set<User>();
   User? _selectedUser;
   String _currentUser = "";
 
@@ -25,16 +25,19 @@ class _ChatPageState extends State<ChatPage> {
     // Get current user's ID
     _currentUser =
         FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
+    //print(_currentUser);
 
-    _messagesRef = database.reference().child("messages").child(_currentUser);
-    _usersRef = database.reference().child("users");
+    _messagesRef = database.ref().child("messages").child(_currentUser);
+    _usersRef = database.ref().child("users");
     _usersRef.onChildAdded.listen((event) {
       setState(() {
         String firstName = event.snapshot.child("first name").value.toString();
         String lastName = event.snapshot.child("last name").value.toString();
+        String userRole = event.snapshot.child("userType").value.toString();
         String fullname = firstName + " " + lastName;
         String checkStringID = event.snapshot.key.toString();
-        _users.add(User(Name: fullname, ID: checkStringID));
+        //print("name: " + fullname + " ID: " + checkStringID);
+        _users.add(User(Name: fullname, ID: checkStringID, userType: userRole));
       });
     });
   }
@@ -128,6 +131,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildUserTile(User user) {
     return ListTile(
       title: Text(user.Name),
+      subtitle: Text(user.userType),
       tileColor: Colors.white,
       onTap: () {
         setState(() {
@@ -157,7 +161,18 @@ class _ChatPageState extends State<ChatPage> {
       child: ListView.builder(
         itemCount: _users.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildUserTile(_users[index]);
+          //print(_users.length);
+          //print(index);
+          //print("name: " +
+          //_users.elementAt(index).Name +
+          //" ID: " +
+          //_users.elementAt(index).ID);
+          // checks to see if the user isn't the current user so you can't self message
+          if (_users.elementAt(index).ID != _currentUser) {
+            return _buildUserTile(_users.elementAt(index));
+          } else {
+            return SizedBox(); // return emptybox if its the currentuser
+          }
         },
       ),
     );
@@ -242,6 +257,7 @@ class Message {
 class User {
   final String Name;
   final String ID;
+  final String userType;
 
-  User({required this.Name, required this.ID});
+  User({required this.Name, required this.ID, required this.userType});
 }
