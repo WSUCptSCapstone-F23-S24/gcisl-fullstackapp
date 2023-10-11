@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 
@@ -16,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailControllor = TextEditingController();
   final _passwordControllor = TextEditingController();
   final _confirmPasswordControllor = TextEditingController();
+  String _selectedUserType = 'student'; // Default user type
 
   var loading = false;
 
@@ -115,6 +117,24 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
+                ),
+
+                //User-role drop-down button
+                // Add a dropdown or radio buttons for user type selection
+                DropdownButton<String>(
+                  value: _selectedUserType,
+                  items: <String>['student', 'alumni', 'faculty']
+                      .map((String userType) {
+                    return DropdownMenuItem<String>(
+                      value: userType,
+                      child: Text(userType),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedUserType = newValue!;
+                    });
+                  },
                 ),
 
                 //Register button
@@ -236,11 +256,12 @@ class _RegisterPageState extends State<RegisterPage> {
       //try adding new user to authenticator
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailControllor.text, password: _passwordControllor.text);
-
       // ignore: todo
       //TODO: add user data to database
-      //DatabaseReference ref = FirebaseDatabase.instance.ref();
-
+      // Get the user's unique ID
+      var userID = _emailControllor.text.hashCode;
+      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userID");
+      await ref.set({'userType': _selectedUserType});
       //show success message
       await showDialog(
           context: context,
