@@ -13,6 +13,8 @@ import 'package:geocoding/geocoding.dart';
 import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {
+  String? emailHashString = "";
+  ProfilePage1(this.emailHashString);
   @override
   _ProfilePage1State createState() => _ProfilePage1State();
 }
@@ -46,10 +48,20 @@ class _ProfilePage1State extends State<ProfilePage1> {
         .get()
         // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
-              if (element.key.toString() == emailHash) {
+              if (element.key.toString() == widget.emailHashString) {
                _nameController.text = element.child("first name").value.toString()
                    + " "
                    + element.child("last name").value.toString();
+               _companyPositionController.text = element.child("position").value.toString();
+                _phoneController.text = element.child("phone").value.toString();
+                _zipcodeController.text =
+                    element.child("zip address").value.toString();
+                _companyController.text =
+                    element.child("company").value.toString();
+                _companyPositionController.text =
+                    element.child("position").value.toString();
+                _countryAddressController.text =
+                    element.child("country address").value.toString();
               }
             }));
   }
@@ -78,6 +90,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                 children: [
                   TextField(
                     controller: _nameController,
+                    readOnly: true,
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
@@ -100,7 +113,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const _ProfileInfoRow()
+                  _ProfileInfoRow(_companyPositionController, _companyController, _countryAddressController, _phoneController)
                 ],
               ),
             ),
@@ -109,27 +122,49 @@ class _ProfilePage1State extends State<ProfilePage1> {
       ),
     );
   }
+
 }
 
-class _ProfileInfoRow extends StatelessWidget {
-  const _ProfileInfoRow({Key? key}) : super(key: key);
+class _ProfileInfoRow extends StatefulWidget {
+  TextEditingController companyPositionController = TextEditingController();
+  TextEditingController companyController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  _ProfileInfoRow(this.companyPositionController, this.companyController, this.countryController, this.phoneController);
 
   final List<ProfileInfoItem> _items = const [
-    ProfileInfoItem("Posts", 0),
+    ProfileInfoItem("Company", 1),
+    ProfileInfoItem("Company Position", 2),
+    ProfileInfoItem("Country", 3),
+    ProfileInfoItem("Phone Number", 4)
   ];
 
+  TextEditingController getController(int value) {
+    if(value == 1) { return companyController;} 
+    else if(value == 2) {return companyPositionController;}
+    else if(value == 3) {return countryController;}
+    else if(value == 4) {return phoneController;}
+    else {return companyController;}
+    }
+
   @override
+  _ProfileInfoRowState createState() => _ProfileInfoRowState();
+}
+
+class _ProfileInfoRowState extends State<_ProfileInfoRow> {
+  //const _ProfileInfoRowState({Key? key}) : super(key: key);
+
+   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      constraints: const BoxConstraints(maxWidth: 400),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _items
+        children: widget._items
             .map((item) => Expanded(
                     child: Row(
                   children: [
-                    if (_items.indexOf(item) != 0) const VerticalDivider(),
+                    if (widget._items.indexOf(item) != 0) const VerticalDivider(),
                     Expanded(child: _singleItem(context, item)),
                   ],
                 )))
@@ -143,11 +178,14 @@ class _ProfileInfoRow extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              item.value.toString(),
+            child: TextField(
+              //item.value.toString(),
+              controller: widget.getController(item.value),
+              readOnly: true,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
           ),
