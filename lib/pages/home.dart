@@ -21,8 +21,10 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+  enum PostSortOption { newest, oldest, alphabetical }
 
 class _MyHomePageState extends State<MyHomePage> {
+  PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
   final List _postList = [];
   String? emailHash;
@@ -62,8 +64,26 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       setState(() {
         _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
+        _sortPostList();
       });
     }
+  }
+
+  void _sortPostList()
+  {
+    print("sorting\n");
+      switch (_selectedSortOption) {
+        case PostSortOption.newest:
+          _postList.sort((a, b) => b[2].compareTo(a[2])); 
+          break;
+        case PostSortOption.oldest:
+          _postList.sort((a, b) => a[2].compareTo(b[2])); 
+          break;
+        case PostSortOption.alphabetical:
+          _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String)); 
+          break;
+    }
+    setState(() {}); 
   }
 
   void deletePost(int postIndex, String postID, String? potentialImage,String maybeURL)
@@ -302,6 +322,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
+              DropdownButton<PostSortOption>(
+                    value: _selectedSortOption,
+                    onChanged: (newSortOption) {
+                      setState(() {
+                        _selectedSortOption = newSortOption;
+                        // Sort the post list based on the selected option
+                        _sortPostList();
+                      });
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: PostSortOption.newest,
+                        child: Text('Most Recent'),
+                      ),
+                      DropdownMenuItem(
+                        value: PostSortOption.oldest,
+                        child: Text('Oldest'),
+                      ),
+                      DropdownMenuItem(
+                        value: PostSortOption.alphabetical,
+                        child: Text('Alphabetical (A-Z)'),
+                      ),
+                    ],
+                  ),
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
                 Column(children: [
@@ -344,14 +388,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12.0), // Adjust the value for desired roundness
+                                            borderRadius: BorderRadius.circular(12.0), 
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), // Adjust padding as needed
-                                          primary: Colors.red, // Customize button color
+                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), 
+                                          primary: Colors.red, 
                                         ),
                                         child: Text(
                                           'Delete',
-                                          style: TextStyle(fontSize: 9), // Adjust font size as needed
+                                          style: TextStyle(fontSize: 9), 
                                         ),
                                       )
                                     ),
