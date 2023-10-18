@@ -73,6 +73,17 @@ For VS code, you will want to add extensions to make it easier to read code
 
 There are no known problems.
 
+## Accounts
+Currently we are in the process of moving all exterior services under one gmail account. This will allow future users to be able to access Cobb Connect services without having to contact prior students. We are centralizing all information under the account `wsucobbconnect@gmail.com`. The password for this account is `gocougs!`.
+<br>
+The services we currently have attached to the gmail:
+<br>
+[Firebase](https://console.firebase.google.com/) 
+<br>
+[Radar](https://radar.com/)
+<br>
+Google Maps - Yet To Be Added
+
 
 ## Contributing
 
