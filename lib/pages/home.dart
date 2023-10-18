@@ -86,18 +86,17 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {}); 
   }
 
-  void deletePost(int postIndex, String postID, String? potentialImage,String maybeURL)
+  void deletePost(int postIndex, String postID,String maybeURL)
   {
     DatabaseReference postRef = _database.child(postID);
-    print(potentialImage);
     print(maybeURL);
-    if(potentialImage != null)
+    if(maybeURL != "null")
     {
+      print("Removing image");
       int lastIndex = maybeURL.lastIndexOf('/');
       int questionMarkIndex = maybeURL.indexOf('?', lastIndex);
 
       String imageId = maybeURL.substring(lastIndex + 1, questionMarkIndex).replaceAll("%2F", "/");
-      print(imageId);
       Reference storageReference = FirebaseStorage.instance.ref().child(imageId);
       try {
         storageReference.delete();
@@ -383,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       height:15,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          deletePost(index,_postList[index][5],_postList[index][6],_postList[index][3]);
+                                          deletePost(index,_postList[index][5],_postList[index][3]);
                                           setState(() {});
                                         },
                                         style: ElevatedButton.styleFrom(
