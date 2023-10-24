@@ -20,13 +20,24 @@ class _ChatPageState extends State<ChatPage> {
   String _currentUser = "";
 
 
-void _addMessageListener() {
+
+void _addNewMessageListener()
+{
   _messagesRef.onChildAdded.listen((event) {
+    setState(() {
+      if(event.snapshot.key! != _currentUser)
+        _addMessageListener(event.snapshot.key!);
+    });
+  });
+}
+void _addMessageListener(String user) {
+  _messagesRef.child(user).onChildAdded.listen((event) {
     setState(() {
       print("RECEIVING");
       String sender = event.snapshot.child("sender").value.toString();
-
-      if (sender != _currentUser && (_selectedUser == null || sender != _selectedUser!.ID)) {
+      if(sender == _currentUser)
+        return;
+      if (_selectedUser == null || sender != _selectedUser!.ID) {
         for(User u in _users)
         {
           if(u.ID == sender)
@@ -99,12 +110,19 @@ void _addMessageListener() {
 
               
           });
+
           _users.add(User(Name: fullname, ID: checkStringID, userType: userRole, hasUnreadMessages : false));
 
 
       });
     });
-    _addMessageListener();
+    _addNewMessageListener();
+    // for(User u in _users)
+    // {
+    //   if(u.ID == _currentUser)
+    //     continue;
+    //   _addMessageListener(u.ID);
+    // }
   }
 
   
@@ -220,12 +238,15 @@ Widget _buildUserTile(User user) {
           _messages.clear();
           _messagesRef.child(_selectedUser!.ID).onChildAdded.listen((event) {
             setState(() {
-              print("Adding ${_selectedUser!.ID}");
-              
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
-              if(sender != _selectedUser!.ID && sender != _currentUser)
+              if(_selectedUser != null)
+                print("${_selectedUser!} - $sender - $_currentUser");
+
+              if(_selectedUser == null || (sender != _selectedUser!.ID && sender != _currentUser))
               {
+                print("Adding Unviewed");
+
                 for(User u in _users)
                 {
                   if(u.ID == sender)
@@ -235,7 +256,8 @@ Widget _buildUserTile(User user) {
                 }
                 return;
               }
-          
+              print("Adding ${_selectedUser}");
+
               String timestampString =
                   event.snapshot.child("timestamp").value.toString();
               bool isSeen = event.snapshot.child("isSeen").value as bool;
