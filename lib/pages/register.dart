@@ -17,6 +17,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailControllor = TextEditingController();
   final _passwordControllor = TextEditingController();
   final _confirmPasswordControllor = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _companyController = TextEditingController();
+  final _positionController = TextEditingController();
+
   String _selectedUserType = 'student'; // Default user type
 
   var loading = false;
@@ -25,9 +31,9 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body: Form(
-          key: _formKey,
-          child: Center(
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -114,6 +120,121 @@ class _RegisterPageState extends State<RegisterPage> {
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Re-enter Password',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _firstNameController,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'First Name',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _lastNameController,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Last Name',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _phoneController,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Phone Number',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _companyController,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Company',
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: TextFormField(
+                      controller: _positionController,
+                      validator: _requiredValidator,
+                      style: const TextStyle(color: Colors.black),
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Position',
                       ),
                     ),
                   ),
@@ -261,7 +382,14 @@ class _RegisterPageState extends State<RegisterPage> {
       // Get the user's unique ID
       var userID = _emailControllor.text.hashCode;
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userID");
-      await ref.set({'userType': _selectedUserType});
+      await ref.set({
+        'userType': _selectedUserType,
+        'first name': _firstNameController.text,
+        'last name': _lastNameController.text,
+        'phone': _phoneController.text,
+        'company': _companyController.text,
+        'position': _positionController.text,
+      });
       //show success message
       await showDialog(
           context: context,
