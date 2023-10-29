@@ -501,34 +501,45 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ]),
                               ),
-                              Column(
-                                children: [
-                                  LikeButton(
-                                    isLiked: likes.contains(currentEmail),
-                                    onTap: (isLiked) async {
-                                      setState(() {
-                                        if (isLiked) {
-                                          likes.remove(currentEmail);
-                                        } else {
-                                          likes.add(currentEmail);
-                                        }
-                                      });
-                                      await _updateLikesInDatabase(
-                                          _postList[index][5], likes);
-                                      return Future.value(!isLiked);
-                                    },
-                                    // likeCount: numLikes,
-                                    // countPostion: CountPostion.bottom,
-                                    likeBuilder: (isLiked) {
-                                      return Icon(
-                                        Icons.thumb_up_sharp,
-                                        color:
-                                            isLiked ? Colors.blue : Colors.grey,
-                                      );
-                                    },
-                                  ),
-                                  Text('Likes: ${likes.length}'),
-                                ],
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    LikeButton(
+                                      isLiked: likes.contains(currentEmail),
+                                      onTap: (isLiked) async {
+                                        setState(() {
+                                          if (isLiked) {
+                                            likes.remove(currentEmail);
+                                          } else {
+                                            likes.add(currentEmail);
+                                          }
+                                        });
+                                        await _updateLikesInDatabase(
+                                            _postList[index][5], likes);
+                                        return Future.value(!isLiked);
+                                      },
+                                      //likeCount: numLikes,
+                                      //countPostion: CountPostion.bottom,
+                                      likeBuilder: (isLiked) {
+                                        return Icon(
+                                          Icons.thumb_up_sharp,
+                                          color: isLiked
+                                              ? Colors.blue
+                                              : Colors.grey,
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    Icon(Icons.add_comment_sharp),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text('Likes: ${likes.length}'),
                               ),
                             ]));
                       },
