@@ -33,7 +33,6 @@ void _addNewMessageListener()
 void _addMessageListener(String user) {
   _messagesRef.child(user).onChildAdded.listen((event) {
     setState(() {
-      print("RECEIVING");
       String sender = event.snapshot.child("sender").value.toString();
       if(sender == _currentUser)
         return;
@@ -83,12 +82,9 @@ void _addMessageListener(String user) {
                   }
 
                   dynamic msgs = messages as Map;
-                  print(messages);
-                  print(msgs);
                   msgs.forEach((msgID, message)
                   {
                     dynamic msg = msgs[msgID] as Map;
-                    print(msg);
                     if(!msg["isSeen"])
                     {
                       for(User u in _users)
@@ -240,12 +236,10 @@ Widget _buildUserTile(User user) {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
-              if(_selectedUser != null)
-                print("${_selectedUser!} - $sender - $_currentUser");
+
 
               if(_selectedUser == null || (sender != _selectedUser!.ID && sender != _currentUser))
               {
-                print("Adding Unviewed");
 
                 for(User u in _users)
                 {
@@ -256,7 +250,6 @@ Widget _buildUserTile(User user) {
                 }
                 return;
               }
-              print("Adding ${_selectedUser}");
 
               String timestampString =
                   event.snapshot.child("timestamp").value.toString();
@@ -270,7 +263,6 @@ Widget _buildUserTile(User user) {
             });
           });
 
-          // Mark all messages as seen for the selected user
             DatabaseReference _messagesFromUser = _messagesRef.child(user.ID);
             _messagesRef.once().then((e) {
               setState(() {
@@ -286,7 +278,6 @@ Widget _buildUserTile(User user) {
                     dynamic msgs = messages as Map;
                     msgs.forEach((msgID, message)
                     {
-                      print("UPDATING ${_selectedUser!.ID}");
                       _messagesRef.child(id).child(msgID).child("isSeen").set(true);
                     });
                   });
