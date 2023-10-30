@@ -41,10 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _companyPositionController = TextEditingController();
   TextEditingController _countryAddressController = TextEditingController();
 
-  String kGoogleApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
-  String kGeocodeApiKey = "452514987019605450571x112215";
-  String kGeolocationApiKey = "8b106f81fa8d4bbf9e9dbc9e3a212320";
-  String kRadarApiKey = "prj_live_sk_6a3bac229896963af319b7a5fe8da818d3f88707";
+  String kRadarApiKey = "prj_live_sk_2fb53893e9f964d139db2df3f78ef8480ba5d424";
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
   bool _isLoading = false;
 
