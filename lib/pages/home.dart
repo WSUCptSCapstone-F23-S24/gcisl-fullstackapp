@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:html';
 import 'dart:async';
+import 'package:gcisl_app/pages/CommentsPage.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -29,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
   final List _postList = [];
+  final List _commentList = [];
   String? emailHash;
   String? username;
   String? currentEmail;
@@ -36,7 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showEmojiPicker = false;
   var downloadUrl = null;
   bool isLiked = false;
-  var numLikes;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -62,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String? timestamp = event.snapshot.child("timestamp").value.toString();
     String? image = event.snapshot.child("image").value.toString();
     String? email = event.snapshot.child("email").value.toString();
-    numLikes = 0;
     var likes = event.snapshot.child("likes").value;
+    var comments = event.snapshot.child("comments").value;
 
     if (userName == "null") {
       userName = "anonymous";
@@ -71,6 +72,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (likes == null) {
       likes = [];
+    }
+
+    if (comments == null) {
+      comments = <String, dynamic>{};
     }
 
     if (mounted) {
@@ -83,7 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
           email,
           uniquePostId,
           uniquePostImageId,
-          likes
+          likes,
+          comments,
         ]);
         _sortPostList();
       });
@@ -330,6 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'image': downloadUrl,
                       'email': currentEmail,
                       'likes': [],
+                      'comments': {},
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -384,7 +391,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemCount: min(_postList.length, _displayedPosts),
                       itemBuilder: (BuildContext context, int index) {
                         final likes = _postList[index][7] as List;
-
+                        final comments =
+                            _postList[index][8] as Map<String, dynamic>;
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -506,13 +514,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Row(
                                   children: [
                                     LikeButton(
-                                      isLiked: likes.contains(currentEmail),
+                                      isLiked: likes.contains(username),
                                       onTap: (isLiked) async {
                                         setState(() {
                                           if (isLiked) {
-                                            likes.remove(currentEmail);
+                                            likes.remove(username);
                                           } else {
-                                            likes.add(currentEmail);
+                                            likes.add(username);
                                           }
                                         });
                                         await _updateLikesInDatabase(
@@ -533,14 +541,42 @@ class _MyHomePageState extends State<MyHomePage> {
                                     SizedBox(
                                       width: 25,
                                     ),
-                                    Icon(Icons.add_comment_sharp),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CommentsPage(
+                                                      postId: _postList[index]
+                                                          [5],
+                                                      username: username,
+                                                      commentMap: comments,
+                                                    )));
+                                      },
+                                      child: Icon(
+                                        Icons.add_comment_sharp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text('Likes: ${likes.length}'),
-                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text('Likes: ${likes.length}'),
+                                  ),
+                                  SizedBox(
+                                    width: 25,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text('Comments: ${comments.length}'),
+                                  ),
+                                ],
+                              )
                             ]));
                       },
                     ),
