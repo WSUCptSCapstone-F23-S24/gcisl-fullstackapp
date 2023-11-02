@@ -24,7 +24,7 @@ class User {
   final String company;
   final String position;
   final String phone;
-  final bool isAdmin;
+  bool isAdmin;
 
   User({
     required this.name,
@@ -70,6 +70,7 @@ class _AdminPageState extends State<AdminPage> {
         usersData.forEach((key, value) {
           if(value['email'] == "admin@wsu.edu")
             return;
+          bool isAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
           var user = User(
             name: value['first name'],
             lastName: value['last name'],
@@ -81,7 +82,7 @@ class _AdminPageState extends State<AdminPage> {
             company: value['company'],
             position: value['position'],
             phone: value['phone'],
-            isAdmin: value['is admin'],
+            isAdmin: isAdmin,
           );
 
           setState(() {
@@ -92,19 +93,18 @@ class _AdminPageState extends State<AdminPage> {
     });
   }
 
-  bool isAdmin(User u)
-  {
-    return u.isAdmin != null && u.isAdmin;
-  }
 
-  void changeAdmin(User u, bool status)
+  void changeAdmin(User u)
   {
+    print("Changing ${u.email} admin's status to ${u.isAdmin}");
     DatabaseReference ref = FirebaseDatabase.instance.ref("users/${u.email.hashCode}");
-    ref.set({'isAdmin' : status});
+    ref.update({'isAdmin' : !u.isAdmin});
+    u.isAdmin = !u.isAdmin;
   }
 
 
   void deleteUser(User user) {
+    print("Delete User");
     setState(() {
       userList.remove(user);
     });
@@ -207,19 +207,19 @@ class _AdminPageState extends State<AdminPage> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            changeAdmin(userList[index], isAdmin(userList[index]));
+                            changeAdmin(userList[index]);
                           });
                         },
                         child: Text(
-                          isAdmin(userList[index]) ? "Revoke Admin" : "Set As Admin",
+                          userList[index].isAdmin ? "Revoke Admin" : "Set As Admin",
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          deleteUser(userList[index]);
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: Icon(Icons.delete),
+                      //   onPressed: () {
+                      //     deleteUser(userList[index]);
+                      //   },
+                      // ),
                     ],
                   ),
                   // Row(
