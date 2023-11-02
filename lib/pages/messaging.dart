@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:io';
 class ChatPage extends StatefulWidget {
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -19,6 +19,38 @@ class _ChatPageState extends State<ChatPage> {
   User? _selectedUser;
   String _currentUser = "";
 
+
+
+void _addNewMessageListener()
+{
+  _messagesRef.onChildAdded.listen((event) {
+    setState(() {
+      if(event.snapshot.key! != _currentUser)
+        _addMessageListener(event.snapshot.key!);
+    });
+  });
+}
+void _addMessageListener(String user) {
+  _messagesRef.child(user).onChildAdded.listen((event) {
+    setState(() {
+      String sender = event.snapshot.child("sender").value.toString();
+      if(sender == _currentUser)
+        return;
+      if (_selectedUser == null || sender != _selectedUser!.ID) {
+        for(User u in _users)
+        {
+          if(u.ID == sender)
+          {
+            u.hasUnreadMessages = true;
+          }
+        }
+      }
+    });
+  });
+}
+
+
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
 
     _messagesRef = database.ref().child("messages").child(_currentUser);
     _usersRef = database.ref().child("users");
+    
     _usersRef.onChildAdded.listen((event) {
       setState(() {
         String firstName = event.snapshot.child("first name").value.toString();
@@ -36,11 +69,60 @@ class _ChatPageState extends State<ChatPage> {
         String userRole = event.snapshot.child("userType").value.toString();
         String fullname = firstName + " " + lastName;
         String checkStringID = event.snapshot.key.toString();
-        //print("name: " + fullname + " ID: " + checkStringID);
-        _users.add(User(Name: fullname, ID: checkStringID, userType: userRole));
+        DatabaseReference _allUserMessages = _messagesRef.child(event.snapshot.child("email").value.hashCode.toString());
+        database.ref().child("messages").child(_currentUser).once().then((e) {
+              if(e.snapshot.value != null)
+              {
+                Map<dynamic, dynamic> values = e.snapshot.value as Map;
+                values.forEach((id,messages)
+                {
+                  if(id != checkStringID)
+                  {
+                    return;
+                  }
+
+                  dynamic msgs = messages as Map;
+                  msgs.forEach((msgID, message)
+                  {
+                    dynamic msg = msgs[msgID] as Map;
+                    if(!msg["isSeen"])
+                    {
+                      for(User u in _users)
+                      {
+                        if(u.ID == checkStringID)
+                        {
+                          if(!u.hasUnreadMessages)
+                          {
+                            setState(() {
+                              u.hasUnreadMessages = true;
+                            });
+                          }
+                        }
+                      }
+                    }
+                  });
+                });
+              }
+
+              
+          });
+
+          _users.add(User(Name: fullname, ID: checkStringID, userType: userRole, hasUnreadMessages : false));
+
+
       });
     });
+    _addNewMessageListener();
+    // for(User u in _users)
+    // {
+    //   if(u.ID == _currentUser)
+    //     continue;
+    //   _addMessageListener(u.ID);
+    // }
   }
+
+  
+
 
   void _sendMessage(String message) {
     final now = DateTime.now();
@@ -48,7 +130,8 @@ class _ChatPageState extends State<ChatPage> {
     _messagesRef.child(_selectedUser!.ID).push().set({
       "message": message,
       "sender": _currentUser,
-      "timestamp": formattedDate
+      "timestamp": formattedDate,
+      "isSeen" : true
     });
     _messagesRef.parent
         ?.child(_selectedUser!.ID)
@@ -57,10 +140,12 @@ class _ChatPageState extends State<ChatPage> {
         .set({
       "message": message,
       "sender": _currentUser,
-      "timestamp": formattedDate
+      "timestamp": formattedDate,
+      "isSeen" : false
     });
     setState(() {
-      //_messages.add(message);
+      // _messages.add(Message(
+      //             message: message, sender: _currentUser, timestamp: now.millisecondsSinceEpoch, isSeen: true));
     });
     _textController.clear();
   }
@@ -128,9 +213,19 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildUserTile(User user) {
+Widget _buildUserTile(User user) {
     return ListTile(
-      title: Text(user.Name),
+      title: Row(
+        children: [
+          Text(user.Name),
+          if (user.hasUnreadMessages)
+            Icon(
+              Icons.brightness_1,
+              color: Colors.red,
+              size: 10.0,
+            ),
+        ],
+      ),
       subtitle: Text(user.userType),
       tileColor: Colors.white,
       onTap: () {
@@ -141,15 +236,57 @@ class _ChatPageState extends State<ChatPage> {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
+
+
+              if(_selectedUser == null || (sender != _selectedUser!.ID && sender != _currentUser))
+              {
+
+                for(User u in _users)
+                {
+                  if(u.ID == sender)
+                  {
+                    u.hasUnreadMessages = true;
+                  }
+                }
+                return;
+              }
+
               String timestampString =
                   event.snapshot.child("timestamp").value.toString();
+              bool isSeen = event.snapshot.child("isSeen").value as bool;
               DateTime timestamp = DateTime.parse(timestampString);
               int timestampInt = timestamp.millisecondsSinceEpoch;
-              _messages.add(new Message(
-                  message: message, sender: sender, timestamp: timestampInt));
+              
+              _messages.add(Message(
+                  message: message, sender: sender, timestamp: timestampInt, isSeen: isSeen));
               print(message);
             });
           });
+
+            DatabaseReference _messagesFromUser = _messagesRef.child(user.ID);
+            _messagesRef.once().then((e) {
+              setState(() {
+                if(e.snapshot.value != null)
+                {
+                  Map<dynamic, dynamic> values = e.snapshot.value as Map;
+                  values.forEach((id,messages)
+                  {
+                    if(id != user.ID)
+                    {
+                      return;
+                    }
+                    dynamic msgs = messages as Map;
+                    msgs.forEach((msgID, message)
+                    {
+                      _messagesRef.child(id).child(msgID).child("isSeen").set(true);
+                    });
+                  });
+                }
+              });
+
+              
+          });
+            user.hasUnreadMessages = false;
         });
         Navigator.pop(context);
       },
@@ -177,6 +314,8 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -249,15 +388,22 @@ class Message {
   final String message;
   final String sender;
   final int timestamp;
+  final bool isSeen;
 
   Message(
-      {required this.message, required this.sender, required this.timestamp});
+      {required this.message, required this.sender, required this.timestamp, required this.isSeen});
 }
 
 class User {
   final String Name;
   final String ID;
   final String userType;
+  bool hasUnreadMessages;
 
-  User({required this.Name, required this.ID, required this.userType});
+  User({
+    required this.Name,
+    required this.ID,
+    required this.userType,
+    this.hasUnreadMessages = false, // Initialize to false
+  });
 }
