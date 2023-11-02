@@ -595,6 +595,8 @@ class _RegisterPageState extends State<RegisterPage> {
       // Get the user's unique ID
       var userID = _emailControllor.text.hashCode;
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userID");
+      bool isAdmin = _emailControllor.text == "admin@wsu.edu" ? true : false;
+
       await ref.set({
         'first name': _firstNameController.text,
         'last name': _lastNameController.text,
@@ -611,6 +613,7 @@ class _RegisterPageState extends State<RegisterPage> {
         "experience": "1",
         "date added": ServerValue.timestamp,
         'userType': _selectedUserType,
+        'isAdmin': isAdmin,
       });
       //show success message
       await showDialog(
