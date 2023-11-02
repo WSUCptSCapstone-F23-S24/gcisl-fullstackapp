@@ -16,9 +16,11 @@ class CommentsPage extends StatefulWidget {
 
 class _CommentsPageState extends State<CommentsPage> {
   final TextEditingController _commentController = TextEditingController();
+  final TextEditingController _replyController = TextEditingController();
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
   List<Comment> _comments = [];
+  List<Reply> _replies = [];
 
   @override
   void initState() {
@@ -42,13 +44,48 @@ class _CommentsPageState extends State<CommentsPage> {
         DateTime timestamp = DateTime.parse(timeStampString);
         final formattedTimeStamp =
             DateFormat('MM/dd/yyyy hh:mm a').format(timestamp);
+
+        // Now Get the Replies
+        List<Reply> loadReply = _loadReplies(commentID);
         _comments.add(Comment(
             commentID: commentID,
             commentText: text,
             commentedBy: sender,
-            commentTime: formattedTimeStamp));
+            commentTime: formattedTimeStamp,
+            replies: loadReply));
       });
     });
+  }
+
+  List<Reply> _loadReplies(String commentID) {
+    List<Reply> replies = [];
+    final DatabaseReference _replyRef = _database
+        .child(widget.postId)
+        .child('comments')
+        .child(commentID)
+        .child('replies');
+    _replyRef.onChildAdded.listen((event) {
+      setState(() {
+        String replyID = event.snapshot.key.toString();
+        String text = event.snapshot.child('text').value.toString();
+        String sender = event.snapshot.child('sender').value.toString();
+        String timeStampString =
+            event.snapshot.child('timestamp').value.toString();
+        DateTime timestamp = DateTime.parse(timeStampString);
+        final formattedTimeStamp =
+            DateFormat('MM/dd/yyyy hh:mm a').format(timestamp);
+
+        // Now Get the Replies
+
+        replies.add(Reply(
+          replyID: replyID,
+          replyText: text,
+          repliedBy: sender,
+          replyTime: formattedTimeStamp,
+        ));
+      });
+    });
+    return replies;
   }
 
   // Function that handles sending the meta data of a new comment on a post to the database
@@ -64,6 +101,7 @@ class _CommentsPageState extends State<CommentsPage> {
       'text': text,
       'sender': widget.username.toString(),
       'timestamp': timestamp,
+      'replies': [],
     });
 
     // setState(() {
@@ -75,6 +113,49 @@ class _CommentsPageState extends State<CommentsPage> {
     // });
     // Clear the comment input field
     _commentController.clear();
+  }
+
+  void _sendReply(String text, String commentID) {
+    final DatabaseReference _replyRef = _database
+        .child(widget.postId)
+        .child('comments')
+        .child(commentID)
+        .child('replies');
+    final timestamp = DateTime.now().toString();
+    String replyID = _replyRef.push().key.toString();
+    _replyRef.child(replyID).set({
+      'text': text,
+      'sender': widget.username.toString(),
+      'timestamp': timestamp,
+    });
+  }
+
+  void _openDialog(String commentID) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('My Reply'),
+          content: TextField(
+            controller: _replyController,
+            decoration: InputDecoration(
+              hintText: 'Write a reply...',
+            ),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () {
+                // Send the reply in the textfield inside of the dialog box to the database to be stored.
+                _sendReply(_replyController.text, commentID);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    _replyController.clear();
   }
 
   @override
@@ -104,11 +185,19 @@ class _CommentsPageState extends State<CommentsPage> {
                     ": " +
                     _comments[index].commentText);
                 final comment = _comments[index];
+                int commentIndex = index;
                 if (comment != null) {
                   return Card(
-                    elevation: 2, // Add elevation for a box-like appearance
+                    elevation: 4, // Add elevation for a box-like appearance
                     margin: EdgeInsets.all(
-                        8), // Add margin for spacing between cards
+                        16), // Add margin for spacing between cards
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 2,
+                        color: Colors.grey,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -138,11 +227,73 @@ class _CommentsPageState extends State<CommentsPage> {
                             Expanded(
                               child: TextButton(
                                 onPressed: () {
-                                  // Handle reply action here
-                                  // You can open a new page or a dialog for replying to the comment
-                                  // You can use Navigator to navigate to the reply page/dialog
+                                  // When reply button is pressed it pops up a dialog box for the user to write a comment.
+                                  _openDialog(_comments[index].commentID);
                                 },
                                 child: Text('Reply'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 2,
+                          color: Colors.black,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.all(16),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount:
+                                    _comments[commentIndex].replies.length,
+                                itemBuilder: ((context, index) {
+                                  final reply =
+                                      _comments[commentIndex].replies[index];
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 8),
+                                    child: Card(
+                                      elevation: 2,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                          width: 2,
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  reply.repliedBy,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  reply.replyTime.toString() ??
+                                                      '',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                Text(reply.replyText ?? ''),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                           ],
@@ -196,11 +347,27 @@ class Comment {
   final String commentText;
   final String commentedBy;
   final String commentTime;
+  final List<Reply> replies;
 
   Comment({
     required this.commentID,
     required this.commentText,
     required this.commentedBy,
     required this.commentTime,
+    required this.replies,
+  });
+}
+
+class Reply {
+  final String replyID;
+  final String replyText;
+  final String repliedBy;
+  final String replyTime;
+
+  Reply({
+    required this.replyID,
+    required this.replyText,
+    required this.repliedBy,
+    required this.replyTime,
   });
 }

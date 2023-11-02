@@ -30,7 +30,6 @@ class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
   final List _postList = [];
-  final List _commentList = [];
   String? emailHash;
   String? username;
   String? currentEmail;
