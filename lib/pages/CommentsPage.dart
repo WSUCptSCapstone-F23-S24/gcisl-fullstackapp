@@ -66,12 +66,6 @@ class _CommentsPageState extends State<CommentsPage> {
       'timestamp': timestamp,
     });
 
-    widget.commentMap[commentID] = {
-      'text': text,
-      'sender': widget.username.toString(),
-      'timestamp': timestamp,
-    };
-
     // setState(() {
     //   _comments.add(Comment(
     //       commentID: '',
@@ -111,23 +105,48 @@ class _CommentsPageState extends State<CommentsPage> {
                     _comments[index].commentText);
                 final comment = _comments[index];
                 if (comment != null) {
-                  return ListTile(
-                    title: Column(
+                  return Card(
+                    elevation: 2, // Add elevation for a box-like appearance
+                    margin: EdgeInsets.all(
+                        8), // Add margin for spacing between cards
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          comment.commentedBy,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                comment.commentedBy,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                comment.commentTime.toString() ?? '',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Text(comment.commentText ?? ''),
+                            ],
                           ),
                         ),
-                        Text(
-                          comment.commentTime.toString() ?? '',
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  // Handle reply action here
+                                  // You can open a new page or a dialog for replying to the comment
+                                  // You can use Navigator to navigate to the reply page/dialog
+                                },
+                                child: Text('Reply'),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(comment.commentText ?? ''),
                       ],
                     ),
                   );
