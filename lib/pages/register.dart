@@ -262,6 +262,25 @@ class _RegisterPageState extends State<RegisterPage> {
       var userID = _emailControllor.text.hashCode;
       DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userID");
       await ref.set({'userType': _selectedUserType});
+      bool isAdmin = _emailControllor.text == "admin@wsu.edu" ? true : false;
+      await ref.set({
+        'first name': _firstNameController.text,
+        'last name': _lastNameController.text,
+        "email": _emailControllor.text,
+        'phone': _phoneController.text,
+        'company': _companyController.text,
+        "city address": cityValue,
+        "state address": stateValue,
+        "country address": countryValue,
+        "zip address": _zipcodeController.text,
+        "lat": lat,
+        "long": long,
+        'position': _positionController.text,
+        "experience": "1",
+        "date added": ServerValue.timestamp,
+        'userType': _selectedUserType,
+        'isAdmin': isAdmin,
+      });
       //show success message
       await showDialog(
           context: context,

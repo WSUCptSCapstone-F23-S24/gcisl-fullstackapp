@@ -24,6 +24,7 @@ class User {
   final String company;
   final String position;
   final String phone;
+  final bool isAdmin;
 
   User({
     required this.name,
@@ -36,6 +37,7 @@ class User {
     required this.company,
     required this.position,
     required this.phone,
+    required this.isAdmin,
   });
 }
 
@@ -66,6 +68,8 @@ class _AdminPageState extends State<AdminPage> {
 
       if (usersData != null) {
         usersData.forEach((key, value) {
+          if(value['email'] == "admin@wsu.edu")
+            return;
           var user = User(
             name: value['first name'],
             lastName: value['last name'],
@@ -77,6 +81,7 @@ class _AdminPageState extends State<AdminPage> {
             company: value['company'],
             position: value['position'],
             phone: value['phone'],
+            isAdmin: value['is admin'],
           );
 
           setState(() {
@@ -86,6 +91,18 @@ class _AdminPageState extends State<AdminPage> {
       }
     });
   }
+
+  bool isAdmin(User u)
+  {
+    return u.isAdmin != null && u.isAdmin;
+  }
+
+  void changeAdmin(User u, bool status)
+  {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("users/${u.email.hashCode}");
+    ref.set({'isAdmin' : status});
+  }
+
 
   void deleteUser(User user) {
     setState(() {
@@ -117,7 +134,7 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('User List'),
@@ -183,6 +200,27 @@ class _AdminPageState extends State<AdminPage> {
                   Text(
                     'Position: ${userList[index].position}',
                     style: TextStyle(fontSize: 16),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            changeAdmin(userList[index], isAdmin(userList[index]));
+                          });
+                        },
+                        child: Text(
+                          isAdmin(userList[index]) ? "Revoke Admin" : "Set As Admin",
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          deleteUser(userList[index]);
+                        },
+                      ),
+                    ],
                   ),
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.end,
