@@ -3,11 +3,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/main.dart';
+import 'package:gcisl_app/pages/resetpasswd.dart';
+import 'package:gcisl_app/pages/signout.dart';
+
 import 'package:gcisl_app/palette.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showRegisterpage;
-  const SignInPage({Key? key, required this.showRegisterpage})
+  final VoidCallback showForgotPassword;
+  const SignInPage({Key? key, required this.showRegisterpage, required this.showForgotPassword})
       : super(key: key);
 
   @override
@@ -17,6 +21,8 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _emailControllor = TextEditingController();
   final _passwordControllor = TextEditingController();
+
+
 
   _login() async {
     try {
@@ -170,7 +176,17 @@ class _SignInPageState extends State<SignInPage> {
                               color: Colors.blue, fontWeight: FontWeight.bold),
                         ))
                   ],
-                )
+                ),
+                TextButton(
+                  onPressed: widget.showForgotPassword, 
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
