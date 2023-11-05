@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:html';
 import 'dart:async';
+import 'package:gcisl_app/pages/CommentsPage.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'image.dart';
+import 'package:like_button/like_button.dart';
 
 import '../palette.dart';
 
@@ -21,7 +23,8 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-  enum PostSortOption { newest, oldest, alphabetical }
+
+enum PostSortOption { newest, oldest, alphabetical }
 
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
@@ -34,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
   var downloadUrl = null;
+  bool isLiked = false;
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -72,46 +76,68 @@ class _MyHomePageState extends State<MyHomePage> {
     String? timestamp = event.snapshot.child("timestamp").value.toString();
     String? image = event.snapshot.child("image").value.toString();
     String? email = event.snapshot.child("email").value.toString();
+    var likes = event.snapshot.child("likes").value;
+    var comments = event.snapshot.child("comments").value;
+
     if (userName == "null") {
       userName = "anonymous";
     }
+
+    if (likes == null) {
+      likes = [];
+    }
+
+    if (comments == null) {
+      comments = <String, dynamic>{};
+    }
+
     if (mounted) {
       setState(() {
-        _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
+        _postList.insert(0, [
+          newPost,
+          userName,
+          timestamp,
+          image,
+          email,
+          uniquePostId,
+          uniquePostImageId,
+          likes,
+          comments,
+        ]);
         _sortPostList();
       });
     }
   }
 
-  void _sortPostList()
-  {
+  void _sortPostList() {
     print("sorting\n");
-      switch (_selectedSortOption) {
-        case PostSortOption.newest:
-          _postList.sort((a, b) => b[2].compareTo(a[2])); 
-          break;
-        case PostSortOption.oldest:
-          _postList.sort((a, b) => a[2].compareTo(b[2])); 
-          break;
-        case PostSortOption.alphabetical:
-          _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String)); 
-          break;
+    switch (_selectedSortOption) {
+      case PostSortOption.newest:
+        _postList.sort((a, b) => b[2].compareTo(a[2]));
+        break;
+      case PostSortOption.oldest:
+        _postList.sort((a, b) => a[2].compareTo(b[2]));
+        break;
+      case PostSortOption.alphabetical:
+        _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
+        break;
     }
-    setState(() {}); 
+    setState(() {});
   }
 
-  void deletePost(int postIndex, String postID,String maybeURL)
-  {
+  void deletePost(int postIndex, String postID, String maybeURL) {
     DatabaseReference postRef = _database.child(postID);
     print(maybeURL);
-    if(maybeURL != "null")
-    {
+    if (maybeURL != "null") {
       print("Removing image");
       int lastIndex = maybeURL.lastIndexOf('/');
       int questionMarkIndex = maybeURL.indexOf('?', lastIndex);
 
-      String imageId = maybeURL.substring(lastIndex + 1, questionMarkIndex).replaceAll("%2F", "/");
-      Reference storageReference = FirebaseStorage.instance.ref().child(imageId);
+      String imageId = maybeURL
+          .substring(lastIndex + 1, questionMarkIndex)
+          .replaceAll("%2F", "/");
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child(imageId);
       try {
         storageReference.delete();
         print('File deleted successfully');
@@ -194,6 +220,11 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
     return completer.future;
+  }
+
+  Future<void> _updateLikesInDatabase(String postID, List likes) async {
+    final postRef = _database.child(postID);
+    await postRef.child('likes').set(likes);
   }
 
   @override
@@ -316,7 +347,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       'user_name': username,
                       'timestamp': timestamp,
                       'image': downloadUrl,
-                      'email' : currentEmail
+                      'email': currentEmail,
+                      'likes': [],
+                      'comments': {},
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -336,29 +369,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               DropdownButton<PostSortOption>(
-                    value: _selectedSortOption,
-                    onChanged: (newSortOption) {
-                      setState(() {
-                        _selectedSortOption = newSortOption;
-                        // Sort the post list based on the selected option
-                        _sortPostList();
-                      });
-                    },
-                    items: [
-                      DropdownMenuItem(
-                        value: PostSortOption.newest,
-                        child: Text('Most Recent'),
-                      ),
-                      DropdownMenuItem(
-                        value: PostSortOption.oldest,
-                        child: Text('Oldest'),
-                      ),
-                      DropdownMenuItem(
-                        value: PostSortOption.alphabetical,
-                        child: Text('Alphabetical (A-Z)'),
-                      ),
-                    ],
+                value: _selectedSortOption,
+                onChanged: (newSortOption) {
+                  setState(() {
+                    _selectedSortOption = newSortOption;
+                    // Sort the post list based on the selected option
+                    _sortPostList();
+                  });
+                },
+                items: [
+                  DropdownMenuItem(
+                    value: PostSortOption.newest,
+                    child: Text('Most Recent'),
                   ),
+                  DropdownMenuItem(
+                    value: PostSortOption.oldest,
+                    child: Text('Oldest'),
+                  ),
+                  DropdownMenuItem(
+                    value: PostSortOption.alphabetical,
+                    child: Text('Alphabetical (A-Z)'),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
                 Column(children: [
@@ -370,6 +403,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: min(_postList.length, _displayedPosts),
                       itemBuilder: (BuildContext context, int index) {
+                        final likes = _postList[index][7] as List;
+                        final comments =
+                            _postList[index][8] as Map<String, dynamic>;
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -390,28 +426,34 @@ class _MyHomePageState extends State<MyHomePage> {
                                       fontSize: 16,
                                     ),
                                   ),
+
                                   if (_postList[index][4] == currentEmail || isAdmin)
+
                                     Container(
-                                      width:75,
-                                      height:15,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          deletePost(index,_postList[index][5],_postList[index][3]);
-                                          setState(() {});
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12.0), 
+                                        width: 75,
+                                        height: 15,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            deletePost(
+                                                index,
+                                                _postList[index][5],
+                                                _postList[index][3]);
+                                            setState(() {});
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 3),
+                                            primary: Colors.red,
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), 
-                                          primary: Colors.red, 
-                                        ),
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(fontSize: 9), 
-                                        ),
-                                      )
-                                    ),
+                                          child: Text(
+                                            'Delete',
+                                            style: TextStyle(fontSize: 9),
+                                          ),
+                                        )),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -479,13 +521,79 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                     ),
                                   ),
-                                  
                                 ]),
                               ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    LikeButton(
+                                      isLiked: likes.contains(username),
+                                      onTap: (isLiked) async {
+                                        setState(() {
+                                          if (isLiked) {
+                                            likes.remove(username);
+                                          } else {
+                                            likes.add(username);
+                                          }
+                                        });
+                                        await _updateLikesInDatabase(
+                                            _postList[index][5], likes);
+                                        return Future.value(!isLiked);
+                                      },
+                                      //likeCount: numLikes,
+                                      //countPostion: CountPostion.bottom,
+                                      likeBuilder: (isLiked) {
+                                        return Icon(
+                                          Icons.thumb_up_sharp,
+                                          color: isLiked
+                                              ? Colors.blue
+                                              : Colors.grey,
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CommentsPage(
+                                                      postId: _postList[index]
+                                                          [5],
+                                                      username: username,
+                                                      commentMap: comments,
+                                                    )));
+                                      },
+                                      child: Icon(
+                                        Icons.add_comment_sharp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text('Likes: ${likes.length}'),
+                                  ),
+                                  SizedBox(
+                                    width: 25,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text('Comments: ${comments.length}'),
+                                  ),
+                                ],
+                              )
                             ]));
                       },
                     ),
-                    
                   ),
                   if (_postList.length > _displayedPosts)
                     SizedBox(
