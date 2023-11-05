@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/auth/auth_page.dart';
 import 'package:gcisl_app/pages/signin.dart';
+import 'package:gcisl_app/pages/resetpasswd.dart';
 import 'package:gcisl_app/pages/register.dart';
 import 'package:gcisl_app/pages/public_profile.dart';
 

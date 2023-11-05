@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? emailHash;
   String? username;
   String? currentEmail;
+  bool isAdmin = false;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
   var downloadUrl = null;
@@ -52,6 +53,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     currentEmail = FirebaseAuth.instance.currentUser?.email;
     _database.onChildAdded.listen(_onNewPostAdded);
+     FirebaseDatabase.instance.reference().child('users').once().then((DatabaseEvent event) {
+      DataSnapshot snapshot = event.snapshot;
+      Map<dynamic, dynamic>? usersData = snapshot.value as Map<dynamic, dynamic>?;
+      if (usersData != null) {
+        usersData.forEach((key, value) {
+          if(value['email'] != currentEmail)
+            return;
+          bool tempisAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
+          isAdmin = tempisAdmin;
+        });
+      }
+    });
+    
   }
 
   void _onNewPostAdded(DatabaseEvent event) {
@@ -412,8 +426,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       fontSize: 16,
                                     ),
                                   ),
-                                  if (_postList[index][4] == currentEmail ||
-                                      currentEmail == "admin@wsu.edu")
+
+                                  if (_postList[index][4] == currentEmail || isAdmin)
+
                                     Container(
                                         width: 75,
                                         height: 15,
