@@ -382,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString()))
+                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
                                       );
                                       //ProfilePage1(_postList[index][4].hashCode.toString());
                                     }

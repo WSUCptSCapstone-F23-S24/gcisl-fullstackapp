@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
     Text("dummy"),
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     ProfilePage(),
-    ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString()),
+    ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
     ChatPage(),
     AnalyticsPage(),
     if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
-          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString()),
+          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
-          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString()),
+          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
           ChatPage(),
           AnalyticsPage(),
           if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")

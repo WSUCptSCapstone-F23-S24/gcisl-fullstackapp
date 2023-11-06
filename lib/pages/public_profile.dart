@@ -23,7 +23,8 @@ import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {
   String? emailHashString = "";
-  ProfilePage1(this.emailHashString);
+  bool isOtherPage = true;
+  ProfilePage1(this.emailHashString, bool isOtherPage);
   @override
   _ProfilePage1State createState() => _ProfilePage1State();
 }
@@ -105,23 +106,24 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 16.0),
-                      FloatingActionButton.extended(
-                        onPressed: () {},
-                        heroTag: 'message',
-                        elevation: 0,
-                        backgroundColor: Colors.red,
-                        label: const Text("Message"),
-                        icon: const Icon(Icons.message_rounded),
-                      ),
-                    ],
-                  ),
+                  if(widget.isOtherPage)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 16.0),
+                        FloatingActionButton.extended(
+                          onPressed: () {},
+                          heroTag: 'message',
+                          elevation: 0,
+                          backgroundColor: Colors.red,
+                          label: const Text("Message"),
+                          icon: const Icon(Icons.message_rounded),
+                        ),
+                      ],
+                    ),
                   const SizedBox(height: 16),
                   _ProfileInfoRow(_companyPositionController, _companyController, _countryAddressController, _phoneController),
-                  PostPortion()
+                  PostPortion(widget.emailHashString!)
                 ],
               ),
             ),
@@ -211,65 +213,10 @@ class ProfileInfoItem {
   const ProfileInfoItem(this.title, this.value);
 }
 
-class _TopPortion extends StatelessWidget {
-  const _TopPortion({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 50),
-          decoration: const BoxDecoration(
-              color: Palette.ktoCrimson,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50),
-              )),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            width: 150,
-            height: 150,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                            'https://www.booksie.com/files/profiles/22/mr-anonymous_230x230.png')),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    child: Container(
-                      margin: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(
-                          color: Colors.green, shape: BoxShape.circle),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
-    );
-  }
-}
-
 class PostPortion extends StatefulWidget {
   @override
+  final String emailHashcode;
+  const PostPortion(this.emailHashcode);
   State<PostPortion> createState() => _PostPortionState();
 }
   enum PostSortOption { newest, oldest, alphabetical }
@@ -342,7 +289,7 @@ class _PostPortionState extends State<PostPortion> {
     if (userName == "null") {
       userName = "anonymous";
     }
-    if (mounted && email == currentEmail) {
+    if (mounted && email.hashCode.toString() == widget.emailHashcode) {
       setState(() {
         _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
         _sortPostList();
@@ -416,7 +363,7 @@ class _PostPortionState extends State<PostPortion> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString()))
+                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
                                       );
                                       //ProfilePage1(_postList[index][4].hashCode.toString());
                                     }
