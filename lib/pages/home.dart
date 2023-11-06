@@ -13,6 +13,8 @@ import 'package:intl/intl.dart';
 import 'image.dart';
 import 'package:like_button/like_button.dart';
 
+import 'public_profile.dart';
+
 import '../palette.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -417,14 +419,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  SelectableText(
-                                    _postList[index][1] ?? "anonymous",
-                                    style: const TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Palette.ktoCrimson,
-                                      fontWeight: FontWeight.w600,
+                                  TextButton(
+                                    child: Text(
+                                      _postList[index][1] ?? "anonymous",
+                                      style: const TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color: Palette.ktoCrimson,
+                                        fontWeight: FontWeight.w600,
                                       fontSize: 16,
+                                      ),
                                     ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
+                                      );
+                                      //ProfilePage1(_postList[index][4].hashCode.toString());
+                                    }
                                   ),
 
                                   if (_postList[index][4] == currentEmail || isAdmin)
