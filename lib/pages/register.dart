@@ -8,6 +8,7 @@ import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'geolocation_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showSignInPage;
@@ -31,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _zipcodeController = TextEditingController();
   final _countryAddressController = TextEditingController();
 
-  String kRadarApiKey = "prj_live_sk_2fb53893e9f964d139db2df3f78ef8480ba5d424";
+
 
   String? countryValue;
   String? stateValue;
@@ -42,36 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   var loading = false;
 
-  Future<Coordinates> queryGeoLocation(
-      String? country, String? city, String? state, String? zipCode) async {
-    final apiUrl = Uri.parse('https://api.radar.io/v1/search/autocomplete');
-
-    String csvParameters = '$country,$city,$state';
-
-    if (zipCode != null) {
-      csvParameters += ',$zipCode';
-    }
-
-    final url = Uri.parse('$apiUrl?query=$csvParameters');
-
-    final response =
-        await http.get(url, headers: {'Authorization': '$kRadarApiKey'});
-
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      final latitude = responseData["addresses"][0]['latitude'];
-      final longitude = responseData["addresses"][0]['longitude'];
-
-      final coordinates = Coordinates(
-        latitude: latitude,
-        longitude: longitude,
-      );
-      return coordinates;
-    } else {
-      throw Exception(
-          'Error: ${response.statusCode}, Response: ${response.body}');
-    }
-  }
 
   //get lat long to save data to backend
   getLatLong(context) async {
@@ -81,15 +52,12 @@ class _RegisterPageState extends State<RegisterPage> {
     String addy = "";
 
     try {
-      Coordinates coordinates;
 
-      coordinates =
-          await queryGeoLocation(countryValue, cityValue, stateValue, zipValue);
+      Map<String, double> coordinates = await GeoLocationService.queryGeoLocation(
+          countryValue, cityValue, stateValue, zipValue);
 
-      //List<Location> locations = await locationFromAddress(addy);
-      //Location local = locations[0];
-      lat = coordinates.latitude;
-      long = coordinates.longitude;
+      lat = coordinates['latitude'];
+      long = coordinates['longitude'];
       //print("Latitude: ${lat}");
       //print("Longitude: ${long}");
 
