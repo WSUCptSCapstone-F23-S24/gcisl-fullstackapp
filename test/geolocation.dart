@@ -9,11 +9,11 @@ void main() {
       String state = 'NY';
       String zipCode = '10001';
 
-      Coordinates result = await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
+      Map<String, double> result = await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
 
-      // Assuming your API always returns valid coordinates for the given address
-      expect(result.latitude, isNotNull);
-      expect(result.longitude, isNotNull);
+      expect(result["latitude"], isNotNull);
+      expect(result["latitude"], isNotNull);
+      expect(result["longitude"], isNotNull);
     });
 
     test('should throw an exception for invalid address parameters', () async {
@@ -22,12 +22,12 @@ void main() {
       String state = 'Nonexistent State';
       String zipCode = 'Nonexistent Zip Code';
 
-      // Assuming your API always returns an exception for invalid addresses
+      
       expect(() async {
         await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
       }, throwsA(TypeMatcher<Exception>()));
     });
 
-    // Add more test cases as needed
+    
   });
 }
