@@ -303,11 +303,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       Positioned.fill(
-                        left: 845,
+                        left: 800,
                         top: 65,
-                        child: Column(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.photo_library,
+                                color: Palette.ktoCrimson,
+                              ),
+                              onPressed: _pickImage,
+                              splashRadius: 20,
+                            ),
+                            const SizedBox(width: 10),
                             IconButton(
                               icon: const Icon(
                                 Icons.emoji_emotions,
@@ -325,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 10),
               downloadUrl == null
-                  ? const Text('No image selected.')
+                  ? const Text('')
                   : SizedBox(
                       height: 300,
                       child: Image.network(
@@ -334,11 +343,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
               const SizedBox(height: 6),
-              FloatingActionButton(
-                onPressed: () => _pickImage(),
-                tooltip: 'Pick from gallery',
-                child: const Icon(Icons.photo_library),
-              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
