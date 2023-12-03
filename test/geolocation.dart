@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:gcisl_app/pages/geolocation_service.dart';
+import 'package:gcisl_app/helper_functions/geolocation_service.dart';
 
 void main() {
   group('queryGeoLocation', () {
@@ -11,23 +11,23 @@ void main() {
 
       Map<String, double> result = await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
 
-      expect(result["latitude"], isNotNull);
-      expect(result["latitude"], isNotNull);
-      expect(result["longitude"], isNotNull);
+      expect(result["latitude"], 42.879179);
+      expect(result["longitude"], -75.246253);
+      print("${result["longitude"]}  ${result["latitude"]}");
     });
 
-    test('should throw an exception for invalid address parameters', () async {
-      String country = 'Nonexistent Country';
-      String city = 'Nonexistent City';
-      String state = 'Nonexistent State';
-      String zipCode = 'Nonexistent Zip Code';
+    test('should return coordinates for a valid address in a different country', () async {
+    String country = 'Canada';
+    String city = 'Toronto';
+    String state = 'ON';
+    String zipCode = 'M5V 2L7';
 
-      
-      expect(() async {
-        await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
-      }, throwsA(TypeMatcher<Exception>()));
-    });
+    Map<String, double> result = await GeoLocationService.queryGeoLocation(country, city, state, zipCode);
 
+    expect(result["latitude"], 38.511316);
+    expect(result["longitude"], -122.460908);
+    print("${result["longitude"]}  ${result["latitude"]}");
+  });
     
   });
 }

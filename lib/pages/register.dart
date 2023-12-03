@@ -8,7 +8,7 @@ import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'geolocation_service.dart';
+import '../helper_functions/geolocation_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showSignInPage;
