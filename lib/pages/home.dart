@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'image.dart';
 import 'package:like_button/like_button.dart';
-
+// import '../helper_functions/post_sorting.dart';
 import 'public_profile.dart';
 
 import '../palette.dart';
@@ -26,7 +26,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-enum PostSortOption { newest, oldest, alphabetical, likes }
+
 
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
@@ -106,29 +106,30 @@ class _MyHomePageState extends State<MyHomePage> {
           likes,
           comments,
         ]);
-        _sortPostList();
+        _localPostListSort();
       });
     }
   }
 
-  void _sortPostList() {
-    print("sorting\n");
-    switch (_selectedSortOption) {
-      case PostSortOption.newest:
-        _postList.sort((a, b) => b[2].compareTo(a[2]));
-        break;
-      case PostSortOption.oldest:
-        _postList.sort((a, b) => a[2].compareTo(b[2]));
-        break;
-      case PostSortOption.alphabetical:
-        _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
-        break;
-      case PostSortOption.likes:
-        _postList.sort((a, b) => (-1 * a[7].length).compareTo(-1 * b[7].length));
-        break;
-    }
+  void _localPostListSort()
+  {
+    PostSorting.sortPostList(_postList, _selectedSortOption);
     setState(() {});
   }
+  // void _sortPostList() {
+  //   switch (_selectedSortOption) {
+  //     case PostSortOption.newest:
+  //       _postList.sort((a, b) => b[2].compareTo(a[2]));
+  //       break;
+  //     case PostSortOption.oldest:
+  //       _postList.sort((a, b) => a[2].compareTo(b[2]));
+  //       break;
+  //     case PostSortOption.alphabetical:
+  //       _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
+  //       break;
+  //   }
+  //   setState(() {});
+  // }
 
   void deletePost(int postIndex, String postID, String maybeURL) {
     DatabaseReference postRef = _database.child(postID);
@@ -382,7 +383,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _selectedSortOption = newSortOption;
                     // Sort the post list based on the selected option
-                    _sortPostList();
+                    _localPostListSort();
                   });
                 },
                 items: [
