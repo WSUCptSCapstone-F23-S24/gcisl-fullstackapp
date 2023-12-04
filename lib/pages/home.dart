@@ -27,6 +27,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 
+
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
@@ -255,7 +256,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Image.asset(
                 'assets/GCISL_logo.png',
                 height: 50,
-                color: Palette.ktoCrimson,
               ),
             ),
           ],
@@ -312,11 +312,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       Positioned.fill(
-                        left: 845,
+                        left: 800,
                         top: 65,
-                        child: Column(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.photo_library,
+                                color: Palette.ktoCrimson,
+                              ),
+                              onPressed: _pickImage,
+                              splashRadius: 20,
+                            ),
+                            const SizedBox(width: 10),
                             IconButton(
                               icon: const Icon(
                                 Icons.emoji_emotions,
@@ -334,7 +343,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 10),
               downloadUrl == null
-                  ? const Text('No image selected.')
+                  ? const Text('')
                   : SizedBox(
                       height: 300,
                       child: Image.network(
@@ -343,11 +352,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
               const SizedBox(height: 6),
-              FloatingActionButton(
-                onPressed: () => _pickImage(),
-                tooltip: 'Pick from gallery',
-                child: const Icon(Icons.photo_library),
-              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -494,33 +498,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       
                                     ]
                                   ),
-                                  if (_postList[index][4] == currentEmail || isAdmin)
-
-                                    Container(
-                                        width: 75,
-                                        height: 15,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            deletePost(
-                                                index,
-                                                _postList[index][5],
-                                                _postList[index][3]);
-                                            setState(() {});
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 3),
-                                            primary: Colors.red,
-                                          ),
-                                          child: Text(
-                                            'Delete',
-                                            style: TextStyle(fontSize: 9),
-                                          ),
-                                        )),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -626,6 +603,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                         Icons.add_comment_sharp,
                                         color: Colors.grey,
                                       ),
+                                    ),
+                                    if (_postList[index][4] == currentEmail || isAdmin)
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    if (_postList[index][4] == currentEmail || isAdmin)
+                                    IconButton(
+                                      icon: Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () {
+                                        deletePost(index, _postList[index][5], _postList[index][3]);
+                                        setState(() {});
+                                      },
                                     ),
                                   ],
                                 ),
