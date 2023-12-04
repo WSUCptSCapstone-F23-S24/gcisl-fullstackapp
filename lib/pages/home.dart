@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? emailHash;
   String? username;
   String? currentEmail;
+  String? currentUserType;
   bool isAdmin = false;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
@@ -63,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if(value['email'] != currentEmail)
             return;
           bool tempisAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
+          currentUserType = value["userType"];
           isAdmin = tempisAdmin;
         });
       }
@@ -80,7 +82,12 @@ class _MyHomePageState extends State<MyHomePage> {
     String? email = event.snapshot.child("email").value.toString();
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
-
+    String? userType = event.snapshot.child("userType").value.toString();
+    print("UT - $userType");
+    if(userType == "null")
+    {
+      userType = null;
+    }
     if (userName == "null") {
       userName = "anonymous";
     }
@@ -105,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
           uniquePostImageId,
           likes,
           comments,
+          userType,
         ]);
         _localPostListSort();
       });
@@ -359,6 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'email': currentEmail,
                       'likes': [],
                       'comments': {},
+                      'userType' : currentUserType,
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -430,23 +439,64 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  TextButton(
-                                    child: Text(
-                                      _postList[index][1] ?? "anonymous",
-                                      style: const TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        color: Palette.ktoCrimson,
-                                        fontWeight: FontWeight.w600,
-                                      fontSize: 16,
+                                  Column(
+                                    children:[
+                                        Row(
+                                    children: [
+                                      TextButton(
+                                        child: Text(
+                                          _postList[index][1] ?? "anonymous",
+                                          style: const TextStyle(
+                                            // decoration: TextDecoration.underline,
+                                            // color: Palette.ktoCrimson,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
+                                          );
+                                          //ProfilePage1(_postList[index][4].hashCode.toString());
+                                        }
                                       ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
-                                      );
-                                      //ProfilePage1(_postList[index][4].hashCode.toString());
-                                    }
+                                      if(_postList[index][9] != "null" && _postList[index][9] != null)
+                                        Text(
+                                          '-  ${_postList[index][9]}',
+                                          style: const TextStyle(
+                                            // decoration: TextDecoration.underline,
+                                            // color: Palette.ktoCrimson,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          ),
+                                        ),
+                                    ]
+                                  ),
+                                  Row(
+                                    children:[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 15.0), 
+                                        child:Tooltip(
+                                        message:  DateFormat('MM/dd/yyyy hh:mm a').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                int.parse(_postList[index][2]))),
+                                        child: SelectableText(
+                                        '${DateFormat('MMM d').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                int.parse(_postList[index][2])))}',
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                            ),
+                                        ))   
+                                      ),
+                                      
+                                    ]
+                                  )
+                                      
+                                    ]
                                   ),
                                   _postList[index][0] == ""
                                       ? Container(
@@ -502,19 +552,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                   const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                    ),
-                                    child: SelectableText(
-                                      DateFormat('MM/dd/yyyy hh:mm a').format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              int.parse(_postList[index][2]))),
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
                                 ]),
                               ),
                               Container(
