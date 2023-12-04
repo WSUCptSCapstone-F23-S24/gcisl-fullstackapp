@@ -103,26 +103,29 @@ class _AnalyticsPage extends State<AnalyticsPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
           body: Container(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-        color: Palette.ktoCrimson,
+        // padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+        color: Colors.white,
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                  margin: EdgeInsets.fromLTRB(
-                      0, 0, 0, MediaQuery.of(context).size.height * 0.01),
+                  // margin: EdgeInsets.fromLTRB(
+                  //     0, 0, 0, MediaQuery.of(context).size.height * 0.01),
                   width: MediaQuery.of(context).size.width * 0.30,
-                  height: MediaQuery.of(context).size.height * 0.95,
+                  height: MediaQuery.of(context).size.height * 1,
                   color: Colors.white,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          // margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           height: 30,
                           child: Column(children: [
+                            const SizedBox(
+                              height: 5,
+                            ),
                             Expanded(
                               child: Text("Find People",
                                   style: TextStyle(fontSize: 20)),
@@ -156,8 +159,8 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                             Expanded(
                                                 child: Text(
                                               userInfo[index][0] +
-                                                  "\n" +
-                                                  userInfo[index][1],
+                                                  " " +
+                                                  userInfo[index][1] +"\n",
                                               style: TextStyle(
                                                   color: _selectedIndex == index
                                                       ? Color.fromARGB(
@@ -208,7 +211,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                     children: [
                       Container(
                           //margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          width: MediaQuery.of(context).size.width * 0.60,
+                          width: MediaQuery.of(context).size.width * 0.70,
                           height: MediaQuery.of(context).size.height * 0.65,
                           /*padding:
                           EdgeInsets.only(bottom: 1, top: 1, right: 1, left: 1),*/
@@ -243,11 +246,11 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                 ))
                           ])),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.60,
-                        height: MediaQuery.of(context).size.height * 0.2198,
+                        width: MediaQuery.of(context).size.width * 0.70,
+                        height: MediaQuery.of(context).size.height * 0.29,
                         decoration: BoxDecoration(
-                            color: Palette.ktoGray,
-                            border: Border.all(color: Colors.black, width: 1)),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black, width: 2)),
                         child: Row(
                           children: [
                             if (userInfo.isNotEmpty)
@@ -271,7 +274,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                     "\n" +
                                     userInfo[_selectedIndex][9].toString(),
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                    fontWeight: FontWeight.bold, fontSize: 25),
                                 textAlign: TextAlign.center,
                               )),
                           ],
