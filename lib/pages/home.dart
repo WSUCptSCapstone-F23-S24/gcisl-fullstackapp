@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'image.dart';
 import 'package:like_button/like_button.dart';
-
+// import '../helper_functions/post_sorting.dart';
 import 'public_profile.dart';
 
 import '../palette.dart';
@@ -26,7 +26,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-enum PostSortOption { newest, oldest, alphabetical }
+
 
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? emailHash;
   String? username;
   String? currentEmail;
+  String? currentUserType;
   bool isAdmin = false;
   int _displayedPosts = 30;
   bool _showEmojiPicker = false;
@@ -63,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if(value['email'] != currentEmail)
             return;
           bool tempisAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
+          currentUserType = value["userType"];
           isAdmin = tempisAdmin;
         });
       }
@@ -80,7 +82,12 @@ class _MyHomePageState extends State<MyHomePage> {
     String? email = event.snapshot.child("email").value.toString();
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
-
+    String? userType = event.snapshot.child("userType").value.toString();
+    print("UT - $userType");
+    if(userType == "null")
+    {
+      userType = null;
+    }
     if (userName == "null") {
       userName = "anonymous";
     }
@@ -105,27 +112,32 @@ class _MyHomePageState extends State<MyHomePage> {
           uniquePostImageId,
           likes,
           comments,
+          userType,
         ]);
-        _sortPostList();
+        _localPostListSort();
       });
     }
   }
 
-  void _sortPostList() {
-    print("sorting\n");
-    switch (_selectedSortOption) {
-      case PostSortOption.newest:
-        _postList.sort((a, b) => b[2].compareTo(a[2]));
-        break;
-      case PostSortOption.oldest:
-        _postList.sort((a, b) => a[2].compareTo(b[2]));
-        break;
-      case PostSortOption.alphabetical:
-        _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
-        break;
-    }
+  void _localPostListSort()
+  {
+    PostSorting.sortPostList(_postList, _selectedSortOption);
     setState(() {});
   }
+  // void _sortPostList() {
+  //   switch (_selectedSortOption) {
+  //     case PostSortOption.newest:
+  //       _postList.sort((a, b) => b[2].compareTo(a[2]));
+  //       break;
+  //     case PostSortOption.oldest:
+  //       _postList.sort((a, b) => a[2].compareTo(b[2]));
+  //       break;
+  //     case PostSortOption.alphabetical:
+  //       _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
+  //       break;
+  //   }
+  //   setState(() {});
+  // }
 
   void deletePost(int postIndex, String postID, String maybeURL) {
     DatabaseReference postRef = _database.child(postID);
@@ -244,7 +256,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Image.asset(
                 'assets/GCISL_logo.png',
                 height: 50,
-                color: Palette.ktoCrimson,
               ),
             ),
           ],
@@ -301,11 +312,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       Positioned.fill(
-                        left: 845,
+                        left: 800,
                         top: 65,
-                        child: Column(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.photo_library,
+                                color: Palette.ktoCrimson,
+                              ),
+                              onPressed: _pickImage,
+                              splashRadius: 20,
+                            ),
+                            const SizedBox(width: 10),
                             IconButton(
                               icon: const Icon(
                                 Icons.emoji_emotions,
@@ -323,7 +343,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 10),
               downloadUrl == null
-                  ? const Text('No image selected.')
+                  ? const Text('')
                   : SizedBox(
                       height: 300,
                       child: Image.network(
@@ -332,11 +352,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
               const SizedBox(height: 6),
-              FloatingActionButton(
-                onPressed: () => _pickImage(),
-                tooltip: 'Pick from gallery',
-                child: const Icon(Icons.photo_library),
-              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -352,6 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'email': currentEmail,
                       'likes': [],
                       'comments': {},
+                      'userType' : currentUserType,
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -376,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _selectedSortOption = newSortOption;
                     // Sort the post list based on the selected option
-                    _sortPostList();
+                    _localPostListSort();
                   });
                 },
                 items: [
@@ -391,6 +407,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   DropdownMenuItem(
                     value: PostSortOption.alphabetical,
                     child: Text('Alphabetical (A-Z)'),
+                  ),
+                  DropdownMenuItem(
+                    value: PostSortOption.likes,
+                    child: Text('Likes'),
                   ),
                 ],
               ),
@@ -419,52 +439,65 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  TextButton(
-                                    child: Text(
-                                      _postList[index][1] ?? "anonymous",
-                                      style: const TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        color: Palette.ktoCrimson,
-                                        fontWeight: FontWeight.w600,
-                                      fontSize: 16,
+                                  Column(
+                                    children:[
+                                        Row(
+                                    children: [
+                                      TextButton(
+                                        child: Text(
+                                          _postList[index][1] ?? "anonymous",
+                                          style: const TextStyle(
+                                            // decoration: TextDecoration.underline,
+                                            // color: Palette.ktoCrimson,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
+                                          );
+                                          //ProfilePage1(_postList[index][4].hashCode.toString());
+                                        }
                                       ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
-                                      );
-                                      //ProfilePage1(_postList[index][4].hashCode.toString());
-                                    }
+                                      if(_postList[index][9] != "null" && _postList[index][9] != null)
+                                        Text(
+                                          '-  ${_postList[index][9]}',
+                                          style: const TextStyle(
+                                            // decoration: TextDecoration.underline,
+                                            // color: Palette.ktoCrimson,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          ),
+                                        ),
+                                    ]
                                   ),
-
-                                  if (_postList[index][4] == currentEmail || isAdmin)
-
-                                    Container(
-                                        width: 75,
-                                        height: 15,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            deletePost(
-                                                index,
-                                                _postList[index][5],
-                                                _postList[index][3]);
-                                            setState(() {});
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
+                                  Row(
+                                    children:[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 15.0), 
+                                        child:Tooltip(
+                                        message:  DateFormat('MM/dd/yyyy hh:mm a').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                int.parse(_postList[index][2]))),
+                                        child: SelectableText(
+                                        '${DateFormat('MMM d').format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                int.parse(_postList[index][2])))}',
+                                        style: const TextStyle(
+                                          color: Colors.grey,
                                             ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 3),
-                                            primary: Colors.red,
-                                          ),
-                                          child: Text(
-                                            'Delete',
-                                            style: TextStyle(fontSize: 9),
-                                          ),
-                                        )),
+                                        ))   
+                                      ),
+                                      
+                                    ]
+                                  )
+                                      
+                                    ]
+                                  ),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -519,19 +552,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                   const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                    ),
-                                    child: SelectableText(
-                                      DateFormat('MM/dd/yyyy hh:mm a').format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              int.parse(_postList[index][2]))),
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
                                 ]),
                               ),
                               Container(
@@ -583,6 +603,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                         Icons.add_comment_sharp,
                                         color: Colors.grey,
                                       ),
+                                    ),
+                                    if (_postList[index][4] == currentEmail || isAdmin)
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    if (_postList[index][4] == currentEmail || isAdmin)
+                                    IconButton(
+                                      icon: Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () {
+                                        deletePost(index, _postList[index][5], _postList[index][3]);
+                                        setState(() {});
+                                      },
                                     ),
                                   ],
                                 ),

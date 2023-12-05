@@ -44,13 +44,15 @@ class _MyAppState extends State<MyApp> {
   var screens = [
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     Text("dummy"),
-    MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+    AuthPage(),
     ProfilePage(),
-    ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
+    ProfilePage1(
+        FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
     ChatPage(),
     AnalyticsPage(),
-    if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
-            AdminPage(title: "Admin"),
+    if (FirebaseAuth.instance.currentUser != null &&
+        FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+      AdminPage(title: "Admin"),
     Text("dummey"),
     AuthPage()
   ];
@@ -61,9 +63,11 @@ class _MyAppState extends State<MyApp> {
         screens = [
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           Text("dummy"),
-          MyHomePage(title: "Granger Cobb Institute for Senior Living"),
+          AuthPage(),
           ProfilePage(),
-          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
+          ProfilePage1(
+              FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
+              false),
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
@@ -75,10 +79,13 @@ class _MyAppState extends State<MyApp> {
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           ProfilePage(),
-          ProfilePage1(FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
+          ProfilePage1(
+              FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
+              false),
           ChatPage(),
           AnalyticsPage(),
-          if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+          if (FirebaseAuth.instance.currentUser != null &&
+              FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
             AdminPage(title: "Admin"),
           Text("dummey"),
           SignOut(),
@@ -102,8 +109,9 @@ class _MyAppState extends State<MyApp> {
           }
           // Set index to login if user not logged in
           if (FirebaseAuth.instance.currentUser == null) {
-            index = 8;
-            if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+            index = 2;
+            if (FirebaseAuth.instance.currentUser != null &&
+                FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
               index += 1;
           }
           return Scaffold(
@@ -118,9 +126,10 @@ class _MyAppState extends State<MyApp> {
                       onDestinationSelected: (selectedindex) {
                         // Don't allow users to go to other pages until signed in
                         if (FirebaseAuth.instance.currentUser == null) {
-                          selectedindex = 8;
-                          if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
-                            selectedindex += 1;
+                          selectedindex = 2;
+                          if (FirebaseAuth.instance.currentUser != null &&
+                              FirebaseAuth.instance.currentUser!.email ==
+                                  "admin@wsu.edu") selectedindex += 1;
                         }
                         _updateScreens();
                         setState(() => index = selectedindex);
@@ -138,34 +147,44 @@ class _MyAppState extends State<MyApp> {
                         Container(
                           padding: EdgeInsets.only(right: 100, left: 100),
                         ),
-                        Container(
-                          child: NavigationDestination(
-                            icon: Icon(Icons.house_outlined),
-                            label: hideLabels ? "" : "Home",
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                            child: NavigationDestination(
+                              icon: Icon(Icons.house_outlined),
+                              label: hideLabels ? "" : "Home",
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: NavigationDestination(
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                            child: NavigationDestination(
                               icon: Icon(Icons.person_add_alt_1_outlined),
-                              label: hideLabels ? "" : "Edit Profile"),
-                        ),
-                        Container(
-                          child: NavigationDestination(
-                              icon: Icon(Icons.person_2_outlined),
-                              label: hideLabels ? "" : "Profile"),
-                        ),
-                        Container(
-                          child: NavigationDestination(
-                              icon: Icon(Icons.email_outlined),
-                              label: hideLabels ? "" : "Messages"),
-                        ),
-                        Container(
-                          child: NavigationDestination(
-                            icon: Icon(Icons.graphic_eq_outlined),
-                            label: hideLabels ? "" : "Analytics",
+                              label: hideLabels ? "" : "Edit Profile",
+                            ),
                           ),
-                        ),
-                        if(FirebaseAuth.instance.currentUser != null && FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                            child: NavigationDestination(
+                              icon: Icon(Icons.person_2_outlined),
+                              label: hideLabels ? "" : "Profile",
+                            ),
+                          ),
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                            child: NavigationDestination(
+                              icon: Icon(Icons.email_outlined),
+                              label: hideLabels ? "" : "Messages",
+                            ),
+                          ),
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                            child: NavigationDestination(
+                              icon: Icon(Icons.graphic_eq_outlined),
+                              label: hideLabels ? "" : "Analytics",
+                            ),
+                          ),
+                        if (FirebaseAuth.instance.currentUser != null &&
+                            FirebaseAuth.instance.currentUser!.email ==
+                                "admin@wsu.edu")
                           Container(
                             child: NavigationDestination(
                               icon: Icon(Icons.add_chart),
