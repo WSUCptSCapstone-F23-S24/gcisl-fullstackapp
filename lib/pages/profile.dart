@@ -9,7 +9,6 @@ import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../helper_functions/geolocation_service.dart';
 
 import '../palette.dart';
 
@@ -137,6 +136,36 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<Coordinates> queryGeoLocation(
+      String? country, String? city, String? state, String? zipCode) async {
+    final apiUrl = Uri.parse('https://api.radar.io/v1/search/autocomplete');
+
+    String csvParameters = '$country,$city,$state';
+
+    if (zipCode != null) {
+      csvParameters += ',$zipCode';
+    }
+
+    final url = Uri.parse('$apiUrl?query=$csvParameters');
+
+    final response =
+        await http.get(url, headers: {'Authorization': '$kRadarApiKey'});
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final latitude = responseData["addresses"][0]['latitude'];
+      final longitude = responseData["addresses"][0]['longitude'];
+
+      final coordinates = Coordinates(
+        latitude: latitude,
+        longitude: longitude,
+      );
+      return coordinates;
+    } else {
+      throw Exception(
+          'Error: ${response.statusCode}, Response: ${response.body}');
+    }
+  }
 
   //get lat long to save data to backend
   getLatLong(context) async {
@@ -146,14 +175,15 @@ class _ProfilePageState extends State<ProfilePage> {
     String addy = "";
 
     try {
+      Coordinates coordinates;
 
-      Map<String, double> coordinates =
-          await GeoLocationService.queryGeoLocation(countryValue, cityValue, stateValue, zipValue);
+      coordinates =
+          await queryGeoLocation(countryValue, cityValue, stateValue, zipValue);
 
       //List<Location> locations = await locationFromAddress(addy);
       //Location local = locations[0];
-      lat = coordinates['latitude'];
-      long = coordinates['longitude'];
+      lat = coordinates.latitude;
+      long = coordinates.longitude;
       //print("Latitude: ${lat}");
       //print("Longitude: ${long}");
 

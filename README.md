@@ -106,9 +106,7 @@ Through VS code IDE:
 - Documentaion: [Sprint 1 Report](https://docs.google.com/document/d/19AO4LtnsS9xayqkGBoHLEvZZPomT7-d7fJNX8l-KBiM/edit?usp=sharing)
 - Video: [link](https://drive.google.com/file/d/1kXeur_cPgJcVlPbxYCckQIS09Ft-GwDv/view?usp=sharing)
 
-#### Sprint 2:
-- Documentaion: [Sprint 2 Report](https://docs.google.com/document/d/1FTKmaRnwVmYHjXzD_6hu4s1M7LHf4Hc0esqTTOamKUw/edit) 
-- Video: [link](https://drive.google.com/file/d/17eL1IFK6jhf-RNsKqX8oAkc2T3Hq-XlQ/view?usp=drive_link)
+
 
 ## PREVIOUS GROUP - Sprints
 

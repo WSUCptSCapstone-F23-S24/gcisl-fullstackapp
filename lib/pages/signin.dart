@@ -90,26 +90,6 @@ class _SignInPageState extends State<SignInPage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       Column(
-                      children: [
-                        // Logo Image
-                        Image.asset(
-                          'assets/cougar.png', 
-                          height: 200,
-                          width: 200, 
-                          color: Palette.ktoCrimson,
-                        ),
-                        Text(
-                          'Cobb Connect',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 50), 
                       //Wecolme Back
                       Text(
                         'Sign in',
@@ -120,7 +100,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
 
                       //Email textfield
-                      SizedBox(height: 40),
+                      SizedBox(height: 50),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.50,
                         decoration: BoxDecoration(

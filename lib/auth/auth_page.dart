@@ -33,6 +33,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void returnToLogin() {
+    print("HERE");
     setState(() {
       isLoggedIn = true;
       isResetPassword = false;

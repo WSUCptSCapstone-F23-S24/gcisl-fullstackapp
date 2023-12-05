@@ -18,8 +18,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'image.dart';
-import "../helper_functions/post_sorting.dart";
-export "../helper_functions/post_sorting.dart";
+
 import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {
@@ -220,6 +219,7 @@ class PostPortion extends StatefulWidget {
   const PostPortion(this.emailHashcode);
   State<PostPortion> createState() => _PostPortionState();
 }
+  enum PostSortOption { newest, oldest, alphabetical }
 
 class _PostPortionState extends State<PostPortion> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
@@ -232,27 +232,22 @@ class _PostPortionState extends State<PostPortion> {
    final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
 
-  void _localPostListSort()
+  void _sortPostList()
   {
-    PostSorting.sortPostList(_postList, _selectedSortOption);
-    setState(() {});
+    print("sorting\n");
+      switch (_selectedSortOption) {
+        case PostSortOption.newest:
+          _postList.sort((a, b) => b[2].compareTo(a[2])); 
+          break;
+        case PostSortOption.oldest:
+          _postList.sort((a, b) => a[2].compareTo(b[2])); 
+          break;
+        case PostSortOption.alphabetical:
+          _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String)); 
+          break;
+    }
+    setState(() {}); 
   }
-  // void _sortPostList()
-  // {
-  //   print("sorting\n");
-  //     switch (_selectedSortOption) {
-  //       case PostSortOption.newest:
-  //         _postList.sort((a, b) => b[2].compareTo(a[2])); 
-  //         break;
-  //       case PostSortOption.oldest:
-  //         _postList.sort((a, b) => a[2].compareTo(b[2])); 
-  //         break;
-  //       case PostSortOption.alphabetical:
-  //         _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String)); 
-  //         break;
-  //   }
-  //   setState(() {}); 
-  // }
 
   Future<String?> getCurrentUser() async {
     String? name;
@@ -297,7 +292,7 @@ class _PostPortionState extends State<PostPortion> {
     if (mounted && email.hashCode.toString() == widget.emailHashcode) {
       setState(() {
         _postList.insert(0, [newPost, userName, timestamp, image,email,uniquePostId,uniquePostImageId]);
-        _localPostListSort();
+        _sortPostList();
       });
     }
   }
@@ -315,7 +310,7 @@ class _PostPortionState extends State<PostPortion> {
                       setState(() {
                         _selectedSortOption = newSortOption;
                         // Sort the post list based on the selected option
-                        _localPostListSort();
+                        _sortPostList();
                       });
                     },
                     items: [
