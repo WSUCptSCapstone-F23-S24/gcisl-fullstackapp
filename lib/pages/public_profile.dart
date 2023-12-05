@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:gcisl_app/pages/messaging.dart';
 
 import 'dart:math';
 import 'dart:async';
@@ -24,8 +25,8 @@ import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {
   String? emailHashString = "";
-  bool isOtherPage = true;
-  ProfilePage1(this.emailHashString, bool isOtherPage);
+  bool isOtherPage = false;
+  ProfilePage1(this.emailHashString, this.isOtherPage);
   @override
   _ProfilePage1State createState() => _ProfilePage1State();
 }
@@ -113,12 +114,15 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       children: [
                         const SizedBox(width: 16.0),
                         FloatingActionButton.extended(
-                          onPressed: () {},
-                          heroTag: 'message',
+                          onPressed: () {
+                            Navigator.of(context)
+                              .pop();
+                          },
+                          heroTag: 'back',
                           elevation: 0,
                           backgroundColor: Colors.red,
-                          label: const Text("Message"),
-                          icon: const Icon(Icons.message_rounded),
+                          label: const Text("Go Back"),
+                          icon: const Icon(Icons.arrow_back),
                         ),
                       ],
                     ),
