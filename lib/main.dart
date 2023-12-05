@@ -71,6 +71,7 @@ class _MyAppState extends State<MyApp> {
           ChatPage(),
           AnalyticsPage(),
           Text("dummey"),
+          Text("dummey"),
           AuthPage()
         ];
       } else {
@@ -194,17 +195,12 @@ class _MyAppState extends State<MyApp> {
                         Container(
                           padding: EdgeInsets.only(right: 100, left: 100),
                         ),
-                        Container(
-                            child: NavigationDestination(
-                          icon: FirebaseAuth.instance.currentUser == null
-                              ? Icon(Icons.person_outline)
-                              : Icon(Icons.person_off_outlined),
-                          label: hideLabels
-                              ? ""
-                              : FirebaseAuth.instance.currentUser == null
-                                  ? "Sign in"
-                                  : "Sign Out",
-                        ))
+                        if (FirebaseAuth.instance.currentUser != null)
+                          Container(
+                              child: NavigationDestination(
+                            icon: Icon(Icons.person_off_outlined),
+                            label: hideLabels ? "" : "Sign Out",
+                          ))
                       ]),
                 ),
               ));
