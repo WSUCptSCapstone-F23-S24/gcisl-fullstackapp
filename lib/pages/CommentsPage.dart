@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:gcisl_app/pages/home.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
 
@@ -167,8 +168,13 @@ class _CommentsPageState extends State<CommentsPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context)
-                .pop(); // Pops the current route and goes back to MyHomePage.
+            // Navigator.of(context)
+            //     .pop(); // Pops the current route and goes back to MyHomePage.
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MyHomePage(
+                        title: "Granger Cobb Institute for Senior Living")));
           },
         ),
         title: Text('Comments'),
