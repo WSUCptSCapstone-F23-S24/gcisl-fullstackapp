@@ -5,6 +5,7 @@ import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 class ChatPage extends StatefulWidget {
+  ChatPage();
   @override
   _ChatPageState createState() => _ChatPageState();
 }
