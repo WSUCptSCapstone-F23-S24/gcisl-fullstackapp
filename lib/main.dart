@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
 
   var screens = [
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
-    Text("dummy"),
+    AuthPage(),
     AuthPage(),
     ProfilePage(),
     ProfilePage1(
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
       if (FirebaseAuth.instance.currentUser == null) {
         screens = [
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
-          Text("dummy"),
+          AuthPage(),
           AuthPage(),
           ProfilePage(),
           ProfilePage1(
@@ -115,95 +115,102 @@ class _MyAppState extends State<MyApp> {
                 FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
               index += 1;
           }
-          return Scaffold(
-              body: screens[index],
-              appBar: AppBar(
-                flexibleSpace: NavigationBarTheme(
-                  data: NavigationBarThemeData(
-                      indicatorColor: Palette.ktoCrimson),
-                  child: NavigationBar(
-                      height: 60,
-                      selectedIndex: index,
-                      onDestinationSelected: (selectedindex) {
-                        // Don't allow users to go to other pages until signed in
-                        if (FirebaseAuth.instance.currentUser == null) {
-                          selectedindex = 2;
-                          if (FirebaseAuth.instance.currentUser != null &&
-                              FirebaseAuth.instance.currentUser!.email ==
-                                  "admin@wsu.edu") selectedindex += 1;
-                        }
-                        _updateScreens();
-                        setState(() => index = selectedindex);
-                      },
-                      destinations: [
-                        Container(
-                          child: NavigationDestination(
-                            icon: ImageIcon(AssetImage("assets/cougar.png"),
-                                size: 30),
-                            label: hideLabels
-                                ? ""
-                                : "Cobb Connect", // hide label if hideLabels is true
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(right: 100, left: 100),
-                        ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.house_outlined),
-                              label: hideLabels ? "" : "Home",
+          return (FirebaseAuth.instance.currentUser == null)
+              ? Scaffold(
+                  body: screens[index],
+                )
+              : Scaffold(
+                  body: screens[index],
+                  appBar: AppBar(
+                    flexibleSpace: NavigationBarTheme(
+                      data: NavigationBarThemeData(
+                          indicatorColor: Palette.ktoCrimson),
+                      child: NavigationBar(
+                          height: 60,
+                          selectedIndex: index,
+                          onDestinationSelected: (selectedindex) {
+                            // Don't allow users to go to other pages until signed in
+                            if (FirebaseAuth.instance.currentUser == null) {
+                              selectedindex = 2;
+                              if (FirebaseAuth.instance.currentUser != null &&
+                                  FirebaseAuth.instance.currentUser!.email ==
+                                      "admin@wsu.edu") selectedindex += 1;
+                            }
+                            _updateScreens();
+                            setState(() => index = selectedindex);
+                          },
+                          destinations: [
+                            (FirebaseAuth.instance.currentUser == null)
+                                ? Container()
+                                : Container(
+                                    child: NavigationDestination(
+                                      icon: ImageIcon(
+                                          AssetImage("assets/cougar.png"),
+                                          size: 30),
+                                      label: hideLabels
+                                          ? ""
+                                          : "Cobb Connect", // hide label if hideLabels is true
+                                    ),
+                                  ),
+                            Container(
+                              padding: EdgeInsets.only(right: 100, left: 100),
                             ),
-                          ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.person_add_alt_1_outlined),
-                              label: hideLabels ? "" : "Edit Profile",
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.house_outlined),
+                                  label: hideLabels ? "" : "Home",
+                                ),
+                              ),
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.person_add_alt_1_outlined),
+                                  label: hideLabels ? "" : "Edit Profile",
+                                ),
+                              ),
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.person_2_outlined),
+                                  label: hideLabels ? "" : "Profile",
+                                ),
+                              ),
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.email_outlined),
+                                  label: hideLabels ? "" : "Messages",
+                                ),
+                              ),
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.graphic_eq_outlined),
+                                  label: hideLabels ? "" : "Analytics",
+                                ),
+                              ),
+                            if (FirebaseAuth.instance.currentUser != null &&
+                                FirebaseAuth.instance.currentUser!.email ==
+                                    "admin@wsu.edu")
+                              Container(
+                                child: NavigationDestination(
+                                  icon: Icon(Icons.add_chart),
+                                  label: hideLabels ? "" : "Admin",
+                                ),
+                              ),
+                            Container(
+                              padding: EdgeInsets.only(right: 100, left: 100),
                             ),
-                          ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.person_2_outlined),
-                              label: hideLabels ? "" : "Profile",
-                            ),
-                          ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.email_outlined),
-                              label: hideLabels ? "" : "Messages",
-                            ),
-                          ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.graphic_eq_outlined),
-                              label: hideLabels ? "" : "Analytics",
-                            ),
-                          ),
-                        if (FirebaseAuth.instance.currentUser != null &&
-                            FirebaseAuth.instance.currentUser!.email ==
-                                "admin@wsu.edu")
-                          Container(
-                            child: NavigationDestination(
-                              icon: Icon(Icons.add_chart),
-                              label: hideLabels ? "" : "Admin",
-                            ),
-                          ),
-                        Container(
-                          padding: EdgeInsets.only(right: 100, left: 100),
-                        ),
-                        if (FirebaseAuth.instance.currentUser != null)
-                          Container(
-                              child: NavigationDestination(
-                            icon: Icon(Icons.person_off_outlined),
-                            label: hideLabels ? "" : "Sign Out",
-                          ))
-                      ]),
-                ),
-              ));
+                            if (FirebaseAuth.instance.currentUser != null)
+                              Container(
+                                  child: NavigationDestination(
+                                icon: Icon(Icons.person_off_outlined),
+                                label: hideLabels ? "" : "Sign Out",
+                              ))
+                          ]),
+                    ),
+                  ));
         },
       ));
 }
