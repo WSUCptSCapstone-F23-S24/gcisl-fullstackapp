@@ -2,10 +2,8 @@ import 'package:test/test.dart';
 import 'package:gcisl_app/helper_functions/register.dart';
 
 class YourTestClass {
-  // Static variable
   static int sharedVariable = 0;
 
-  // Helper functions
   static void showSignInPage() {
     sharedVariable = 1;
   }
@@ -18,7 +16,6 @@ class YourTestClass {
     sharedVariable = -1;
   }
 
-  // First test method
   static void testRegistrationSuccess() {
     test('Registering a user should succeed', () async {
 
@@ -64,7 +61,6 @@ class YourTestClass {
     });
   }
 
-  // Second test method
   static void testRegistrationFailure() {
     test('Registering a user should fail', () async {
 
@@ -110,9 +106,7 @@ class YourTestClass {
     });
   }
 
-  // Main method to run all tests
   static void main() {
-    // Run all test methods
     testRegistrationSuccess();
     testRegistrationFailure();
   }
