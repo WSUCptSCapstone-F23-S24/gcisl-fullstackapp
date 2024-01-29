@@ -9,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../helper_functions/geolocation_service.dart';
+import '../helper_functions/register.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showSignInPage;
@@ -32,6 +33,35 @@ class _RegisterPageState extends State<RegisterPage> {
   final _zipcodeController = TextEditingController();
   final _countryAddressController = TextEditingController();
 
+  // final _ifFailure = showDialog(
+  //       context: context,
+  //       builder: ((context) => AlertDialog(
+  //             title: const Text("Sign up failed"),
+  //             content: Text(message),
+  //             actions: [
+  //               TextButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                   },
+  //                   // ignore: prefer_const_constructors
+  //                   child: Text("Ok"))
+  //             ],
+  //           )));
+  // final _ifSuccess = showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //               title: const Text("Sign up Success"),
+  //               content:
+  //                   const Text("Your account was created, you can now login"),
+  //               actions: [
+  //                 TextButton(
+  //                     onPressed: () {
+  //                       Navigator.pop(context);
+  //                     },
+  //                     child: const Text("Ok"))
+  //               ],
+  //             ));
+
 
 
   String? countryValue;
@@ -40,9 +70,6 @@ class _RegisterPageState extends State<RegisterPage> {
   String? zipValue;
 
   String _selectedUserType = 'student'; // Default user type
-
-  var loading = false;
-
 
   //get lat long to save data to backend
   getLatLong(context) async {
@@ -62,7 +89,26 @@ class _RegisterPageState extends State<RegisterPage> {
       //print("Longitude: ${long}");
 
       //uploadData(lat, long);
-      _register(lat, long);
+      Register.registerUser(
+        lat,
+        long,
+        _emailControllor.text.hashCode,
+        _emailControllor.text,
+        _passwordControllor.text,
+        _firstNameController.text,
+        _lastNameController.text,
+        _phoneController.text,
+        _companyController.text,
+        cityValue!,
+        stateValue!,
+        countryValue!,
+        _zipcodeController.text,
+        _positionController.text,
+        _selectedUserType,
+        widget.showSignInPage,
+        _showSuccess,
+        _showFailure
+      );
     } catch (e) {
       print(e);
 
@@ -154,7 +200,26 @@ class _RegisterPageState extends State<RegisterPage> {
                         debugPrint("pressed");
                         if (_formKey.currentState != null &&
                             _formKey.currentState!.validate()) {
-                          _register(0, 0);
+                          Register.registerUser(
+                            0,
+                            0,
+                            _emailControllor.text.hashCode,
+                            _emailControllor.text,
+                            _passwordControllor.text,
+                            _firstNameController.text,
+                            _lastNameController.text,
+                            _phoneController.text,
+                            _companyController.text,
+                            cityValue!,
+                            stateValue!,
+                            countryValue!,
+                            _zipcodeController.text,
+                            _positionController.text,
+                            _selectedUserType,
+                            widget.showSignInPage,
+                            _showSuccess,
+                            _showFailure
+                          );
                         }
                       },
                       controller: _confirmPasswordControllor,
@@ -516,23 +581,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  void _handleRegisterError(FirebaseAuthException e) {
-    String message = " ";
-    switch (e.code) {
-      case 'email-already-in-use':
-        message = "An account is already being used with this email";
-        break;
-      case 'invalid-email':
-        message = "Invalid Email";
-        break;
-      case 'operation-not-alowed':
-        message = "Error: Opporation not allowed";
-        break;
-      case 'weak-password':
-        message = "Password is too weak, please enter a longer one";
-        break;
-    }
-
+  void _showFailure(String message)
+  {
     showDialog(
         context: context,
         builder: ((context) => AlertDialog(
@@ -549,42 +599,9 @@ class _RegisterPageState extends State<RegisterPage> {
             )));
   }
 
-  Future _register(double? lat, double? long) async {
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      //try adding new user to authenticator
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailControllor.text, password: _passwordControllor.text);
-      // ignore: todo
-      //TODO: add user data to database
-      // Get the user's unique ID
-      var userID = _emailControllor.text.hashCode;
-      DatabaseReference ref = FirebaseDatabase.instance.ref("users/$userID");
-      bool isAdmin = _emailControllor.text == "admin@wsu.edu" ? true : false;
-
-      await ref.set({
-        'first name': _firstNameController.text,
-        'last name': _lastNameController.text,
-        "email": _emailControllor.text,
-        'phone': _phoneController.text,
-        'company': _companyController.text,
-        "city address": cityValue,
-        "state address": stateValue,
-        "country address": countryValue,
-        "zip address": _zipcodeController.text,
-        "lat": lat,
-        "long": long,
-        'position': _positionController.text,
-        "experience": "1",
-        "date added": ServerValue.timestamp,
-        'userType': _selectedUserType,
-        'isAdmin': isAdmin,
-      });
-      //show success message
-      await showDialog(
+  void _showSuccess()
+  {
+    showDialog(
           context: context,
           builder: (context) => AlertDialog(
                 title: const Text("Sign up Success"),
@@ -598,13 +615,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: const Text("Ok"))
                 ],
               ));
-
-      widget.showSignInPage();
-    } on FirebaseAuthException catch (e) {
-      _handleRegisterError(e);
-      setState(() {
-        loading = false;
-      });
-    }
   }
+
 }
