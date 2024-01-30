@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
+
 class ChatPage extends StatefulWidget {
   ChatPage();
   @override
@@ -20,37 +21,31 @@ class _ChatPageState extends State<ChatPage> {
   User? _selectedUser;
   String _currentUser = "";
 
-
-
-void _addNewMessageListener()
-{
-  _messagesRef.onChildAdded.listen((event) {
-    setState(() {
-      if(event.snapshot.key! != _currentUser)
-        _addMessageListener(event.snapshot.key!);
+  void _addNewMessageListener() {
+    _messagesRef.onChildAdded.listen((event) {
+      setState(() {
+        if (event.snapshot.key! != _currentUser)
+          _addMessageListener(event.snapshot.key!);
+      });
     });
-  });
-}
-void _addMessageListener(String user) {
-  _messagesRef.child(user).onChildAdded.listen((event) {
-    setState(() {
-      String sender = event.snapshot.child("sender").value.toString();
-      if(sender == _currentUser)
-        return;
-      if (_selectedUser == null || sender != _selectedUser!.ID) {
-        for(User u in _users)
-        {
-          if(u.ID == sender)
-          {
-            u.hasUnreadMessages = true;
+  }
+
+  void _addMessageListener(String user) {
+    _messagesRef.child(user).onChildAdded.listen((event) {
+      setState(() {
+        String sender = event.snapshot.child("sender").value.toString();
+        if (sender == _currentUser) return;
+
+        if (_selectedUser == null || sender != _selectedUser!.ID) {
+          for (User u in _users) {
+            if (u.ID == sender) {
+              u.hasUnreadMessages = true;
+            }
           }
         }
-      }
+      });
     });
-  });
-}
-
-
+  }
 
   @override
   void initState() {
@@ -58,11 +53,10 @@ void _addMessageListener(String user) {
     // Get current user's ID
     _currentUser =
         FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
-    //print(_currentUser);
 
     _messagesRef = database.ref().child("messages").child(_currentUser);
     _usersRef = database.ref().child("users");
-    
+
     _usersRef.onChildAdded.listen((event) {
       setState(() {
         String firstName = event.snapshot.child("first name").value.toString();
@@ -70,60 +64,41 @@ void _addMessageListener(String user) {
         String userRole = event.snapshot.child("userType").value.toString();
         String fullname = firstName + " " + lastName;
         String checkStringID = event.snapshot.key.toString();
-        DatabaseReference _allUserMessages = _messagesRef.child(event.snapshot.child("email").value.hashCode.toString());
+        DatabaseReference _allUserMessages =
+            _messagesRef.child(event.snapshot.child("email").value.hashCode.toString());
         database.ref().child("messages").child(_currentUser).once().then((e) {
-              if(e.snapshot.value != null)
-              {
-                Map<dynamic, dynamic> values = e.snapshot.value as Map;
-                values.forEach((id,messages)
-                {
-                  if(id != checkStringID)
-                  {
-                    return;
-                  }
-
-                  dynamic msgs = messages as Map;
-                  msgs.forEach((msgID, message)
-                  {
-                    dynamic msg = msgs[msgID] as Map;
-                    if(!msg["isSeen"])
-                    {
-                      for(User u in _users)
-                      {
-                        if(u.ID == checkStringID)
-                        {
-                          if(!u.hasUnreadMessages)
-                          {
-                            setState(() {
-                              u.hasUnreadMessages = true;
-                            });
-                          }
-                        }
-                      }
-                    }
-                  });
-                });
+          if (e.snapshot.value != null) {
+            Map<dynamic, dynamic> values = e.snapshot.value as Map;
+            values.forEach((id, messages) {
+              if (id != checkStringID) {
+                return;
               }
 
-              
-          });
+              dynamic msgs = messages as Map;
+              msgs.forEach((msgID, message) {
+                dynamic msg = msgs[msgID] as Map;
+                if (!msg["isSeen"]) {
+                  for (User u in _users) {
+                    if (u.ID == checkStringID) {
+                      if (!u.hasUnreadMessages) {
+                        setState(() {
+                          u.hasUnreadMessages = true;
+                        });
+                      }
+                    }
+                  }
+                }
+              });
+            });
+          }
+        });
 
-          _users.add(User(Name: fullname, ID: checkStringID, userType: userRole, hasUnreadMessages : false));
-
-
+        _users.add(User(
+            Name: fullname, ID: checkStringID, userType: userRole, hasUnreadMessages: false));
       });
     });
     _addNewMessageListener();
-    // for(User u in _users)
-    // {
-    //   if(u.ID == _currentUser)
-    //     continue;
-    //   _addMessageListener(u.ID);
-    // }
   }
-
-  
-
 
   void _sendMessage(String message) {
     final now = DateTime.now();
@@ -132,7 +107,7 @@ void _addMessageListener(String user) {
       "message": message,
       "sender": _currentUser,
       "timestamp": formattedDate,
-      "isSeen" : true
+      "isSeen": true
     });
     _messagesRef.parent
         ?.child(_selectedUser!.ID)
@@ -142,12 +117,9 @@ void _addMessageListener(String user) {
       "message": message,
       "sender": _currentUser,
       "timestamp": formattedDate,
-      "isSeen" : false
+      "isSeen": false
     });
-    setState(() {
-      // _messages.add(Message(
-      //             message: message, sender: _currentUser, timestamp: now.millisecondsSinceEpoch, isSeen: true));
-    });
+    setState(() {});
     _textController.clear();
   }
 
@@ -158,9 +130,6 @@ void _addMessageListener(String user) {
     final isSameDay = messageTime.day == now.day &&
         messageTime.month == now.month &&
         messageTime.year == now.year;
-    print(message.message);
-    print(messageTime.day);
-    print(now.day);
     final dateFormat = isSameDay ? 'h:mm a' : 'MMM d, h:mm a';
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
@@ -214,7 +183,7 @@ void _addMessageListener(String user) {
     );
   }
 
-Widget _buildUserTile(User user) {
+  Widget _buildUserTile(User user) {
     return ListTile(
       title: Row(
         children: [
@@ -228,7 +197,7 @@ Widget _buildUserTile(User user) {
         ],
       ),
       subtitle: Text(user.userType),
-      tileColor: Colors.white,
+      tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
       onTap: () {
         setState(() {
           _selectedUser = user;
@@ -238,14 +207,10 @@ Widget _buildUserTile(User user) {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
 
-
-              if(_selectedUser == null || (sender != _selectedUser!.ID && sender != _currentUser))
-              {
-
-                for(User u in _users)
-                {
-                  if(u.ID == sender)
-                  {
+              if (_selectedUser == null ||
+                  (sender != _selectedUser!.ID && sender != _currentUser)) {
+                for (User u in _users) {
+                  if (u.ID == sender) {
                     u.hasUnreadMessages = true;
                   }
                 }
@@ -257,66 +222,56 @@ Widget _buildUserTile(User user) {
               bool isSeen = event.snapshot.child("isSeen").value as bool;
               DateTime timestamp = DateTime.parse(timestampString);
               int timestampInt = timestamp.millisecondsSinceEpoch;
-              
+
               _messages.add(Message(
-                  message: message, sender: sender, timestamp: timestampInt, isSeen: isSeen));
-              print(message);
+                  message: message,
+                  sender: sender,
+                  timestamp: timestampInt,
+                  isSeen: isSeen));
             });
           });
 
-            DatabaseReference _messagesFromUser = _messagesRef.child(user.ID);
-            _messagesRef.once().then((e) {
-              setState(() {
-                if(e.snapshot.value != null)
-                {
-                  Map<dynamic, dynamic> values = e.snapshot.value as Map;
-                  values.forEach((id,messages)
-                  {
-                    if(id != user.ID)
-                    {
-                      return;
-                    }
-                    dynamic msgs = messages as Map;
-                    msgs.forEach((msgID, message)
-                    {
-                      _messagesRef.child(id).child(msgID).child("isSeen").set(true);
-                    });
+          DatabaseReference _messagesFromUser = _messagesRef.child(user.ID);
+          _messagesRef.once().then((e) {
+            setState(() {
+              if (e.snapshot.value != null) {
+                Map<dynamic, dynamic> values = e.snapshot.value as Map;
+                values.forEach((id, messages) {
+                  if (id != user.ID) {
+                    return;
+                  }
+                  dynamic msgs = messages as Map;
+                  msgs.forEach((msgID, message) {
+                    _messagesRef.child(id).child(msgID).child("isSeen").set(true);
                   });
-                }
-              });
-
-              
+                });
+              }
+            });
           });
-            user.hasUnreadMessages = false;
+          user.hasUnreadMessages = false;
         });
-        Navigator.pop(context);
       },
     );
   }
 
   Widget _buildUserList() {
-    return Drawer(
+    return Container(
+  decoration: BoxDecoration(
+    border: Border.all(color: Palette.ktoCrimson, width: 3),
+  ),
+      width: 250.0,
       child: ListView.builder(
         itemCount: _users.length,
         itemBuilder: (BuildContext context, int index) {
-          //print(_users.length);
-          //print(index);
-          //print("name: " +
-          //_users.elementAt(index).Name +
-          //" ID: " +
-          //_users.elementAt(index).ID);
-          // checks to see if the user isn't the current user so you can't self message
           if (_users.elementAt(index).ID != _currentUser) {
             return _buildUserTile(_users.elementAt(index));
           } else {
-            return SizedBox(); // return emptybox if its the currentuser
+            return SizedBox();
           }
         },
       ),
     );
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -324,61 +279,82 @@ Widget _buildUserTile(User user) {
       appBar: AppBar(
         title: Text(_selectedUser != null ? _selectedUser!.Name : 'Chat'),
         backgroundColor: Palette.ktoCrimson,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.people),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ],
       ),
-      drawer: _buildUserList(),
-      body: Column(
-        children: <Widget>[
+      body: Row(
+        children: [
+          _buildUserList(),
+
           Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                bool isCurrentUser = _selectedUser == _currentUser;
-                return _buildMessage(_messages[index]);
-              },
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 1,
-                  offset: Offset(0, 1), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Row(
+            child: _selectedUser != null ? Column(
               children: <Widget>[
                 Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message',
-                    ),
-                    onSubmitted: (String message) {
-                      _sendMessage(message);
+                  child: ListView.builder(
+                    itemCount: _messages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildMessage(_messages[index]);
                     },
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    _sendMessage(_textController.text);
-                  },
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          decoration: InputDecoration(
+                            hintText: 'Type a message',
+                          ),
+                          onSubmitted: (String message) {
+                            _sendMessage(message);
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+                          _sendMessage(_textController.text);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+           : Container(
+            // padding: EdgeInsets.all(16.0),  
+            color: Colors.white, 
+            
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.message,size: 64
+                ),
+                SizedBox(width: 8.0), 
+                Text(
+                  'Your messages',
+                  style: TextStyle(
+                    color: Colors.black, // Set the text color
+                    fontSize: 64.0, // Set the font size
+                    fontWeight: FontWeight.bold, // Set the font weight
+                  ),
                 ),
               ],
             ),
-          ),
+          )
+          )
         ],
       ),
     );
@@ -392,7 +368,10 @@ class Message {
   final bool isSeen;
 
   Message(
-      {required this.message, required this.sender, required this.timestamp, required this.isSeen});
+      {required this.message,
+      required this.sender,
+      required this.timestamp,
+      required this.isSeen});
 }
 
 class User {
@@ -405,6 +384,6 @@ class User {
     required this.Name,
     required this.ID,
     required this.userType,
-    this.hasUnreadMessages = false, // Initialize to false
+    this.hasUnreadMessages = false,
   });
 }
