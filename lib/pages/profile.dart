@@ -85,6 +85,8 @@ class _ProfilePageState extends State<ProfilePage> {
       onPressed: () {
         //this should refresh and go to home page
         //Navigator.of(context).pop();
+        Navigator.of(context, rootNavigator: true)
+            .pop('dialog'); // Dismiss the dialog
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MyApp()),
@@ -116,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Text("OK"),
       onPressed: () {
         // When Ok button is pressed it will remove the dialog box
-        Navigator.of(context).pop();
+        Navigator.of(context, rootNavigator: true).pop('dialog');
       },
     );
 
