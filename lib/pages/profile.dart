@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gcisl_app/main.dart';
+import 'package:gcisl_app/pages/public_profile.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
@@ -58,9 +60,12 @@ class _ProfilePageState extends State<ProfilePage> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Profile not uploaded"),
-      content: Text(message),
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+      ),
       actions: [
-        okButton,
+        Center(child: okButton),
       ],
     );
 
@@ -76,10 +81,41 @@ class _ProfilePageState extends State<ProfilePage> {
   showSucessAlertDialog(BuildContext context) {
     // set up the button
     Widget okButton = TextButton(
-      child: Text(""),
+      child: Text("Go Back to Home Page"),
       onPressed: () {
-        // ignore: todo
-        //TODO this should refresh and go to home page
+        //this should refresh and go to home page
+        //Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(""),
+      content: Text("Sucess! Profile Updated", textAlign: TextAlign.center),
+      actions: [
+        Center(child: okButton),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showLocationErrorAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        // When Ok button is pressed it will remove the dialog box
         Navigator.of(context).pop();
       },
     );
@@ -87,9 +123,12 @@ class _ProfilePageState extends State<ProfilePage> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
-      content: Text("Sucess! Profile Updated"),
+      content: Text(
+        "Error! Please Enter State and City",
+        textAlign: TextAlign.center,
+      ),
       actions: [
-        okButton,
+        Center(child: okButton),
       ],
     );
 
@@ -137,7 +176,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -146,9 +184,9 @@ class _ProfilePageState extends State<ProfilePage> {
     String addy = "";
 
     try {
-
       Map<String, double> coordinates =
-          await GeoLocationService.queryGeoLocation(countryValue, cityValue, stateValue, zipValue);
+          await GeoLocationService.queryGeoLocation(
+              countryValue, cityValue, stateValue, zipValue);
 
       //List<Location> locations = await locationFromAddress(addy);
       //Location local = locations[0];
@@ -456,7 +494,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: _isLoading
                       ? null // disable button while loading
                       : () async {
-                          if (_formKey.currentState!.validate()) {
+                          if (_formKey.currentState!.validate() &&
+                              stateValue != null &&
+                              cityValue != null) {
                             _formKey.currentState!.save();
                             setState(() {
                               _isLoading = true;
@@ -466,6 +506,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             setState(() {
                               _isLoading = false;
                             });
+                          } else {
+                            // Show an error message if state or city is not selected
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //   content: Text('Please select State and City'),
+                            // ));
+                            showLocationErrorAlertDialog(context);
                           }
                         },
                   style: ElevatedButton.styleFrom(

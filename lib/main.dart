@@ -26,6 +26,9 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
 
+  //FirebaseAuth.instance
+  //.useAuthEmulator('localhost', 9099); // Configure authentication emulator
+
   runApp(const MyApp());
 }
 
@@ -45,7 +48,7 @@ class _MyAppState extends State<MyApp> {
     MyHomePage(title: "Granger Cobb Institute for Senior Living"),
     AuthPage(),
     AuthPage(),
-    ProfilePage(),
+    //ProfilePage(),
     ProfilePage1(
         FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
     ChatPage(),
@@ -64,7 +67,7 @@ class _MyAppState extends State<MyApp> {
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           AuthPage(),
           AuthPage(),
-          ProfilePage(),
+          //ProfilePage(),
           ProfilePage1(
               FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
               false),
@@ -79,7 +82,7 @@ class _MyAppState extends State<MyApp> {
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
           Text("dummy"),
           MyHomePage(title: "Granger Cobb Institute for Senior Living"),
-          ProfilePage(),
+          //ProfilePage(),
           ProfilePage1(
               FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
               false),
@@ -162,13 +165,13 @@ class _MyAppState extends State<MyApp> {
                                   label: hideLabels ? "" : "Home",
                                 ),
                               ),
-                            if (FirebaseAuth.instance.currentUser != null)
-                              Container(
-                                child: NavigationDestination(
-                                  icon: Icon(Icons.person_add_alt_1_outlined),
-                                  label: hideLabels ? "" : "Edit Profile",
-                                ),
-                              ),
+                            // if (FirebaseAuth.instance.currentUser != null)
+                            //   Container(
+                            //     child: NavigationDestination(
+                            //       icon: Icon(Icons.person_add_alt_1_outlined),
+                            //       label: hideLabels ? "" : "Edit Profile",
+                            //     ),
+                            //   ),
                             if (FirebaseAuth.instance.currentUser != null)
                               Container(
                                 child: NavigationDestination(
