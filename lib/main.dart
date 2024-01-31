@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
     ProfilePage(),
     ProfilePage1(
         FirebaseAuth.instance.currentUser?.email?.hashCode.toString(), false),
-    ChatPage(),
+    ChatPage(null),
     AnalyticsPage(),
     if (FirebaseAuth.instance.currentUser != null &&
         FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
           ProfilePage1(
               FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
               false),
-          ChatPage(),
+          ChatPage(null),
           AnalyticsPage(),
           Text("dummey"),
           Text("dummey"),
@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
           ProfilePage1(
               FirebaseAuth.instance.currentUser?.email?.hashCode.toString(),
               false),
-          ChatPage(),
+          ChatPage(null),
           AnalyticsPage(),
           if (FirebaseAuth.instance.currentUser != null &&
               FirebaseAuth.instance.currentUser!.email == "admin@wsu.edu")

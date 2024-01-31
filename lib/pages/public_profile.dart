@@ -124,6 +124,20 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           label: const Text("Go Back"),
                           icon: const Icon(Icons.arrow_back),
                         ),
+                        const SizedBox(width: 16.0),
+                        FloatingActionButton.extended(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ChatPage(emailHash))
+                            );
+                          },
+                          heroTag: 'message',
+                          elevation: 0,
+                          backgroundColor: Colors.red,
+                          label: const Text("Message"),
+                          icon: const Icon(Icons.message),
+                        )
                       ],
                     ),
                   const SizedBox(height: 16),

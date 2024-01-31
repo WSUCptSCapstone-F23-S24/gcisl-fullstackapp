@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 class ChatPage extends StatefulWidget {
   String? selectedUserID;
-  ChatPage({this.selectedUserID});
+  ChatPage(this.selectedUserID);
   @override
   _ChatPageState createState() => _ChatPageState();
 }
