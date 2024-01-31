@@ -27,6 +27,18 @@ class SignOut extends StatelessWidget {
                   fontSize: 24,
                 ),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyApp()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white, elevation: 0),
+                  child: Text(
+                    'Click here to sign in again',
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ))
             ],
           ),
         ),
