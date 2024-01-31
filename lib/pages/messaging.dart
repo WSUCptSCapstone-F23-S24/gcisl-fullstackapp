@@ -5,7 +5,8 @@ import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 class ChatPage extends StatefulWidget {
-  ChatPage();
+  String? selectedUserID;
+  ChatPage({this.selectedUserID});
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -17,8 +18,8 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
   List<Message> _messages = [];
   Set<User> _users = Set<User>();
-  User? _selectedUser;
   String _currentUser = "";
+  User? _selectedUser;
 
 
 
@@ -114,12 +115,11 @@ void _addMessageListener(String user) {
       });
     });
     _addNewMessageListener();
-    // for(User u in _users)
-    // {
-    //   if(u.ID == _currentUser)
-    //     continue;
-    //   _addMessageListener(u.ID);
-    // }
+    for(User u in _users)
+    {
+      if(u.ID == widget.selectedUserID)
+        _selectedUser = u;
+    }
   }
 
   
