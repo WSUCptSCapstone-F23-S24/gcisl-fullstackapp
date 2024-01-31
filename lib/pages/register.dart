@@ -32,8 +32,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _zipcodeController = TextEditingController();
   final _countryAddressController = TextEditingController();
 
-
-
   String? countryValue;
   String? stateValue;
   String? cityValue;
@@ -43,7 +41,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   var loading = false;
 
-
   //get lat long to save data to backend
   getLatLong(context) async {
     //get lat and log values
@@ -52,9 +49,9 @@ class _RegisterPageState extends State<RegisterPage> {
     String addy = "";
 
     try {
-
-      Map<String, double> coordinates = await GeoLocationService.queryGeoLocation(
-          countryValue, cityValue, stateValue, zipValue);
+      Map<String, double> coordinates =
+          await GeoLocationService.queryGeoLocation(
+              countryValue, cityValue, stateValue, zipValue);
 
       lat = coordinates['latitude'];
       long = coordinates['longitude'];
@@ -595,7 +592,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text("Ok"))
+                      child: Center(child: const Text("Ok")))
                 ],
               ));
 
