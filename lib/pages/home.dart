@@ -83,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
     String? userType = event.snapshot.child("userType").value.toString();
-    print("UT - $userType");
     if(userType == "null")
     {
       userType = null;

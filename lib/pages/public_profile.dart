@@ -125,11 +125,12 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           icon: const Icon(Icons.arrow_back),
                         ),
                         const SizedBox(width: 16.0),
+                        if(widget.emailHashString != emailHash)
                         FloatingActionButton.extended(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ChatPage(emailHash))
+                              MaterialPageRoute(builder: (context) => ChatPage(widget.emailHashString))
                             );
                           },
                           heroTag: 'message',
