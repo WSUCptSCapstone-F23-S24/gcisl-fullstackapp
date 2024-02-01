@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 
 import 'dart:html';
@@ -10,6 +12,7 @@ import 'package:gcisl_app/pages/profile.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:gcisl_app/pages/messaging.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'dart:math';
 import 'dart:async';
@@ -44,6 +47,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
       _company,
       _position;
   String? emailHash;
+  String initials = "";
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
@@ -55,44 +59,124 @@ class _ProfilePage1State extends State<ProfilePage1> {
 
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
-  getCurrentUser() async {
-    await FirebaseDatabase.instance
+  String? _profilePictureUrl; // New field to hold profile picture URL
+
+  Future<void> _pickImage() async {
+    print("Entered _pickImage");
+    final completer = Completer<void>();
+    InputElement input = FileUploadInputElement() as InputElement
+      ..accept = 'image/*';
+    input.click();
+    input.onChange.listen((event) async {
+      final file = input.files!.first;
+      if (file.type.startsWith('image/')) {
+        final reader = FileReader();
+        reader.readAsDataUrl(file);
+        reader.onLoadEnd.listen((event) async {
+          String filename = Uuid().v1() + file.type.toString();
+          var snapshot = await FirebaseStorage.instance
+              .ref()
+              .child(filename)
+              .putBlob(file);
+          var imageUrl = await snapshot.ref.getDownloadURL();
+
+          // Get the current user's ID
+          //String? userId = FirebaseAuth.instance.currentUser.uid;
+          // Reference to the user's profile data in the database
+          DatabaseReference userRef = FirebaseDatabase.instance
+              .ref()
+              .child('users')
+              .child(widget.emailHashString.toString());
+          // Update the profile data with the image URL
+          await userRef.child('profile picture').set(imageUrl);
+
+          // Trigger a rebuild to update the profile picture display
+          setState(() {
+            // Update the profile picture display with the selected image
+            _profilePictureUrl = imageUrl;
+          });
+
+          completer.complete();
+        });
+      } else {
+        // Show an error message or perform any other action for non-image files
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Please pick an image file.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+    return completer.future;
+  }
+
+  getCurrentUser() {
+    FirebaseDatabase.instance
         .ref('users')
         .get()
         // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
               if (element.key.toString() == widget.emailHashString) {
-                _nameController.text =
-                    element.child("first name").value.toString() +
-                        " " +
-                        element.child("last name").value.toString();
-                _companyPositionController.text =
-                    element.child("position").value.toString();
-                _phoneController.text = element.child("phone").value.toString();
-                _zipcodeController.text =
-                    element.child("zip address").value.toString();
-                _companyController.text =
-                    element.child("company").value.toString();
-                _companyPositionController.text =
-                    element.child("position").value.toString();
-                _countryAddressController.text =
-                    element.child("country address").value.toString();
+                setState(() {
+                  _nameController.text =
+                      element.child("first name").value.toString() +
+                          " " +
+                          element.child("last name").value.toString();
+                  _companyPositionController.text =
+                      element.child("position").value.toString();
+                  _phoneController.text =
+                      element.child("phone").value.toString();
+                  _zipcodeController.text =
+                      element.child("zip address").value.toString();
+                  _companyController.text =
+                      element.child("company").value.toString();
+                  _companyPositionController.text =
+                      element.child("position").value.toString();
+                  _countryAddressController.text =
+                      element.child("country address").value.toString();
+                  _profilePictureUrl =
+                      element.child("profile picture").value.toString();
+                });
               }
             }));
   }
 
   @override
   void initState() {
-    getCurrentUser();
     super.initState();
     // Check if user is logged in using Firebase Authentication
     final user = FirebaseAuth.instance.currentUser;
 
     emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+
+    getCurrentUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Gets the initials of the users name
+    String fullName = _nameController.text;
+    List<String> nameParts = fullName.split(" ");
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+      initials = initials.toUpperCase();
+    }
+
     return Scaffold(
       body: ListView(
         children: [
@@ -101,6 +185,29 @@ class _ProfilePage1State extends State<ProfilePage1> {
               padding: const EdgeInsets.all(6.0),
               child: Column(
                 children: [
+                  _profilePictureUrl.toString() == "null"
+                      ? CircleAvatar(
+                          backgroundColor: Palette.ktoCrimson,
+                          child: Text(
+                            initials,
+                            style: TextStyle(fontSize: 50, color: Colors.white),
+                          ),
+                          radius: 100,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(_profilePictureUrl!),
+                          radius: 100,
+                        ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  if (emailHash == widget.emailHashString)
+                    ElevatedButton(
+                      onPressed: () {
+                        _pickImage(); // Call the image picker function here
+                      },
+                      child: Text('Edit Profile Picture'),
+                    ),
                   TextField(
                     controller: _nameController,
                     readOnly: true,
