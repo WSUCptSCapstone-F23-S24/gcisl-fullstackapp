@@ -127,20 +127,21 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           icon: const Icon(Icons.arrow_back),
                         ),
                         const SizedBox(width: 16.0),
-                        if(widget.emailHashString != emailHash)
-                        FloatingActionButton.extended(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ChatPage(widget.emailHashString))
-                            );
-                          },
-                          heroTag: 'message',
-                          elevation: 0,
-                          backgroundColor: Colors.red,
-                          label: const Text("Message"),
-                          icon: const Icon(Icons.message),
-                        )
+                        if (widget.emailHashString != emailHash)
+                          FloatingActionButton.extended(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChatPage(widget.emailHashString)));
+                            },
+                            heroTag: 'message',
+                            elevation: 0,
+                            backgroundColor: Colors.red,
+                            label: const Text("Message"),
+                            icon: const Icon(Icons.message),
+                          )
                       ],
                     ),
                   const SizedBox(height: 16),
@@ -347,17 +348,22 @@ class _PostPortionState extends State<PostPortion> {
       child: Center(
         child: Column(
           children: <Widget>[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-              },
-              child: Text('Edit Profile'),
+            const SizedBox(
+              height: 16,
             ),
-            const SizedBox(height: 16),
+            if (emailHash == widget.emailHashcode)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                  );
+                },
+                child: Text('Edit Profile'),
+              ),
+            const SizedBox(
+              height: 16,
+            ),
             DropdownButton<PostSortOption>(
               value: _selectedSortOption,
               onChanged: (newSortOption) {
