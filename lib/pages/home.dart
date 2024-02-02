@@ -26,8 +26,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
@@ -56,23 +54,27 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     currentEmail = FirebaseAuth.instance.currentUser?.email;
     _database.onChildAdded.listen(_onNewPostAdded);
-     FirebaseDatabase.instance.reference().child('users').once().then((DatabaseEvent event) {
+    FirebaseDatabase.instance
+        .reference()
+        .child('users')
+        .once()
+        .then((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
-      Map<dynamic, dynamic>? usersData = snapshot.value as Map<dynamic, dynamic>?;
+      Map<dynamic, dynamic>? usersData =
+          snapshot.value as Map<dynamic, dynamic>?;
       if (usersData != null) {
         usersData.forEach((key, value) {
-          if(value['email'] != currentEmail)
-            return;
-          bool tempisAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
+          if (value['email'] != currentEmail) return;
+          bool tempisAdmin =
+              value['isAdmin'] != null ? value['isAdmin'] as bool : false;
           currentUserType = value["userType"];
           isAdmin = tempisAdmin;
         });
       }
     });
-    
   }
 
-  void _onNewPostAdded(DatabaseEvent event) {
+  void _onNewPostAdded(DatabaseEvent event) async {
     String? uniquePostId = event.snapshot.key;
     String? uniquePostImageId = event.snapshot.child("image").key;
     final newPost = event.snapshot.child("text").value.toString();
@@ -83,13 +85,26 @@ class _MyHomePageState extends State<MyHomePage> {
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
     String? userType = event.snapshot.child("userType").value.toString();
-    if(userType == "null")
-    {
+    if (userType == "null") {
       userType = null;
     }
     if (userName == "null") {
       userName = "anonymous";
     }
+
+    // Hash the email to get the email hashcode
+    int emailHashCode = email.hashCode;
+
+    // Fetch the user details from the "users" table based on the hashed email
+    DataSnapshot userSnapshot = await FirebaseDatabase.instance
+        .ref('users')
+        .child(emailHashCode
+            .toString()) // assuming the emailHashCode is stored as the key in the users table
+        .get();
+
+    // Extract first name and last name from the user details
+    String? firstName = userSnapshot.child("first name").value.toString();
+    String? lastName = userSnapshot.child("last name").value.toString();
 
     if (likes == null) {
       likes = [];
@@ -103,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _postList.insert(0, [
           newPost,
-          userName,
+          firstName + " " + lastName,
           timestamp,
           image,
           email,
@@ -118,8 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _localPostListSort()
-  {
+  void _localPostListSort() {
     PostSorting.sortPostList(_postList, _selectedSortOption);
     setState(() {});
   }
@@ -366,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'email': currentEmail,
                       'likes': [],
                       'comments': {},
-                      'userType' : currentUserType,
+                      'userType': currentUserType,
                     }).then((_) {
                       setState(() {
                         _post.text = '';
@@ -438,30 +452,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Column(
-                                    children:[
-                                        Row(
-                                    children: [
+                                  Column(children: [
+                                    Row(children: [
                                       TextButton(
-                                        child: Text(
-                                          _postList[index][1] ?? "anonymous",
-                                          style: const TextStyle(
-                                            // decoration: TextDecoration.underline,
-                                            // color: Palette.ktoCrimson,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600,
-                                          fontSize: 16,
+                                          child: Text(
+                                            _postList[index][1] ?? "anonymous",
+                                            style: const TextStyle(
+                                              // decoration: TextDecoration.underline,
+                                              // color: Palette.ktoCrimson,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
                                           ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => ProfilePage1(_postList[index][4].hashCode.toString(), true))
-                                          );
-                                          //ProfilePage1(_postList[index][4].hashCode.toString());
-                                        }
-                                      ),
-                                      if(_postList[index][9] != "null" && _postList[index][9] != null)
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfilePage1(
+                                                            _postList[index][4]
+                                                                .hashCode
+                                                                .toString(),
+                                                            true)));
+                                            //ProfilePage1(_postList[index][4].hashCode.toString());
+                                          }),
+                                      if (_postList[index][9] != "null" &&
+                                          _postList[index][9] != null)
                                         Text(
                                           '-  ${_postList[index][9]}',
                                           style: const TextStyle(
@@ -469,34 +486,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                             // color: Palette.ktoCrimson,
                                             color: Colors.black,
                                             fontWeight: FontWeight.w600,
-                                          fontSize: 16,
+                                            fontSize: 16,
                                           ),
                                         ),
-                                    ]
-                                  ),
-                                  Row(
-                                    children:[
+                                    ]),
+                                    Row(children: [
                                       Padding(
-                                        padding: EdgeInsets.only(left: 15.0), 
-                                        child:Tooltip(
-                                        message:  DateFormat('MM/dd/yyyy hh:mm a').format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                int.parse(_postList[index][2]))),
-                                        child: SelectableText(
-                                        '${DateFormat('MMM d').format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                int.parse(_postList[index][2])))}',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                            ),
-                                        ))   
-                                      ),
-                                      
-                                    ]
-                                  )
-                                      
-                                    ]
-                                  ),
+                                          padding: EdgeInsets.only(left: 15.0),
+                                          child: Tooltip(
+                                              message: DateFormat(
+                                                      'MM/dd/yyyy hh:mm a')
+                                                  .format(DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          int.parse(
+                                                              _postList[index]
+                                                                  [2]))),
+                                              child: SelectableText(
+                                                '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index][2])))}',
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ))),
+                                    ])
+                                  ]),
                                   _postList[index][0] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
@@ -558,13 +570,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Row(
                                   children: [
                                     LikeButton(
-                                      isLiked: likes.contains(username),
+                                      isLiked: likes.contains(emailHash),
                                       onTap: (isLiked) async {
                                         setState(() {
                                           if (isLiked) {
-                                            likes.remove(username);
+                                            likes.remove(emailHash);
                                           } else {
-                                            likes.add(username);
+                                            likes.add(emailHash);
                                           }
                                         });
                                         await _updateLikesInDatabase(
@@ -594,7 +606,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     CommentsPage(
                                                       postId: _postList[index]
                                                           [5],
-                                                      username: username,
+                                                      username: _postList[index]
+                                                          [1],
                                                       commentMap: comments,
                                                     )));
                                       },
@@ -603,18 +616,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                         color: Colors.grey,
                                       ),
                                     ),
-                                    if (_postList[index][4] == currentEmail || isAdmin)
-                                    SizedBox(
-                                      width: 25,
-                                    ),
-                                    if (_postList[index][4] == currentEmail || isAdmin)
-                                    IconButton(
-                                      icon: Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () {
-                                        deletePost(index, _postList[index][5], _postList[index][3]);
-                                        setState(() {});
-                                      },
-                                    ),
+                                    if (_postList[index][4] == currentEmail ||
+                                        isAdmin)
+                                      SizedBox(
+                                        width: 25,
+                                      ),
+                                    if (_postList[index][4] == currentEmail ||
+                                        isAdmin)
+                                      IconButton(
+                                        icon: Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () {
+                                          deletePost(index, _postList[index][5],
+                                              _postList[index][3]);
+                                          setState(() {});
+                                        },
+                                      ),
                                   ],
                                 ),
                               ),
