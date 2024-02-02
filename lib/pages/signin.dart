@@ -68,7 +68,15 @@ class _SignInPageState extends State<SignInPage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text(message),
+              title: Center(child: Text(message)),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    // ignore: prefer_const_constructors
+                    child: Center(child: Text("Ok")))
+              ],
             );
           });
     } finally {
@@ -90,26 +98,26 @@ class _SignInPageState extends State<SignInPage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       Column(
-                      children: [
-                        // Logo Image
-                        Image.asset(
-                          'assets/cougar.png', 
-                          height: 200,
-                          width: 200, 
-                          color: Palette.ktoCrimson,
-                        ),
-                        Text(
-                          'Cobb Connect',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35,
+                      Column(
+                        children: [
+                          // Logo Image
+                          Image.asset(
+                            'assets/cougar.png',
+                            height: 200,
+                            width: 200,
+                            color: Palette.ktoCrimson,
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 50), 
+                          Text(
+                            'Cobb Connect',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 35,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 50),
                       //Wecolme Back
                       Text(
                         'Sign in',
