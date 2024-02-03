@@ -16,6 +16,7 @@ class _ChatPageState extends State<ChatPage> {
   final FirebaseDatabase database = FirebaseDatabase.instance;
   late DatabaseReference _messagesRef;
   late DatabaseReference _usersRef;
+  late DatabaseReference _messagesHelpRef;
   final TextEditingController _textController = TextEditingController();
   List<Message> _messages = [];
   Set<User> _users = Set<User>();
@@ -60,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
         FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
 
     _messagesRef = database.ref().child("messages").child(_currentUser);
+    _messagesHelpRef = database.ref().child("messagesHelp").child(_currentUser);
     _usersRef = database.ref().child("users");
     _initializeUsers();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -97,6 +99,7 @@ class _ChatPageState extends State<ChatPage> {
           sender: sender,
           timestamp: timestampInt,
           isSeen: isSeen));
+      _setUserLastMessage(_selectedUser, message);
       print("${_messages.length}");
 
 
@@ -188,9 +191,6 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {});
   }
 
-  
-
-
   void _sendMessage(String message) {
     print("Sending Message [$message]");
     final now = DateTime.now();
@@ -214,6 +214,40 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {});
     
     _textController.clear();
+  }
+
+  Future<String> _getUserLastMessage(User? u) async {
+  if (u == null) {
+    return "";
+  }
+
+  DatabaseReference reference = _messagesHelpRef.child(u.ID);
+
+  try {
+    var e = await reference.once();
+    
+    if (e.snapshot.value != null) {
+      Map<dynamic, dynamic> values = e.snapshot.value as Map;
+      print("$values - ${values["lastMessage"]}");
+      return values["lastMessage"] ?? "";
+    } else {
+      print("Snapshot null");
+      return "";
+    }
+  } catch (error) {
+    print("Error: $error");
+    return "";
+  }
+}
+
+  void _setUserLastMessage(User? u, String message)
+  {
+    if(u == null)
+    {
+      return;
+    }
+    DatabaseReference reference = _messagesHelpRef.child(u.ID);
+    reference.set({"lastMessage": message});
   }
 
   Widget _buildMessage(Message message) {
@@ -289,7 +323,20 @@ class _ChatPageState extends State<ChatPage> {
             ),
         ],
       ),
-      subtitle: Text(user.userType),
+      // subtitle: Text(user.userType),
+      subtitle: FutureBuilder<String>(
+        future: _getUserLastMessage(user),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("");
+          } else if (snapshot.hasError) {
+            return Text("");
+          } else {
+            String lastMessage = snapshot.data ?? "";
+            return Text('$lastMessage');
+          }
+        },
+      ),
       tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
       onTap: () {
         setState(() {
@@ -299,7 +346,6 @@ class _ChatPageState extends State<ChatPage> {
             setState(() {
               String message = event.snapshot.child("message").value.toString();
               String sender = event.snapshot.child("sender").value.toString();
-              print("Received [$message] from $sender");
 
               if (_selectedUser == null ||
                   (sender != _selectedUser!.ID && sender != _currentUser)) {
@@ -308,7 +354,6 @@ class _ChatPageState extends State<ChatPage> {
                     u.hasUnreadMessages = true;
                   }
                 }
-                print("Returning");
                 return;
               }
 
@@ -317,15 +362,13 @@ class _ChatPageState extends State<ChatPage> {
               bool isSeen = event.snapshot.child("isSeen").value as bool;
               DateTime timestamp = DateTime.parse(timestampString);
               int timestampInt = timestamp.millisecondsSinceEpoch;
-              print("${_messages.length}");
               _messages.insert(0,Message(
                   message: message,
                   sender: sender,
                   timestamp: timestampInt,
                   isSeen: isSeen));
-              print("${_messages.length}");
-
-
+              _setUserLastMessage(_selectedUser, message);
+                
             });
           });
 
