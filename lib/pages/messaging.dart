@@ -34,24 +34,10 @@ class _ChatPageState extends State<ChatPage>
     _messagesHelpRef = database.ref().child("messagesHelp").child(_currentUser);
     _usersRef = database.ref().child("users");
     _initializeUsers();
-    if(widget.selectedUserID != null)
-    {
-      _createUserMessageList(widget.selectedUserID!);
-      for(User u in _users)
-      {
-          if(u.ID == widget.selectedUserID!)
-            setState(() 
-            { 
-              _selectedUser = u;
-            });
-      }
-    }
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scrollDown();
-    // });
+    _setSelectedUser();
   }
 
-  void User? _getUser(String userID)
+  User? _getUser(String userID)
   {
       for(User u in _users)
       {
@@ -63,47 +49,70 @@ class _ChatPageState extends State<ChatPage>
       return null;
   }
 
+  void _setSelectedUser()
+  {
+    if(widget.selectedUserID == null)
+    {
+      return;
+    }
+    _createUserMessageList(widget.selectedUserID!);
+    User? user = _getUser(widget.selectedUserID);
+    if(user == null)
+    {
+      print("User [${widget.selectedUserID}] is null");
+    }
+    _selectedUser = user!;
+    setState((){});
+  }
+
   void _changeUserReadMessages(String userID, bool value)
   {
-      _messagesHelpRef.child(userID).push().update({"hasUnreadMessages": value});
-      _getUser(userID)!.hasUnreadMessages = false;
+      _messagesHelpRef.child(userID).push().update({"
+      ": value});
+      User? user = _getUser(userID);
+      if(user == null)
+      {
+        print("Unable to find user [${userID}]");
+        return;
+      }
+      user!.hasUnreadMessages = value;
   }
 
   void _onUserMessageAdded(DatabaseEvent event)
   {
       String message = event.snapshot.child("message").value.toString();
+      print("On User Message Add");
       String? userID = event.snapshot.ref.parent!.key;
-      if(_currentUser != null && userID == _currentUser)
+      if(_selectedUser != null && userID == _selectedUser.ID)
       {
+
+        _messagesHelpRef.child(_selectedUser.ID).update()
         _addNewMessageToList(event);
         return;
       }
-      bool hasUnreadMessages = true;
-      setState(() {_changeUserReadMessages(userID!, hasUnreadMessages);});
+      setState(() {_changeUserReadMessages(userID!, true);});
       
   }
 
 
   void _addNewMessageToList(DatabaseEvent event)
   {
-    setState(() 
-    {
-      String message = event.snapshot.child("message").value.toString();
-      String sender = event.snapshot.child("sender").value.toString();
+    String message = event.snapshot.child("message").value.toString();
+    String sender = event.snapshot.child("sender").value.toString();
 
-      print("Received [$message] from $sender");
+    print("Received [$message] from $sender");
 
-      String timestampString = event.snapshot.child("timestamp").value.toString();
-      DateTime timestamp = DateTime.parse(timestampString);
-      int timestampInt = timestamp.millisecondsSinceEpoch;
+    String timestampString = event.snapshot.child("timestamp").value.toString();
+    DateTime timestamp = DateTime.parse(timestampString);
+    int timestampInt = timestamp.millisecondsSinceEpoch;
 
-      print("${_messages.length}");
+    print("${_messages.length}");
 
-      _messages.insert(0,Message(
-          message: message,
-          sender: sender,
-          timestamp: timestampInt));
-    });
+    _messages.insert(0,Message(
+        message: message,
+        sender: sender,
+        timestamp: timestampInt));
+    setState(() {});
   }
 
   Future<void> _initializeUsers() async
@@ -126,7 +135,7 @@ class _ChatPageState extends State<ChatPage>
         String checkStringID = key;
         if(checkStringID == _currentUser)
         {
-          continue;
+          return;
         }
         bool hasUnreadMessages;
         try
@@ -166,6 +175,8 @@ class _ChatPageState extends State<ChatPage>
       "sender": _currentUser,
       "timestamp": formattedDate,
     });
+    _messagesHelpRef.parent?.child(_selectedUser!.ID).child(_currentUser).push().set({"hasUnreadMessages": true,"lastMessage": message});
+    _messagesHelpRef.child(_selectedUser!.ID).push().set({"lastMessage": message}, {merge: true});
     setState(() {});
     
     _textController.clear();
@@ -176,33 +187,16 @@ class _ChatPageState extends State<ChatPage>
       return "";
     }
 
-    DatabaseReference reference = _messagesHelpRef.child(u.ID);
-
-    try {
-      var e = await reference.once();
-      
-      if (e.snapshot.value != null) {
-        Map<dynamic, dynamic> values = e.snapshot.value as Map;
-        print("$values - ${values["lastMessage"]}");
-        return values["lastMessage"] ?? "";
-      } else {
-        print("Snapshot null");
-        return "";
-      }
-    } catch (error) {
-      print("Error: $error");
-      return "";
-    }
-  }
-
-  void _setUserLastMessage(User? u, String message)
-  {
-    if(u == null)
+    String lastMessage = "";    
+    try
     {
-      return;
+      lastMessage = _messagesHelpRef.child(u.ID).child("lastMessage");
     }
-    DatabaseReference reference = _messagesHelpRef.child(u.ID);
-    reference.update({"lastMessage": message});
+    catch (e)
+    {
+      lastMessage = "";
+    }
+    return lastMessage;
   }
 
   Future<void> _createUserMessageList(String userID) async
