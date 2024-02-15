@@ -364,18 +364,23 @@ class _ChatPageState extends State<ChatPage>
       ),
       // subtitle: Text(user.userType),
       subtitle: FutureBuilder<String>(
-        future: _getUserLastMessage(user),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("");
-          } else if (snapshot.hasError) {
-            return Text("");
-          } else {
-            String lastMessage = snapshot.data ?? "";
-            return Text('$lastMessage');
-          }
-        },
-      ),
+    future: _getUserLastMessage(user),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Text("");
+      } else if (snapshot.hasError) {
+        return Text("");
+      } else {
+        String lastMessage = snapshot.data ?? "";
+        // Restricting lastMessage to 20 characters
+        if (lastMessage.length > 20) {
+          return Text('${lastMessage.substring(0, 20)}...');
+        }
+        return Text('$lastMessage');
+      }
+    },
+  ),
+
       tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
       onTap: () {
         setState(() {
