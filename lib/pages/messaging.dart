@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,7 @@ class _ChatPageState extends State<ChatPage>
   String _currentUser = "";
   User? _selectedUser;
   int timeSinceStart = 0;
+  List<StreamSubscription> onChildAddedListeners = [];
 
 
   @override
@@ -37,12 +40,15 @@ class _ChatPageState extends State<ChatPage>
     _messagesHelpRef = database.ref().child("messagesHelp").child(_currentUser);
     _usersRef = database.ref().child("users");
     _initializeUsers();
-    _setSelectedUser();
   }
 
   @override
   void dispose() {
     super.dispose();
+    for (var listener in onChildAddedListeners)
+    {
+      listener.cancel();
+    }
     // for(ChildEventListener childListener in _listeners)
     // {
     //   childListener.cancel();
@@ -74,6 +80,7 @@ class _ChatPageState extends State<ChatPage>
       print("User [${widget.selectedUserID}] is null");
     }
     _selectedUser = user!;
+    _selectedUser!.hasUnreadMessages = false;
     setState((){});
   }
 
@@ -165,8 +172,8 @@ class _ChatPageState extends State<ChatPage>
         var value = usersData[key];
         String userRole = value["userType"];
         String fullname = value["first name"] + " " + value["last name"];
-        String checkStringID = key;
-        if(checkStringID == _currentUser)
+        String userID = key;
+        if(userID == _currentUser)
         {
           continue;
         }
@@ -179,16 +186,19 @@ class _ChatPageState extends State<ChatPage>
         catch (e)
         {
           hasUnreadMessages = false;
-          _messagesHelpRef.child(checkStringID).set({"hasUnreadMessages": false, "lastMessage" : ""});
+          _messagesHelpRef.child(userID).set({"hasUnreadMessages": false, "lastMessage" : ""});
         }
         // _listeners.Add(_messagesRef.child(checkStringID).onChildAdded.listen(_onUserMessageAdded));
-        _messagesRef.child(checkStringID).onChildAdded.listen(_onUserMessageAdded);
-        print("Adding to list: Name: $fullname, ID: $checkStringID, userType: $userRole, hasUnreadMessages: $hasUnreadMessages");
+        onChildAddedListeners.add(_messagesRef.child(userID).onChildAdded.listen(_onUserMessageAdded));
+        // onChildAddedListeners.add(() {_messagesRef.child(userID).off();});
+        print("Adding to list: Name: $fullname, ID: $userID, userType: $userRole, hasUnreadMessages: $hasUnreadMessages");
         setState(() 
         {
-          _users.add(User(Name: fullname, ID: checkStringID, userType: userRole, hasUnreadMessages: hasUnreadMessages));
+          _users.add(User(Name: fullname, ID: userID, userType: userRole, hasUnreadMessages: hasUnreadMessages));
         });
       }
+      _setSelectedUser();
+
 
     });
   }
@@ -349,52 +359,54 @@ class _ChatPageState extends State<ChatPage>
     );
   }
 
-  Widget _buildUserTile(User user) {
-    return ListTile(
-      title: Row(
-        children: [
-          Text(user.Name),
-          if (user.hasUnreadMessages)
-            Icon(
-              Icons.brightness_1,
-              color: Colors.red,
-              size: 10.0,
-            ),
-        ],
-      ),
-      // subtitle: Text(user.userType),
-      subtitle: FutureBuilder<String>(
-    future: _getUserLastMessage(user),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Text("");
-      } else if (snapshot.hasError) {
-        return Text("");
-      } else {
-        String lastMessage = snapshot.data ?? "";
-        // Restricting lastMessage to 20 characters
-        if (lastMessage.length > 20) {
-          return Text('${lastMessage.substring(0, 20)}...');
-        }
-        return Text('$lastMessage');
-      }
-    },
-  ),
-
-      tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
-      onTap: () {
-        setState(() {
-          if(_selectedUser == user)
-          {
-            return;
+Widget _buildUserTile(User user) {
+  return ListTile(
+    title: Row(
+      children: [
+        Expanded(
+          child: Text(user.Name),
+        ),
+        if (user.hasUnreadMessages)
+          const Icon(
+            Icons.brightness_1,
+            color: Colors.red,
+            size: 10.0,
+          ),
+      ],
+    ),
+    // subtitle: Text(user.userType),
+    subtitle: FutureBuilder<String>(
+      future: _getUserLastMessage(user),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("");
+        } else if (snapshot.hasError) {
+          return Text("");
+        } else {
+          String lastMessage = snapshot.data ?? "";
+          // Restricting lastMessage to 20 characters
+          if (lastMessage.length > 20) {
+            return Text('${lastMessage.substring(0, 20)}...');
           }
-          _selectedUser = user;
-          _changeUserReadMessages(_selectedUser!.ID, false);
-          setState((){_createUserMessageList(_selectedUser!.ID);});
-        });
+          return Text('$lastMessage');
+        }
       },
-    );
-  }
+    ),
+    tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
+    onTap: () {
+      setState(() {
+        if(_selectedUser == user)
+        {
+          return;
+        }
+        _selectedUser = user;
+        _changeUserReadMessages(_selectedUser!.ID, false);
+        setState((){_createUserMessageList(_selectedUser!.ID);});
+      });
+    },
+  );
+}
+
 
   Widget _buildUserList() {
     return Container(
