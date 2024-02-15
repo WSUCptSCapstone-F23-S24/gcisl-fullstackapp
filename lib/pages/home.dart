@@ -392,11 +392,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      Palette.ktoCrimson, // replace with your desired color
+                      Palette.ktoCrimson, 
                 ),
                 child: const Text(
                   'Post',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
               DropdownButton<PostSortOption>(
