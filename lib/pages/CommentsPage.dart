@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/main.dart';
@@ -8,10 +9,8 @@ import 'package:intl/intl.dart';
 
 class CommentsPage extends StatefulWidget {
   final String postId;
-  final String? userid;
   final Map<String, dynamic> commentMap;
-  CommentsPage(
-      {required this.postId, required this.userid, required this.commentMap});
+  CommentsPage({required this.postId, required this.commentMap});
 
   @override
   _CommentsPageState createState() => _CommentsPageState();
@@ -24,12 +23,14 @@ class _CommentsPageState extends State<CommentsPage> {
       FirebaseDatabase.instance.ref().child('posts');
   List<Comment> _comments = [];
   List<Reply> _replies = [];
-  String userName = "";
+  String? emailHash;
 
   @override
   void initState() {
     super.initState();
     print("Entered Initial State");
+    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode
+        .toString(); // gets current User's unique userid
     _loadComments();
   }
 
@@ -124,7 +125,7 @@ class _CommentsPageState extends State<CommentsPage> {
     _commentRef.child(commentID).set({
       // Generates a unique comment ID
       'text': text,
-      'sender': widget.userid.toString(),
+      'sender': emailHash.toString(),
       'timestamp': timestamp,
       'replies': [],
     });
@@ -150,7 +151,7 @@ class _CommentsPageState extends State<CommentsPage> {
     String replyID = _replyRef.push().key.toString();
     _replyRef.child(replyID).set({
       'text': text,
-      'sender': widget.userid.toString(),
+      'sender': emailHash.toString(),
       'timestamp': timestamp,
     });
   }
@@ -292,11 +293,9 @@ class _CommentsPageState extends State<CommentsPage> {
                                         itemBuilder: ((context, index) {
                                           final reply = _comments[commentIndex]
                                               .replies[index];
-                                          FutureBuilder(
-                                              future: _getUserName(
-                                                  _comments[commentIndex]
-                                                      .replies[index]
-                                                      .repliedBy),
+                                          return FutureBuilder(
+                                              future:
+                                                  _getUserName(reply.repliedBy),
                                               builder: (context, snapshot) {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.waiting) {
@@ -305,11 +304,10 @@ class _CommentsPageState extends State<CommentsPage> {
                                                   return Text(
                                                       'Error: ${snapshot.error}');
                                                 } else {
-                                                  final reply =
-                                                      _comments[commentIndex]
-                                                          .replies[index];
                                                   final replyUsername =
                                                       snapshot.data ?? '';
+                                                  print("reply username: " +
+                                                      replyUsername.toString());
                                                   return Container(
                                                     margin: EdgeInsets.only(
                                                         bottom: 8),

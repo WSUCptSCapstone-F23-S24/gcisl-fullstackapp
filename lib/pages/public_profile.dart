@@ -519,7 +519,7 @@ class _PostPortionState extends State<PostPortion> {
                                 ),
                                 TextButton(
                                     child: Text(
-                                      _postList[index][1] ?? "anonymous",
+                                      username ?? "anonymous",
                                       style: const TextStyle(
                                         decoration: TextDecoration.underline,
                                         color: Palette.ktoCrimson,

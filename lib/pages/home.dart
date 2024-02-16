@@ -605,11 +605,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     CommentsPage(
                                                       postId: _postList[index]
                                                           [5],
-                                                      userid: _postList[
-                                                                  index] // send unique userid as username instead
-                                                              [4]
-                                                          .hashCode
-                                                          .toString(),
                                                       commentMap: comments,
                                                     )));
                                       },
