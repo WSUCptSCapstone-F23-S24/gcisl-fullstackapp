@@ -391,8 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Palette.ktoCrimson, 
+                  backgroundColor: Palette.ktoCrimson,
                 ),
                 child: const Text(
                   'Post',
@@ -606,8 +605,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     CommentsPage(
                                                       postId: _postList[index]
                                                           [5],
-                                                      username: _postList[index]
-                                                          [1],
+                                                      userid: _postList[
+                                                                  index] // send unique userid as username instead
+                                                              [4]
+                                                          .hashCode
+                                                          .toString(),
                                                       commentMap: comments,
                                                     )));
                                       },
