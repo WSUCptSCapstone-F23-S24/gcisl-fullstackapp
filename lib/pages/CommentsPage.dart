@@ -1,16 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/main.dart';
 import 'package:gcisl_app/pages/home.dart';
 import 'package:gcisl_app/palette.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:intl/intl.dart';
 
 class CommentsPage extends StatefulWidget {
   final String postId;
-  final String? username;
   final Map<String, dynamic> commentMap;
-  CommentsPage(
-      {required this.postId, required this.username, required this.commentMap});
+  CommentsPage({required this.postId, required this.commentMap});
 
   @override
   _CommentsPageState createState() => _CommentsPageState();
@@ -23,12 +23,36 @@ class _CommentsPageState extends State<CommentsPage> {
       FirebaseDatabase.instance.ref().child('posts');
   List<Comment> _comments = [];
   List<Reply> _replies = [];
+  String? emailHash;
 
   @override
   void initState() {
     super.initState();
     print("Entered Initial State");
+    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode
+        .toString(); // gets current User's unique userid
     _loadComments();
+  }
+
+  Future<String> _getUserNameHelper(String userid) async {
+    // Fetch the user details from the "users" table based on the hashed email
+    DataSnapshot userSnapshot = await FirebaseDatabase.instance
+        .ref('users')
+        .child(userid
+            .toString()) // assuming the emailHashCode is stored as the key in the users table
+        .get();
+
+    // Extract first name and last name from the user details
+    String? firstName = userSnapshot.child("first name").value.toString();
+    String? lastName = userSnapshot.child("last name").value.toString();
+
+    return firstName + " " + lastName;
+  }
+
+  Future<String> _getUserName(String userid) async {
+    String username = await _getUserNameHelper(userid);
+    print("Name: " + username);
+    return username;
   }
 
   // Function that Loads all the comments on a post from the database
@@ -101,7 +125,7 @@ class _CommentsPageState extends State<CommentsPage> {
     _commentRef.child(commentID).set({
       // Generates a unique comment ID
       'text': text,
-      'sender': widget.username.toString(),
+      'sender': emailHash.toString(),
       'timestamp': timestamp,
       'replies': [],
     });
@@ -127,7 +151,7 @@ class _CommentsPageState extends State<CommentsPage> {
     String replyID = _replyRef.push().key.toString();
     _replyRef.child(replyID).set({
       'text': text,
-      'sender': widget.username.toString(),
+      'sender': emailHash.toString(),
       'timestamp': timestamp,
     });
   }
@@ -191,120 +215,170 @@ class _CommentsPageState extends State<CommentsPage> {
                 final comment = _comments[index];
                 int commentIndex = index;
                 if (comment != null) {
-                  return Card(
-                    elevation: 4, // Add elevation for a box-like appearance
-                    margin: EdgeInsets.all(
-                        16), // Add margin for spacing between cards
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 2,
-                        color: Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                comment.commentedBy,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                  return FutureBuilder(
+                      future: _getUserName(comment.commentedBy),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Or any other loading indicator
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          final username = snapshot.data ?? '';
+                          return Card(
+                            elevation:
+                                4, // Add elevation for a box-like appearance
+                            margin: EdgeInsets.all(
+                                16), // Add margin for spacing between cards
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 2,
+                                color: Colors.grey,
                               ),
-                              Text(
-                                comment.commentTime.toString() ?? '',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Text(comment.commentText ?? ''),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {
-                                  // When reply button is pressed it pops up a dialog box for the user to write a comment.
-                                  _openDialog(_comments[index].commentID);
-                                },
-                                child: Text('Reply'),
-                              ),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
-                        ),
-                        Divider(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.all(16),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount:
-                                    _comments[commentIndex].replies.length,
-                                itemBuilder: ((context, index) {
-                                  final reply =
-                                      _comments[commentIndex].replies[index];
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 8),
-                                    child: Card(
-                                      elevation: 2,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          width: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        username.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        comment.commentTime.toString() ?? '',
+                                        style: TextStyle(
                                           color: Colors.grey,
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  reply.repliedBy,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  reply.replyTime.toString() ??
-                                                      '',
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                Text(reply.replyText ?? ''),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                      Text(comment.commentText ?? ''),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          // When reply button is pressed it pops up a dialog box for the user to write a comment.
+                                          _openDialog(
+                                              _comments[index].commentID);
+                                        },
+                                        child: Text('Reply'),
                                       ),
                                     ),
-                                  );
-                                }),
-                              ),
+                                  ],
+                                ),
+                                Divider(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.all(16),
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: ClampingScrollPhysics(),
+                                        itemCount: _comments[commentIndex]
+                                            .replies
+                                            .length,
+                                        itemBuilder: ((context, index) {
+                                          final reply = _comments[commentIndex]
+                                              .replies[index];
+                                          return FutureBuilder(
+                                              future:
+                                                  _getUserName(reply.repliedBy),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator(); // Or any other loading indicator
+                                                } else if (snapshot.hasError) {
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else {
+                                                  final replyUsername =
+                                                      snapshot.data ?? '';
+                                                  print("reply username: " +
+                                                      replyUsername.toString());
+                                                  return Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 8),
+                                                    child: Card(
+                                                      elevation: 2,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                          width: 2,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  replyUsername
+                                                                      .toString(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  reply.replyTime
+                                                                          .toString() ??
+                                                                      '',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                                Text(reply
+                                                                        .replyText ??
+                                                                    ''),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              });
+                                        }),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
+                          );
+                        }
+                      });
                 } else {
                   return SizedBox();
                 }
