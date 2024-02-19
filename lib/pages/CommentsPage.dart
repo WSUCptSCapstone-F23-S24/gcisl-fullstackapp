@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gcisl_app/main.dart';
 import 'package:gcisl_app/pages/home.dart';
 import 'package:gcisl_app/palette.dart';
 import 'package:intl/intl.dart';
+import 'package:like_button/like_button.dart';
 
 class CommentsPage extends StatefulWidget {
   final String postId;
@@ -43,6 +46,13 @@ class _CommentsPageState extends State<CommentsPage> {
         String sender = event.snapshot.child('sender').value.toString();
         String timeStampString =
             event.snapshot.child('timestamp').value.toString();
+        var likes = [];
+        if(event.snapshot.child('likes').value == null) {
+          likes = [];
+        } else {
+          likes = event.snapshot.child('likes').value as List;
+        }
+        //var likes = event.snapshot.child('likes').value as List;
         DateTime timestamp = DateTime.parse(timeStampString);
         final formattedTimeStamp =
             DateFormat('MM/dd/yyyy hh:mm a').format(timestamp);
@@ -53,8 +63,10 @@ class _CommentsPageState extends State<CommentsPage> {
             commentID: commentID,
             commentText: text,
             commentedBy: sender,
+            commentLikes: likes,
             commentTime: formattedTimeStamp,
             replies: loadReply));
+
       });
     });
   }
@@ -102,6 +114,7 @@ class _CommentsPageState extends State<CommentsPage> {
       // Generates a unique comment ID
       'text': text,
       'sender': widget.username.toString(),
+      'likes': [],
       'timestamp': timestamp,
       'replies': [],
     });
@@ -160,6 +173,14 @@ class _CommentsPageState extends State<CommentsPage> {
     _replyController.clear();
   }
 
+    Future<void> _updateLikesInDatabase(String commentID, String postID, List likes) async {
+      final postRef = _database
+        .child(postID)
+        .child('comments')
+        .child(commentID);
+      await postRef.child('likes').set(likes);
+    }
+
   @override
   Widget build(BuildContext context) {
     print("entered build");
@@ -189,6 +210,7 @@ class _CommentsPageState extends State<CommentsPage> {
                     ": " +
                     _comments[index].commentText);
                 final comment = _comments[index];
+                final likes = _comments[index].commentLikes;
                 int commentIndex = index;
                 if (comment != null) {
                   return Card(
@@ -226,6 +248,38 @@ class _CommentsPageState extends State<CommentsPage> {
                             ],
                           ),
                         ),
+                        Container(
+                          child: Row(
+                            children: [
+                              LikeButton(
+                                likeCount: likes.length,
+                                //countPostion: CountPostion.bottom,
+                                isLiked: likes.contains(widget.username),
+
+                                onTap: (isLiked) async {
+                                  setState(() {
+                                    if (isLiked) {
+                                      likes.remove(widget.username);
+                                    } else {
+                                      likes.add(widget.username);
+                                    }
+                                  });
+                                  await _updateLikesInDatabase(
+                                      _comments[index].commentID, widget.postId, likes);
+                                  return Future.value(!isLiked);
+                                },
+                                likeBuilder: (isLiked) {
+                                  return Icon(
+                                    Icons.thumb_up_sharp,
+                                    color: isLiked
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                         Row(
                           children: [
                             Expanded(
@@ -234,6 +288,7 @@ class _CommentsPageState extends State<CommentsPage> {
                                   // When reply button is pressed it pops up a dialog box for the user to write a comment.
                                   _openDialog(_comments[index].commentID);
                                 },
+                                
                                 child: Text('Reply'),
                               ),
                             ),
@@ -291,6 +346,7 @@ class _CommentsPageState extends State<CommentsPage> {
                                                 ),
                                                 Text(reply.replyText ?? ''),
                                               ],
+                                              
                                             ),
                                           ),
                                         ],
@@ -304,6 +360,7 @@ class _CommentsPageState extends State<CommentsPage> {
                         ),
                       ],
                     ),
+                    
                   );
                 } else {
                   return SizedBox();
@@ -350,6 +407,7 @@ class Comment {
   final String commentID;
   final String commentText;
   final String commentedBy;
+  final List commentLikes;
   final String commentTime;
   final List<Reply> replies;
 
@@ -357,6 +415,7 @@ class Comment {
     required this.commentID,
     required this.commentText,
     required this.commentedBy,
+    required this.commentLikes,
     required this.commentTime,
     required this.replies,
   });
