@@ -189,6 +189,29 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  findMostLikedComment(Map commentList) {
+    int likeCount = 0;
+    String commentContents = "";
+    String senderID = "";
+
+    for (var key in commentList.keys) {
+      print(commentList[key]['sender']);
+      if(commentList[key]['likes'] != null) {
+        List likeList = commentList[key]['likes'];
+        if(likeList.length > likeCount) {
+          likeCount = likeList.length;
+          commentContents = commentList[key]['text'];
+          senderID = commentList[key]['sender'];
+        } 
+      } else if (likeCount == 0) {
+          commentContents = commentList[key]['text'];
+          senderID = commentList[key]['sender'];
+      }
+    }
+
+    return commentContents;
+  }
+
   // Function to open image picker
   Future<void> _pickImage() async {
     final completer = Completer<void>();
@@ -616,6 +639,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         setState(() {});
                                       },
                                     ),
+                                    SizedBox(
+                                      width: 60,
+                                    ),
+                                    if(_postList[index][8].length > 0)
+                                      Card(
+                                          child: SizedBox(
+                                                    width: 200,
+                                                    child: Text(findMostLikedComment(_postList[index][8]))
+                                          )
+                                      ),
                                   ],
                                 ),
                               ),
