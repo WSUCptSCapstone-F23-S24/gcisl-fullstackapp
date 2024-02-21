@@ -172,7 +172,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }).catchError((error) {
       print("Error: $error");
     });
-    _postList.removeAt(postIndex);
+    _allPosts.remove(_postList[postIndex]);
+    updatePostList();
   }
 
   Future<String?> getCurrentUser() async {
