@@ -318,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       Positioned.fill(
-                        left: 800,
+                        left: 350,
                         top: 65,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -340,6 +340,40 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: _toggleEmojiPicker,
                               splashRadius: 20,
                             ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                final newPost = _post.text.trim();
+                                if (newPost.isNotEmpty || downloadUrl != null) {
+                                  final timestamp =
+                                      DateTime.now().millisecondsSinceEpoch.toString();
+                                  _database.push().set({
+                                    'text': newPost,
+                                    'user_name': username,
+                                    'timestamp': timestamp,
+                                    'image': downloadUrl,
+                                    'email': currentEmail,
+                                    'likes': [],
+                                    'comments': {},
+                                    'userType': currentUserType,
+                                  }).then((_) {
+                                    setState(() {
+                                      _post.text = '';
+                                      downloadUrl = null;
+                                      _showEmojiPicker = false;
+                                    });
+                                  });
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Palette.ktoCrimson,
+                              ),
+                              child: const Text(
+                                'Post',
+                                style: TextStyle(fontSize: 18, color: Colors.white),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
                           ],
                         ),
                       ),
@@ -357,83 +391,66 @@ class _MyHomePageState extends State<MyHomePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-              const SizedBox(height: 22),
-              ElevatedButton(
-                onPressed: () {
-                  final newPost = _post.text.trim();
-                  if (newPost.isNotEmpty || downloadUrl != null) {
-                    final timestamp =
-                        DateTime.now().millisecondsSinceEpoch.toString();
-                    _database.push().set({
-                      'text': newPost,
-                      'user_name': username,
-                      'timestamp': timestamp,
-                      'image': downloadUrl,
-                      'email': currentEmail,
-                      'likes': [],
-                      'comments': {},
-                      'userType': currentUserType,
-                    }).then((_) {
-                      setState(() {
-                        _post.text = '';
-                        downloadUrl = null;
-                        _showEmojiPicker = false;
-                      });
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Palette.ktoCrimson,
-                ),
-                child: const Text(
-                  'Post',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 32),
-                SizedBox(
+              const SizedBox(height: 20),
+              SizedBox
+              (
                 width: 900,
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Search',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: (value) {
-                    searchBarText = value;
-                    setState((){updatePostList();});
-                  },
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4, // 75% of available space
+                      child: SizedBox(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: 'Search',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (value) {
+                            searchBarText = value;
+                            setState(() {
+                              updatePostList();
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10), // Small horizontal gap
+                    Expanded(
+                      flex: 1, // 25% of available space
+                      child: DropdownButton<PostSortOption>(
+                        value: _selectedSortOption,
+                        onChanged: (newSortOption) {
+                          setState(() {
+                            _selectedSortOption = newSortOption;
+                            // Sort the post list based on the selected option
+                            _localPostListSort();
+                          });
+                        },
+                        items: [
+                          DropdownMenuItem(
+                            value: PostSortOption.newest,
+                            child: Center(child: Text('Most Recent')),
+                          ),
+                          DropdownMenuItem(
+                            value: PostSortOption.oldest,
+                            child: Center(child: Text('Oldest')),
+                          ),
+                          DropdownMenuItem(
+                            value: PostSortOption.alphabetical,
+                            child: Center(child: Text('Alphabetical (A-Z)')),
+                          ),
+                          DropdownMenuItem(
+                            value: PostSortOption.likes,
+                            child: Center(child:Text('Likes')),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              DropdownButton<PostSortOption>(
-                value: _selectedSortOption,
-                onChanged: (newSortOption) {
-                  setState(() {
-                    _selectedSortOption = newSortOption;
-                    // Sort the post list based on the selected option
-                    _localPostListSort();
-                  });
-                },
-                items: [
-                  DropdownMenuItem(
-                    value: PostSortOption.newest,
-                    child: Text('Most Recent'),
-                  ),
-                  DropdownMenuItem(
-                    value: PostSortOption.oldest,
-                    child: Text('Oldest'),
-                  ),
-                  DropdownMenuItem(
-                    value: PostSortOption.alphabetical,
-                    child: Text('Alphabetical (A-Z)'),
-                  ),
-                  DropdownMenuItem(
-                    value: PostSortOption.likes,
-                    child: Text('Likes'),
-                  ),
-                ],
-              ),
+              
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
                 Column(children: [
