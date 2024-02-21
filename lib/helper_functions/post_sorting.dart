@@ -25,18 +25,18 @@ class PostSorting {
   }
 
   static void _sortByNewest(List<dynamic> postList) {
-    postList.sort((a, b) => b[2].compareTo(a[2]));
+    postList.sort((a, b) => b["timestamp"].compareTo(a["timestamp"]));
   }
 
   static void _sortByOldest(List<dynamic> postList) {
-    postList.sort((a, b) => a[2].compareTo(b[2]));
+    postList.sort((a, b) => a["timestamp"].compareTo(b["timestamp"]));
   }
 
   static void _sortByAlphabetical(List<dynamic> postList) {
-    postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
+    postList.sort((a, b) => (a["post body"] as String).compareTo(b["post body"] as String));
   }
 
   static void _sortByLikes(List<dynamic> postList) {
-    postList.sort((a, b) => (-1 * a[7].length).compareTo(-1 * b[7].length));
+    postList.sort((a, b) => (-1 * a["likes"].length).compareTo(-1 * b["likes"].length));
   }
 }

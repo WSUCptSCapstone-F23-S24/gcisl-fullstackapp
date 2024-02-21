@@ -25,6 +25,8 @@ import 'package:intl/intl.dart';
 import 'image.dart';
 import "../helper_functions/post_sorting.dart";
 export "../helper_functions/post_sorting.dart";
+import "../helper_functions/post_filtering.dart";
+export "../helper_functions/post_filtering.dart";
 import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {

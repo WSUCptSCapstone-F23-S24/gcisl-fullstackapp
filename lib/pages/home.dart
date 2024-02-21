@@ -29,7 +29,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   PostSortOption? _selectedSortOption = PostSortOption.newest;
   final _post = TextEditingController();
-  final List _postList = [];
+  List _postList = [];
+  final List _allPosts = [];
+  String? searchBarText = null;
   String? emailHash;
   String? username;
   String? currentEmail;
@@ -116,41 +118,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (mounted) {
       setState(() {
-        _postList.insert(0, [
-          newPost,
-          firstName + " " + lastName,
-          timestamp,
-          image,
-          email,
-          uniquePostId,
-          uniquePostImageId,
-          likes,
-          comments,
-          userType,
-        ]);
-        _localPostListSort();
+        _allPosts.insert(0, {
+          "post body" : newPost,
+          "full name" : "$firstName $lastName",
+          "timestamp" : timestamp,
+          "image" : image,
+          "email" : email,
+          "post id" : uniquePostId,
+          "image id" : uniquePostImageId,
+          "likes" : likes,
+          "comments" : comments,
+          "userType" : userType,
+        });
+        updatePostList();
       });
     }
+  }
+
+  void updatePostList()
+  {
+        _postList = PostFiltering.filterPosts(_allPosts, searchBarText);
+        _localPostListSort();
+
   }
 
   void _localPostListSort() {
     PostSorting.sortPostList(_postList, _selectedSortOption);
     setState(() {});
   }
-  // void _sortPostList() {
-  //   switch (_selectedSortOption) {
-  //     case PostSortOption.newest:
-  //       _postList.sort((a, b) => b[2].compareTo(a[2]));
-  //       break;
-  //     case PostSortOption.oldest:
-  //       _postList.sort((a, b) => a[2].compareTo(b[2]));
-  //       break;
-  //     case PostSortOption.alphabetical:
-  //       _postList.sort((a, b) => (a[0] as String).compareTo(b[0] as String));
-  //       break;
-  //   }
-  //   setState(() {});
-  // }
 
   void deletePost(int postIndex, String postID, String maybeURL) {
     DatabaseReference postRef = _database.child(postID);
@@ -188,9 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
               if (element.key.toString() == emailHash) {
-                name = element.child("first name").value.toString() +
-                    " " +
-                    element.child("last name").value.toString();
+                name = "${element.child("first name").value.toString()} ${element.child("last name").value.toString()}";
               }
             }));
     return name;
@@ -364,8 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-              const SizedBox(height: 6),
-              const SizedBox(height: 16),
+              const SizedBox(height: 22),
               ElevatedButton(
                 onPressed: () {
                   final newPost = _post.text.trim();
@@ -398,6 +390,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
+              const SizedBox(height: 32),
+                SizedBox(
+                width: 900,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                  onChanged: (value) {
+                    searchBarText = value;
+                    setState((){updatePostList();});
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
               DropdownButton<PostSortOption>(
                 value: _selectedSortOption,
                 onChanged: (newSortOption) {
@@ -437,9 +445,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: min(_postList.length, _displayedPosts),
                       itemBuilder: (BuildContext context, int index) {
-                        final likes = _postList[index][7] as List;
+                        final likes = _postList[index]["likes"] as List;
                         final comments =
-                            _postList[index][8] as Map<String, dynamic>;
+                            _postList[index]["comments"] as Map<String, dynamic>;
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -455,7 +463,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Row(children: [
                                       TextButton(
                                           child: Text(
-                                            _postList[index][1] ?? "anonymous",
+                                            _postList[index]["full name"] ?? "anonymous",
                                             style: const TextStyle(
                                               // decoration: TextDecoration.underline,
                                               // color: Palette.ktoCrimson,
@@ -470,16 +478,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         ProfilePage1(
-                                                            _postList[index][4]
+                                                            _postList[index]["email"]
                                                                 .hashCode
                                                                 .toString(),
                                                             true)));
                                             //ProfilePage1(_postList[index][4].hashCode.toString());
                                           }),
-                                      if (_postList[index][9] != "null" &&
-                                          _postList[index][9] != null)
+                                      if (_postList[index]["userType"] != "null" &&
+                                          _postList[index]["userType"] != null)
                                         Text(
-                                          '-  ${_postList[index][9]}',
+                                          '-  ${_postList[index]["userType"]}',
                                           style: const TextStyle(
                                             // decoration: TextDecoration.underline,
                                             // color: Palette.ktoCrimson,
@@ -499,16 +507,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       .fromMillisecondsSinceEpoch(
                                                           int.parse(
                                                               _postList[index]
-                                                                  [2]))),
+                                                                  ["timestamp"]))),
                                               child: SelectableText(
-                                                '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index][2])))}',
+                                                '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                 ),
                                               ))),
                                     ])
                                   ]),
-                                  _postList[index][0] == ""
+                                  _postList[index]["post body"] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
                                               minHeight: 75),
@@ -525,7 +533,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 children: [
                                                   ListTile(
                                                     title: SelectableText(
-                                                      _postList[index][0],
+                                                      _postList[index]["post body"],
                                                     ),
                                                   ),
                                                 ],
@@ -533,7 +541,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                           ],
                                         ),
-                                  _postList[index][3] == "null"
+                                  _postList[index]["image"] == "null"
                                       ? const SizedBox(height: 0)
                                       : MouseRegion(
                                           cursor: SystemMouseCursors.click,
@@ -545,7 +553,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     ImageDialog(
                                                         imageUrl:
                                                             _postList[index]
-                                                                [3]),
+                                                                ["image"]),
                                               );
                                             },
                                             child: Column(
@@ -553,7 +561,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 //const SizedBox(height: 2),
                                                 SizedBox(
                                                   child: Image.network(
-                                                    _postList[index][3],
+                                                    _postList[index]["image"],
                                                     fit: BoxFit.scaleDown,
                                                   ),
                                                 ),
@@ -579,7 +587,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           }
                                         });
                                         await _updateLikesInDatabase(
-                                            _postList[index][5], likes);
+                                            _postList[index]["post id"], likes);
                                         return Future.value(!isLiked);
                                       },
                                       //likeCount: numLikes,
@@ -604,7 +612,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 builder: (context) =>
                                                     CommentsPage(
                                                       postId: _postList[index]
-                                                          [5],
+                                                          ["post id"],
                                                       commentMap: comments,
                                                     )));
                                       },
@@ -613,19 +621,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                         color: Colors.grey,
                                       ),
                                     ),
-                                    if (_postList[index][4] == currentEmail ||
+                                    if (_postList[index]["email"] == currentEmail ||
                                         isAdmin)
                                       SizedBox(
                                         width: 25,
                                       ),
-                                    if (_postList[index][4] == currentEmail ||
+                                    if (_postList[index]["email"] == currentEmail ||
                                         isAdmin)
                                       IconButton(
                                         icon: Icon(Icons.delete,
                                             color: Colors.red),
                                         onPressed: () {
-                                          deletePost(index, _postList[index][5],
-                                              _postList[index][3]);
+                                          deletePost(index, _postList[index]["post id"],
+                                              _postList[index]["image"]);
                                           setState(() {});
                                         },
                                       ),
