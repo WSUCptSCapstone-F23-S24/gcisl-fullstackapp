@@ -150,6 +150,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       element.child("country address").value.toString();
                   _profilePictureUrl =
                       element.child("profile picture").value.toString();
+                  _emailController.text = 
+                      element.child("email").value.toString();
                 });
               }
             }));
@@ -168,26 +170,39 @@ class _ProfilePage1State extends State<ProfilePage1> {
 
   @override
   Widget build(BuildContext context) {
-    // Gets the initials of the users name
-    String fullName = _nameController.text;
-    List<String> nameParts = fullName.split(" ");
-    for (int i = 0; i < nameParts.length; i++) {
-      if (nameParts[i].isNotEmpty) {
-        String initial = nameParts[i][0];
-        initials += initial;
-      }
-      initials = initials.toUpperCase();
+  // Gets the initials of the user's name
+  String fullName = _nameController.text;
+  List<String> nameParts = fullName.split(" ");
+  String initials = '';
+  for (int i = 0; i < nameParts.length; i++) {
+    if (nameParts[i].isNotEmpty) {
+      String initial = nameParts[i][0];
+      initials += initial;
     }
+    initials = initials.toUpperCase();
+  }
 
-    return Scaffold(
-      body: ListView(
-        children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Column(
-                children: [
-                  _profilePictureUrl.toString() == "null"
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+        height:500,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            new Expanded 
+            ( 
+              flex:1,
+              child : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: 
+              [
+                _profilePictureUrl.toString() == "null"
                       ? CircleAvatar(
                           backgroundColor: Palette.ktoCrimson,
                           child: Text(
@@ -200,7 +215,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           backgroundImage: NetworkImage(_profilePictureUrl!),
                           radius: 100,
                         ),
-                  SizedBox(
+                SizedBox(
                     height: 16,
                   ),
                   if (emailHash == widget.emailHashString)
@@ -210,65 +225,60 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       },
                       child: Text('Edit Profile Picture'),
                     ),
-                  TextField(
-                    controller: _nameController,
-                    readOnly: true,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  if (widget.isOtherPage)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 16.0),
-                        FloatingActionButton.extended(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          heroTag: 'back',
-                          elevation: 0,
-                          backgroundColor: Colors.red,
-                          label: const Text("Go Back"),
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        const SizedBox(width: 16.0),
-                        if (widget.emailHashString != emailHash)
-                          FloatingActionButton.extended(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChatPage(widget.emailHashString)));
-                            },
-                            heroTag: 'message',
-                            elevation: 0,
-                            backgroundColor: Colors.red,
-                            label: const Text("Message"),
-                            icon: const Icon(Icons.message),
-                          )
-                      ],
-                    ),
-                  const SizedBox(height: 16),
-                  _ProfileInfoRow(
-                      _companyPositionController,
-                      _companyController,
-                      _countryAddressController,
-                      _phoneController),
-                  PostPortion(widget.emailHashString!)
-                ],
-              ),
+              ],
             ),
-          ),
-        ],
+            ),
+            new Expanded
+            ( 
+              flex :2,
+              child: 
+              Align
+              (
+                alignment: Alignment.centerLeft,
+                child:Column(
+                children:
+                [
+                  Text
+                  (
+                    _nameController.text,
+                    style: TextStyle(
+                      fontSize: 40,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text
+                  (
+                    "${_companyController.text} - ${_companyPositionController.text}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox
+                  (
+                    height: 40,
+                  ),
+                  Text
+                  (
+                    "Email - ${_emailController.text}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                  ),
+
+                ],
+              )
+            ),
+            )
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }
+}
+
 
 class _ProfileInfoRow extends StatefulWidget {
   TextEditingController companyPositionController = TextEditingController();
