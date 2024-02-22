@@ -83,6 +83,10 @@ class _MyHomePageState extends State<MyHomePage> {
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
     String? userType = event.snapshot.child("userType").value.toString();
+
+    String? commentPreview = "";
+
+
     print("UT - $userType");
     if(userType == "null")
     {
@@ -98,7 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (comments == null) {
       comments = <String, dynamic>{};
-    }
+    } 
+
+    if(event.snapshot.child("comments").value != null) {
+      setState(() {
+        commentPreview = findMostLikedComment(comments);
+    });}
 
     if (mounted) {
       setState(() {
@@ -113,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
           likes,
           comments,
           userType,
+          commentPreview,
         ]);
         _localPostListSort();
       });
@@ -189,26 +199,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  findMostLikedComment(Map commentList) {
+  String? findMostLikedComment(commentList) {
     int likeCount = 0;
     String commentContents = "";
-    String senderID = "";
-
     for (var key in commentList.keys) {
-      print(commentList[key]['sender']);
       if(commentList[key]['likes'] != null) {
         List likeList = commentList[key]['likes'];
         if(likeList.length > likeCount) {
           likeCount = likeList.length;
           commentContents = commentList[key]['text'];
-          senderID = commentList[key]['sender'];
         } 
       } else if (likeCount == 0) {
           commentContents = commentList[key]['text'];
-          senderID = commentList[key]['sender'];
       }
-    }
-
+    } 
+  
     return commentContents;
   }
 
@@ -642,11 +647,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                     SizedBox(
                                       width: 60,
                                     ),
-                                    if(_postList[index][8].length > 0)
+                                    
+                                    if(_postList[index][8].length > 0) 
                                       Card(
+                                        
                                           child: SizedBox(
                                                     width: 200,
-                                                    child: Text(findMostLikedComment(_postList[index][8]))
+                                                    child: Text(_postList[index][10])
                                           )
                                       ),
                                   ],
