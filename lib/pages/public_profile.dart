@@ -155,6 +155,24 @@ class _ProfilePage1State extends State<ProfilePage1> {
             }));
   }
 
+  void getInitials() {
+    // Gets the initials of the users name
+    String fullName = _nameController.text;
+    print("fullName: " + fullName);
+    List<String> nameParts = fullName.split(" ");
+    initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    setState(() {
+      initials = initials.toUpperCase();
+    });
+    print("initials: " + initials);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -169,15 +187,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   @override
   Widget build(BuildContext context) {
     // Gets the initials of the users name
-    String fullName = _nameController.text;
-    List<String> nameParts = fullName.split(" ");
-    for (int i = 0; i < nameParts.length; i++) {
-      if (nameParts[i].isNotEmpty) {
-        String initial = nameParts[i][0];
-        initials += initial;
-      }
-      initials = initials.toUpperCase();
-    }
+    getInitials();
 
     return Scaffold(
       body: ListView(
@@ -424,7 +434,7 @@ class _PostPortionState extends State<PostPortion> {
     _database.onChildAdded.listen(_onNewPostAdded);
   }
 
-  void _onNewPostAdded(DatabaseEvent event) {
+  void _onNewPostAdded(DatabaseEvent event) async {
     String? uniquePostId = event.snapshot.key;
     String? uniquePostImageId = event.snapshot.child("image").key;
     final newPost = event.snapshot.child("text").value.toString();
@@ -432,6 +442,21 @@ class _PostPortionState extends State<PostPortion> {
     String? timestamp = event.snapshot.child("timestamp").value.toString();
     String? image = event.snapshot.child("image").value.toString();
     String? email = event.snapshot.child("email").value.toString();
+
+    // Hash the email to get the email hashcode
+    int emailHashCode = email.hashCode;
+
+    // Fetch the user details from the "users" table based on the hashed email
+    DataSnapshot userSnapshot = await FirebaseDatabase.instance
+        .ref('users')
+        .child(emailHashCode
+            .toString()) // assuming the emailHashCode is stored as the key in the users table
+        .get();
+
+    // Extract first name and last name from the user details
+    String? firstName = userSnapshot.child("first name").value.toString();
+    String? lastName = userSnapshot.child("last name").value.toString();
+
     if (userName == "null") {
       userName = "anonymous";
     }
@@ -439,7 +464,7 @@ class _PostPortionState extends State<PostPortion> {
       setState(() {
         _postList.insert(0, [
           newPost,
-          userName,
+          "$firstName $lastName",
           timestamp,
           image,
           email,
@@ -521,7 +546,7 @@ class _PostPortionState extends State<PostPortion> {
                                 ),
                                 TextButton(
                                     child: Text(
-                                      username ?? "anonymous",
+                                      _postList[index][1] ?? "anonymous",
                                       style: const TextStyle(
                                         decoration: TextDecoration.underline,
                                         color: Palette.ktoCrimson,
