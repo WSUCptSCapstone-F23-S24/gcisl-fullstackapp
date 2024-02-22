@@ -155,6 +155,24 @@ class _ProfilePage1State extends State<ProfilePage1> {
             }));
   }
 
+  void getInitials() {
+    // Gets the initials of the users name
+    String fullName = _nameController.text;
+    print("fullName: " + fullName);
+    List<String> nameParts = fullName.split(" ");
+    initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    setState(() {
+      initials = initials.toUpperCase();
+    });
+    print("initials: " + initials);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -169,15 +187,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   @override
   Widget build(BuildContext context) {
     // Gets the initials of the users name
-    String fullName = _nameController.text;
-    List<String> nameParts = fullName.split(" ");
-    for (int i = 0; i < nameParts.length; i++) {
-      if (nameParts[i].isNotEmpty) {
-        String initial = nameParts[i][0];
-        initials += initial;
-      }
-      initials = initials.toUpperCase();
-    }
+    getInitials();
 
     return Scaffold(
       body: ListView(
