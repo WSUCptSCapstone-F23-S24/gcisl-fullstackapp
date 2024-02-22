@@ -205,6 +205,23 @@ DatabaseReference ref = FirebaseDatabase.instance.ref("users");
     child: 
     Column(
     children:[
+      if (widget.isOtherPage)
+        Row(
+          children: [
+            const SizedBox(width: 16.0),
+            FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              heroTag: 'back',
+              elevation: 0,
+              backgroundColor: Colors.grey,
+              label: const Text("Go Back"),
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
       Container
       (
       height: 300,
@@ -279,12 +296,29 @@ DatabaseReference ref = FirebaseDatabase.instance.ref("users");
                             ElevatedButton
                             (
                                 onPressed: () {
-                                  // Handle submit action
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ProfilePage()));
                                 },
                                 child: Text('Edit Profile',style: TextStyle(color: Colors.white),),
                                 style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
 
-                            ),
+                            )
+                          else
+                          ElevatedButton
+                            (
+                                onPressed: () {
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChatPage(widget.emailHashString)));
+                                },
+                                child: Text('Message User',style: TextStyle(color: Colors.white),),
+                                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
+
+                            )
+                            
                         ]
                       ),
                       Text(
@@ -582,17 +616,7 @@ class _PostPortionState extends State<PostPortion> {
             const SizedBox(
               height: 16,
             ),
-            if (emailHash == widget.emailHashcode)
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
-                child: Text('Edit Profile',style: TextStyle(color: Colors.white),),
-                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson)
-              ),
+           
             const SizedBox(
               height: 16,
             ),
