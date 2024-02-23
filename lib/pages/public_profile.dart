@@ -27,6 +27,7 @@ import "../helper_functions/post_sorting.dart";
 export "../helper_functions/post_sorting.dart";
 import "../helper_functions/post_filtering.dart";
 export "../helper_functions/post_filtering.dart";
+import "../helper_functions/formating.dart";
 import '../palette.dart';
 
 class ProfilePage1 extends StatefulWidget {
@@ -50,7 +51,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
       _position;
   String? emailHash;
   String initials = "";
-
+  bool isCurrentUserProfile = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
@@ -58,8 +59,10 @@ class _ProfilePage1State extends State<ProfilePage1> {
   TextEditingController _companyController = TextEditingController();
   TextEditingController _companyPositionController = TextEditingController();
   TextEditingController _countryAddressController = TextEditingController();
+  TextEditingController _userBioController = TextEditingController();
 
-  DatabaseReference ref = FirebaseDatabase.instance.ref("users");
+
+DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
   String? _profilePictureUrl; // New field to hold profile picture URL
 
@@ -125,11 +128,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   }
 
   getCurrentUser() {
-    FirebaseDatabase.instance
-        .ref('users')
-        .get()
-        // ignore: avoid_function_literals_in_foreach_calls
-        .then((snapshot) => snapshot.children.forEach((element) {
+    ref.get().then((snapshot) => snapshot.children.forEach((element) {
               if (element.key.toString() == widget.emailHashString) {
                 setState(() {
                   _nameController.text =
@@ -150,12 +149,34 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       element.child("country address").value.toString();
                   _profilePictureUrl =
                       element.child("profile picture").value.toString();
+                  _emailController.text = 
+                      element.child("email").value.toString();
+                  var bioSnapshot = element.child("bio");
+                  if (bioSnapshot.exists) {
+                      _userBioController.text = bioSnapshot.value.toString();
+                  } else {
+                      _userBioController.text = "";
+                  }
                 });
               }
             }));
   }
 
-  void getInitials() {
+
+  void _setUserBio(String bio)
+  {
+    if(emailHash == null)
+    {
+      return;
+    }
+    if(bio.length > 500)
+    {
+      bio = bio.substring(0,500);
+    }
+    ref.child(emailHash!).update({"bio" : bio});
+  }
+  void getInitials() 
+  {
     // Gets the initials of the users name
     String fullName = _nameController.text;
     print("fullName: " + fullName);
@@ -177,10 +198,9 @@ class _ProfilePage1State extends State<ProfilePage1> {
   void initState() {
     super.initState();
     // Check if user is logged in using Firebase Authentication
-    final user = FirebaseAuth.instance.currentUser;
 
     emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
-
+    isCurrentUserProfile = emailHash == widget.emailHashString;
     getCurrentUser();
   }
 
@@ -189,96 +209,232 @@ class _ProfilePage1State extends State<ProfilePage1> {
     // Gets the initials of the users name
     getInitials();
 
-    return Scaffold(
-      body: ListView(
+  return Scaffold(
+  body: Padding(
+    padding: const EdgeInsets.all(20.0),
+    child: 
+    Column(
+    children:[
+      if (widget.isOtherPage)
+        Row(
+          children: [
+            const SizedBox(width: 16.0),
+            FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              heroTag: 'back',
+              elevation: 0,
+              backgroundColor: Colors.grey,
+              label: const Text("Go Back"),
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      Container
+      (
+      height: 300,
+      decoration: BoxDecoration
+      (
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Row
+      (
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Column(
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _profilePictureUrl.toString() == "null"
+                    ? CircleAvatar(
+                        backgroundColor: Palette.ktoCrimson,
+                        child: Text(
+                          initials,
+                          style: TextStyle(fontSize: 50, color: Colors.white),
+                        ),
+                        radius: 100,
+                      )
+                    : CircleAvatar(
+                        backgroundImage: NetworkImage(_profilePictureUrl!),
+                        radius: 100,
+                      ),
+                SizedBox(
+                  height: 16,
+                ),
+                if (emailHash == widget.emailHashString)
+                  ElevatedButton(
+                    onPressed: () {
+                      _pickImage(); // Call the image picker function here
+                    },
+                    child: Text('Edit Profile Picture'),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Padding
+            (
+              padding: const EdgeInsets.fromLTRB(0,20,20,0),
+              child:
+              Column
+              (
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _profilePictureUrl.toString() == "null"
-                      ? CircleAvatar(
-                          backgroundColor: Palette.ktoCrimson,
-                          child: Text(
-                            initials,
-                            style: TextStyle(fontSize: 50, color: Colors.white),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row
+                      (
+                        children:
+                        [
+                          Text(
+                            _nameController.text,
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          radius: 100,
-                        )
-                      : CircleAvatar(
-                          backgroundImage: NetworkImage(_profilePictureUrl!),
-                          radius: 100,
-                        ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  if (emailHash == widget.emailHashString)
-                    ElevatedButton(
-                      onPressed: () {
-                        _pickImage(); // Call the image picker function here
-                      },
-                      child: Text('Edit Profile Picture'),
-                    ),
-                  TextField(
-                    controller: _nameController,
-                    readOnly: true,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  if (widget.isOtherPage)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 16.0),
-                        FloatingActionButton.extended(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          heroTag: 'back',
-                          elevation: 0,
-                          backgroundColor: Colors.red,
-                          label: const Text("Go Back"),
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        const SizedBox(width: 16.0),
-                        if (widget.emailHashString != emailHash)
-                          FloatingActionButton.extended(
-                            onPressed: () {
-                              Navigator.push(
+                          Spacer(),
+                          if (isCurrentUserProfile)
+                            ElevatedButton
+                            (
+                                onPressed: () {
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ProfilePage()));
+                                },
+                                child: Text('Edit Profile',style: TextStyle(color: Colors.white),),
+                                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
+
+                            )
+                          else
+                          ElevatedButton
+                            (
+                                onPressed: () {
+                                  Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           ChatPage(widget.emailHashString)));
+                                },
+                                child: Text('Message User',style: TextStyle(color: Colors.white),),
+                                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
+
+                            )
+                            
+                        ]
+                      ),
+                      Text(
+                        "${_companyController.text} - ${_companyPositionController.text}",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      Text(
+                        "Email - ${_emailController.text}",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        "Phone - ${Formatting.formatPhoneString(_phoneController.text)}",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+          Expanded
+          (
+            flex: 2,
+            child: 
+            Padding
+            (
+              padding: const EdgeInsets.fromLTRB(0,30,20,0),
+              child:
+              Column
+              (
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: 
+                [
+                  Row
+                  (
+                    children:
+                    [
+                      Text
+                      (
+                        "Bio",
+                        style: TextStyle
+                        (
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Spacer(),
+                      if(isCurrentUserProfile)
+                        ElevatedButton
+                        (
+                            onPressed: () {
+                              _setUserBio(_userBioController.text);
                             },
-                            heroTag: 'message',
-                            elevation: 0,
-                            backgroundColor: Colors.red,
-                            label: const Text("Message"),
-                            icon: const Icon(Icons.message),
-                          )
-                      ],
+                            child: Text('Update Bio',style: TextStyle(color: Colors.white),),
+                            style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
+                        ),
+                    ]
+                  ),
+                  SizedBox(height: 10),
+                  Expanded
+                  (
+                    child: TextFormField
+                    (
+                      initialValue: _userBioController.text,
+                      controller: _userBioController,
+                      maxLines: null,
+                      readOnly: !isCurrentUserProfile,
+                      decoration: InputDecoration
+                      (
+                          hintText: isCurrentUserProfile ? "Enter your bio..." : "This user has not entered a bio yet",
+                          border: OutlineInputBorder(),
+                      ),
                     ),
-                  const SizedBox(height: 16),
-                  _ProfileInfoRow(
-                      _companyPositionController,
-                      _companyController,
-                      _countryAddressController,
-                      _phoneController),
-                  PostPortion(widget.emailHashString!)
+                  )
+                  // SizedBox(height: 10),
+                  // 
+                  // SizedBox(height: 10),
                 ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+    PostPortion(widget.emailHashString!),
+    ]
+    ),
+  )
+);
 }
+}
+
 
 class _ProfileInfoRow extends StatefulWidget {
   TextEditingController companyPositionController = TextEditingController();
@@ -485,16 +641,7 @@ class _PostPortionState extends State<PostPortion> {
             const SizedBox(
               height: 16,
             ),
-            if (emailHash == widget.emailHashcode)
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
-                child: Text('Edit Profile'),
-              ),
+           
             const SizedBox(
               height: 16,
             ),
