@@ -87,7 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var likes = event.snapshot.child("likes").value;
     var comments = event.snapshot.child("comments").value;
     String? userType = event.snapshot.child("userType").value.toString();
-    if (userType == "null") {
+
+    String? commentPreview = "";
+
+
+    print("UT - $userType");
+    if(userType == "null")
+    {
       userType = null;
     }
     if (userName == "null") {
@@ -114,7 +120,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (comments == null) {
       comments = <String, dynamic>{};
-    }
+    } 
+
+    if(event.snapshot.child("comments").value != null) {
+      setState(() {
+        commentPreview = findMostLikedComment(comments);
+    });}
 
     if (mounted) {
       setState(() {
@@ -129,6 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
           "likes" : likes,
           "comments" : comments,
           "userType" : userType,
+          "commentPreview" : commentPreview,
         });
         updatePostList();
       });
@@ -194,6 +206,24 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _showEmojiPicker = !_showEmojiPicker;
     });
+  }
+
+  String? findMostLikedComment(commentList) {
+    int likeCount = 0;
+    String commentContents = "";
+    for (var key in commentList.keys) {
+      if(commentList[key]['likes'] != null) {
+        List likeList = commentList[key]['likes'];
+        if(likeList.length > likeCount) {
+          likeCount = likeList.length;
+          commentContents = commentList[key]['text'];
+        } 
+      } else if (likeCount == 0) {
+          commentContents = commentList[key]['text'];
+      }
+    } 
+  
+    return commentContents;
   }
 
   // Function to open image picker
@@ -654,6 +684,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                               _postList[index]["image"]);
                                           setState(() {});
                                         },
+                                        SizedBox(
+                                          width: 60,
+                                        ),
+                                    
+                                        if(_postList[index][8].length > 0) 
+                                          Card(
+                                          child: SizedBox(
+                                                    width: 200,
+                                                    child: Text(_postList[index][10])
+                                          ),
                                       ),
                                   ],
                                 ),
