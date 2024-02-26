@@ -139,7 +139,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                             itemBuilder: (context, index) {
                               return Container(
                                   color: _selectedIndex == index
-                                      ? Palette.ktoGray
+                                      ? Colors.blueGrey.shade50
                                       : Colors.white,
                                   child: ListTile(
                                     leading: Icon(Icons.portrait_rounded,
