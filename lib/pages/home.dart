@@ -90,10 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     String? commentPreview = "";
 
-
     print("UT - $userType");
-    if(userType == "null")
-    {
+    if (userType == "null") {
       userType = null;
     }
     if (userName == "null") {
@@ -113,6 +111,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // Extract first name and last name from the user details
     String? firstName = userSnapshot.child("first name").value.toString();
     String? lastName = userSnapshot.child("last name").value.toString();
+    String? profilePicture =
+        userSnapshot.child("profile picture").value.toString();
+
+    // Gets the initials of the users name
+    String fullName = "$firstName $lastName";
+    List<String> nameParts = fullName.split(" ");
+    String initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    initials = initials.toUpperCase();
 
     if (likes == null) {
       likes = [];
@@ -120,38 +132,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (comments == null) {
       comments = <String, dynamic>{};
-    } 
+    }
 
-    if(event.snapshot.child("comments").value != null) {
+    if (event.snapshot.child("comments").value != null) {
       setState(() {
         commentPreview = findMostLikedComment(comments);
-    });}
+      });
+    }
 
     if (mounted) {
       setState(() {
         _allPosts.insert(0, {
-          "post body" : newPost,
-          "full name" : "$firstName $lastName",
-          "timestamp" : timestamp,
-          "image" : image,
-          "email" : email,
-          "post id" : uniquePostId,
-          "image id" : uniquePostImageId,
-          "likes" : likes,
-          "comments" : comments,
-          "userType" : userType,
-          "commentPreview" : commentPreview,
+          "post body": newPost,
+          "full name": "$firstName $lastName",
+          "timestamp": timestamp,
+          "image": image,
+          "email": email,
+          "post id": uniquePostId,
+          "image id": uniquePostImageId,
+          "likes": likes,
+          "comments": comments,
+          "userType": userType,
+          "commentPreview": commentPreview,
+          "profile picture": profilePicture,
+          "initials": initials,
         });
         updatePostList();
       });
     }
   }
 
-  void updatePostList()
-  {
-        _postList = PostFiltering.filterPosts(_allPosts, searchBarText);
-        _localPostListSort();
-
+  void updatePostList() {
+    _postList = PostFiltering.filterPosts(_allPosts, searchBarText);
+    _localPostListSort();
   }
 
   void _localPostListSort() {
@@ -196,7 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // ignore: avoid_function_literals_in_foreach_calls
         .then((snapshot) => snapshot.children.forEach((element) {
               if (element.key.toString() == emailHash) {
-                name = "${element.child("first name").value.toString()} ${element.child("last name").value.toString()}";
+                name =
+                    "${element.child("first name").value.toString()} ${element.child("last name").value.toString()}";
               }
             }));
     return name;
@@ -212,17 +226,17 @@ class _MyHomePageState extends State<MyHomePage> {
     int likeCount = 0;
     String commentContents = "";
     for (var key in commentList.keys) {
-      if(commentList[key]['likes'] != null) {
+      if (commentList[key]['likes'] != null) {
         List likeList = commentList[key]['likes'];
-        if(likeList.length > likeCount) {
+        if (likeList.length > likeCount) {
           likeCount = likeList.length;
           commentContents = commentList[key]['text'];
-        } 
+        }
       } else if (likeCount == 0) {
-          commentContents = commentList[key]['text'];
+        commentContents = commentList[key]['text'];
       }
-    } 
-  
+    }
+
     return commentContents;
   }
 
@@ -376,8 +390,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: () {
                                 final newPost = _post.text.trim();
                                 if (newPost.isNotEmpty || downloadUrl != null) {
-                                  final timestamp =
-                                      DateTime.now().millisecondsSinceEpoch.toString();
+                                  final timestamp = DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString();
                                   _database.push().set({
                                     'text': newPost,
                                     'user_name': username,
@@ -401,7 +416,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               child: const Text(
                                 'Post',
-                                style: TextStyle(fontSize: 18, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -423,8 +439,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
               const SizedBox(height: 20),
-              SizedBox
-              (
+              SizedBox(
                 width: 900,
                 child: Row(
                   children: [
@@ -473,7 +488,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           DropdownMenuItem(
                             value: PostSortOption.likes,
-                            child: Center(child:Text('Likes')),
+                            child: Center(child: Text('Likes')),
                           ),
                         ],
                       ),
@@ -481,7 +496,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              
               const SizedBox(height: 16),
               if (_postList.isNotEmpty)
                 Column(children: [
@@ -494,8 +508,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemCount: min(_postList.length, _displayedPosts),
                       itemBuilder: (BuildContext context, int index) {
                         final likes = _postList[index]["likes"] as List;
-                        final comments =
-                            _postList[index]["comments"] as Map<String, dynamic>;
+                        final comments = _postList[index]["comments"]
+                            as Map<String, dynamic>;
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -509,9 +523,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   Column(children: [
                                     Row(children: [
+                                      _postList[index]["profile picture"] ==
+                                              "null"
+                                          ? CircleAvatar(
+                                              child: Text(
+                                                _postList[index]["initials"],
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color.fromARGB(
+                                                        255, 130, 125, 125)),
+                                              ),
+                                              radius: 15,
+                                            )
+                                          : CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  _postList[index]
+                                                      ["profile picture"]),
+                                              radius: 15,
+                                            ),
                                       TextButton(
                                           child: Text(
-                                            _postList[index]["full name"] ?? "anonymous",
+                                            _postList[index]["full name"] ??
+                                                "anonymous",
                                             style: const TextStyle(
                                               // decoration: TextDecoration.underline,
                                               // color: Palette.ktoCrimson,
@@ -526,13 +559,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         ProfilePage1(
-                                                            _postList[index]["email"]
+                                                            _postList[index]
+                                                                    ["email"]
                                                                 .hashCode
                                                                 .toString(),
                                                             true)));
                                             //ProfilePage1(_postList[index][4].hashCode.toString());
                                           }),
-                                      if (_postList[index]["userType"] != "null" &&
+                                      if (_postList[index]["userType"] !=
+                                              "null" &&
                                           _postList[index]["userType"] != null)
                                         Text(
                                           '-  ${_postList[index]["userType"]}',
@@ -553,9 +588,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       'MM/dd/yyyy hh:mm a')
                                                   .format(DateTime
                                                       .fromMillisecondsSinceEpoch(
-                                                          int.parse(
-                                                              _postList[index]
-                                                                  ["timestamp"]))),
+                                                          int.parse(_postList[
+                                                                  index]
+                                                              ["timestamp"]))),
                                               child: SelectableText(
                                                 '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
                                                 style: const TextStyle(
@@ -581,7 +616,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 children: [
                                                   ListTile(
                                                     title: SelectableText(
-                                                      _postList[index]["post body"],
+                                                      _postList[index]
+                                                          ["post body"],
                                                     ),
                                                   ),
                                                 ],
@@ -669,33 +705,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                         color: Colors.grey,
                                       ),
                                     ),
-                                    if (_postList[index]["email"] == currentEmail ||
+                                    if (_postList[index]["email"] ==
+                                            currentEmail ||
                                         isAdmin)
                                       SizedBox(
                                         width: 25,
                                       ),
-                                    if (_postList[index]["email"] == currentEmail ||
+                                    if (_postList[index]["email"] ==
+                                            currentEmail ||
                                         isAdmin)
                                       IconButton(
                                         icon: Icon(Icons.delete,
                                             color: Colors.red),
                                         onPressed: () {
-                                          deletePost(index, _postList[index]["post id"],
+                                          deletePost(
+                                              index,
+                                              _postList[index]["post id"],
                                               _postList[index]["image"]);
                                           setState(() {});
                                         },
                                       ),
-                                        SizedBox(
-                                          width: 60,
-                                        ),
-                                    
-                                        if(_postList[index]["comments"].length > 0) 
-                                          Card(
-                                            child: SizedBox(
-                                                    width: 200,
-                                                    child: Text(_postList[index]["commentPreview"])
-                                            ),
-                                          ),
+                                    SizedBox(
+                                      width: 60,
+                                    ),
+                                    if (_postList[index]["comments"].length > 0)
+                                      Card(
+                                        child: SizedBox(
+                                            width: 200,
+                                            child: Text(_postList[index]
+                                                ["commentPreview"])),
+                                      ),
                                   ],
                                 ),
                               ),
