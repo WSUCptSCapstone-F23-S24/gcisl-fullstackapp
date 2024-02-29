@@ -424,22 +424,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 20.0),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Zip Code',
+                    labelText: 'Postal Code/Zip Code',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                   ),
                   controller: _zipcodeController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  // keyboardType: TextInputType.number,
+                  // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a zip code';
                     }
-                    if (value.length != 5) {
-                      return 'Zip code must be 5 digits';
-                    }
+                    // if (value.length != 5) {
+                    //   return 'Zip code must be 5 digits';
+                    // }
                     return null;
                   },
                   onSaved: (value) {

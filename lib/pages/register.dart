@@ -352,17 +352,18 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: 'Zip Code'),
+                          border: InputBorder.none,
+                          hintText: 'Postal Code/Zip Code'),
                       controller: _zipcodeController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // keyboardType: TextInputType.number,
+                      // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a zip code';
                         }
-                        if (value.length != 5) {
-                          return 'Zip code must be 5 digits';
-                        }
+                        // if (value.length != 5) {
+                        //   return 'Zip code must be 5 digits';
+                        // }
                         return null;
                       },
                       onSaved: (value) {
