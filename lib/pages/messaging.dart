@@ -14,8 +14,7 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> 
-{
+class _ChatPageState extends State<ChatPage> {
   final FirebaseDatabase database = FirebaseDatabase.instance;
   late DatabaseReference _messagesRef;
   late DatabaseReference _usersRef;
@@ -29,13 +28,13 @@ class _ChatPageState extends State<ChatPage>
   int timeSinceStart = 0;
   List<StreamSubscription> onChildAddedListeners = [];
 
-
   @override
   void initState() {
     super.initState();
     timeSinceStart = DateTime.now().millisecondsSinceEpoch;
     // Get current user's ID
-    _currentUser = FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
+    _currentUser =
+        FirebaseAuth.instance.currentUser!.email!.hashCode.toString();
     _messagesRef = database.ref().child("messages").child(_currentUser);
     _messagesHelpRef = database.ref().child("messagesHelp").child(_currentUser);
     _usersRef = database.ref().child("users");
@@ -45,90 +44,74 @@ class _ChatPageState extends State<ChatPage>
   @override
   void dispose() {
     super.dispose();
-    for (var listener in onChildAddedListeners)
-    {
+    for (var listener in onChildAddedListeners) {
       listener.cancel();
     }
     // for(ChildEventListener childListener in _listeners)
     // {
     //   childListener.cancel();
     // }
-
   }
-  User? _getUser(String userID)
-  {
-      for(User u in _users)
-      {
-          if(u.ID == userID)
-          {
-            return u;
-          }
+
+  User? _getUser(String userID) {
+    for (User u in _users) {
+      if (u.ID == userID) {
+        return u;
       }
-      return null;
+    }
+    return null;
   }
 
-  void _setSelectedUser()
-  {
-    if(widget.selectedUserID == null)
-    {
+  void _setSelectedUser() {
+    if (widget.selectedUserID == null) {
       return;
     }
     _createUserMessageList(widget.selectedUserID!);
     User? user = _getUser(widget.selectedUserID!);
-    if(user == null)
-    {
+    if (user == null) {
       print("User [${widget.selectedUserID}] is null");
     }
     _selectedUser = user!;
     _selectedUser!.hasUnreadMessages = false;
-    setState((){});
+    setState(() {});
   }
 
-  void _changeUserReadMessages(String userID, bool value)
-  {
-      User? user = _getUser(userID);
-      if(user == null)
-      {
-        print("Unable to find user [${userID}]");
-        return;
-      }
-      user.hasUnreadMessages = value;
+  void _changeUserReadMessages(String userID, bool value) {
+    User? user = _getUser(userID);
+    if (user == null) {
+      print("Unable to find user [${userID}]");
+      return;
+    }
+    user.hasUnreadMessages = value;
   }
 
-  void _onUserMessageAdded(DatabaseEvent event)
-  {
+  void _onUserMessageAdded(DatabaseEvent event) {
+    String message = event.snapshot.child("message").value.toString();
+    String? userID = event.snapshot.ref.key;
+    print("_onUserMessageAdded - $message - $userID");
+    String timestampString = event.snapshot.child("timestamp").value.toString();
+    DateTime timestamp = DateTime.parse(timestampString);
+    int timestampInt = timestamp.millisecondsSinceEpoch;
 
-      String message = event.snapshot.child("message").value.toString();
-      String? userID = event.snapshot.ref.key;
-      print("_onUserMessageAdded - $message - $userID");
-      String timestampString = event.snapshot.child("timestamp").value.toString();
-      DateTime timestamp = DateTime.parse(timestampString);
-      int timestampInt = timestamp.millisecondsSinceEpoch;
-      
-
-      if(userID == null || event == null)
-      {
-        print("User ID is null for message");
-        return;
-      }
-      if(userID == _currentUser || (_selectedUser != null && userID == _selectedUser!.ID))
-      {
-
-        _addNewMessageToList(event);
-        return;
-      }
-      if(timestampInt > timeSinceStart) // Is a new message
-      {
-        setState(() {_changeUserReadMessages(userID, true);});
-      }
-      
-  }
-
-
-  void _addNewMessageToList(DatabaseEvent event)
-  {
-    if(event.snapshot.key == null)
+    if (userID == null || event == null) {
+      print("User ID is null for message");
+      return;
+    }
+    if (userID == _currentUser ||
+        (_selectedUser != null && userID == _selectedUser!.ID)) {
+      _addNewMessageToList(event);
+      return;
+    }
+    if (timestampInt > timeSinceStart) // Is a new message
     {
+      setState(() {
+        _changeUserReadMessages(userID, true);
+      });
+    }
+  }
+
+  void _addNewMessageToList(DatabaseEvent event) {
+    if (event.snapshot.key == null) {
       print("Unable to find userID");
       return;
     }
@@ -137,69 +120,77 @@ class _ChatPageState extends State<ChatPage>
     String message = event.snapshot.child("message").value.toString();
     String sender = event.snapshot.child("sender").value.toString();
 
-
     String timestampString = event.snapshot.child("timestamp").value.toString();
     DateTime timestamp = DateTime.parse(timestampString);
     int timestampInt = timestamp.millisecondsSinceEpoch;
 
-
     print("message: $message, sender: $sender, timestamp: $timestampInt");
-    
-    _messages.insert(0,Message(
-        message: message,
-        sender: sender,
-        timestamp: timestampInt));
-    if(sender != _currentUser)
-    {
-      _messagesHelpRef.child(sender).update({"hasUnreadMessages" : false});
+
+    _messages.insert(
+        0, Message(message: message, sender: sender, timestamp: timestampInt));
+    if (sender != _currentUser) {
+      _messagesHelpRef.child(sender).update({"hasUnreadMessages": false});
     }
     setState(() {});
   }
 
-
-  Future<void> _initializeUsers() async
-  {
-    await _usersRef.once().then((DatabaseEvent event) async 
-    {
+  Future<void> _initializeUsers() async {
+    await _usersRef.once().then((DatabaseEvent event) async {
       DataSnapshot snapshot = event.snapshot;
-      Map<dynamic, dynamic>? usersData = snapshot.value as Map<dynamic, dynamic>?;
-      if (usersData == null) 
-      {
+      Map<dynamic, dynamic>? usersData =
+          snapshot.value as Map<dynamic, dynamic>?;
+      if (usersData == null) {
         return;
       }
-      for (var key in usersData.keys)
-      {
+      for (var key in usersData.keys) {
         var value = usersData[key];
         String userRole = value["userType"];
         String fullname = value["first name"] + " " + value["last name"];
+        String profilePictureUrl = value["profile picture"].toString();
+        // Gets the initials of the users name
+        List<String> nameParts = fullname.split(" ");
+        String initials = "";
+        for (int i = 0; i < nameParts.length; i++) {
+          if (nameParts[i].isNotEmpty) {
+            String initial = nameParts[i][0];
+            initials += initial;
+          }
+        }
+        initials = initials.toUpperCase();
+
         String userID = key;
-        if(userID == _currentUser)
-        {
+        if (userID == _currentUser) {
           continue;
         }
 
         bool hasUnreadMessages;
-        try
-        {
+        try {
           hasUnreadMessages = await _getUnreadMessages(key);
-        }
-        catch (e)
-        {
+        } catch (e) {
           hasUnreadMessages = false;
-          _messagesHelpRef.child(userID).set({"hasUnreadMessages": false, "lastMessage" : ""});
+          _messagesHelpRef
+              .child(userID)
+              .set({"hasUnreadMessages": false, "lastMessage": ""});
         }
         // _listeners.Add(_messagesRef.child(checkStringID).onChildAdded.listen(_onUserMessageAdded));
-        onChildAddedListeners.add(_messagesRef.child(userID).onChildAdded.listen(_onUserMessageAdded));
+        onChildAddedListeners.add(_messagesRef
+            .child(userID)
+            .onChildAdded
+            .listen(_onUserMessageAdded));
         // onChildAddedListeners.add(() {_messagesRef.child(userID).off();});
-        print("Adding to list: Name: $fullname, ID: $userID, userType: $userRole, hasUnreadMessages: $hasUnreadMessages");
-        setState(() 
-        {
-          _users.add(User(Name: fullname, ID: userID, userType: userRole, hasUnreadMessages: hasUnreadMessages));
+        print(
+            "Adding to list: Name: $fullname, ID: $userID, userType: $userRole, hasUnreadMessages: $hasUnreadMessages, profilePictureUrl: $profilePictureUrl");
+        setState(() {
+          _users.add(User(
+              Name: fullname,
+              ID: userID,
+              userType: userRole,
+              hasUnreadMessages: hasUnreadMessages,
+              profilePicture: profilePictureUrl,
+              Initials: initials));
         });
       }
       _setSelectedUser();
-
-
     });
   }
 
@@ -220,82 +211,72 @@ class _ChatPageState extends State<ChatPage>
       "sender": _currentUser,
       "timestamp": formattedDate,
     });
-    _messagesHelpRef.parent?.child(_selectedUser!.ID).child(_currentUser).set({"hasUnreadMessages": true,"lastMessage": message});
-    _messagesHelpRef.child(_selectedUser!.ID).set({"lastMessage": message, "hasUnreadMessages" : false});
+    _messagesHelpRef.parent
+        ?.child(_selectedUser!.ID)
+        .child(_currentUser)
+        .set({"hasUnreadMessages": true, "lastMessage": message});
+    _messagesHelpRef
+        .child(_selectedUser!.ID)
+        .set({"lastMessage": message, "hasUnreadMessages": false});
     setState(() {});
-    
+
     _textController.clear();
   }
 
   Future<String> _getUserLastMessage(User? u) async {
-    if (u == null) 
-    {
+    if (u == null) {
       return "";
     }
 
-    try 
-    {
+    try {
       var e = await _messagesHelpRef.child(u.ID).once();
-      
-      if (e.snapshot.value != null) 
-      {
+
+      if (e.snapshot.value != null) {
         Map<dynamic, dynamic> values = e.snapshot.value as Map;
         return values["lastMessage"] ?? "";
-      } 
-      else 
-      {
+      } else {
         return "";
       }
-    } catch (error) 
-    {
+    } catch (error) {
       print("Error: $error");
       return "";
     }
   }
 
   Future<bool> _getUnreadMessages(String userID) async {
-    try 
-    {
+    try {
       var e = await _messagesHelpRef.child(userID).once();
-      
-      if (e.snapshot.value != null) 
-      {
+
+      if (e.snapshot.value != null) {
         Map<dynamic, dynamic> values = e.snapshot.value as Map;
         return values["hasUnreadMessages"] ?? false;
-      } 
-      else 
-      {
+      } else {
         return false;
       }
-    } catch (error) 
-    {
+    } catch (error) {
       print("Error: $error");
       return false;
     }
   }
 
-  Future<void> _createUserMessageList(String userID) async
-  {
+  Future<void> _createUserMessageList(String userID) async {
     _messagesHelpRef.child(userID).update({"hasUnreadMessages": false});
     _messages.clear();
-    await _messagesRef.child(userID).once().then((e) 
-    {
-        if (e.snapshot.value != null) 
-        {
-          Map<dynamic, dynamic> values = e.snapshot.value as Map;
-          values.forEach((id, messages) 
-          {
-            String message = messages["message"];
-            String sender = messages["sender"];
-            DateTime timestamp = DateTime.parse(messages["timestamp"]);
-            int timestampInt = timestamp.millisecondsSinceEpoch;
+    await _messagesRef.child(userID).once().then((e) {
+      if (e.snapshot.value != null) {
+        Map<dynamic, dynamic> values = e.snapshot.value as Map;
+        values.forEach((id, messages) {
+          String message = messages["message"];
+          String sender = messages["sender"];
+          DateTime timestamp = DateTime.parse(messages["timestamp"]);
+          int timestampInt = timestamp.millisecondsSinceEpoch;
 
-            _messages.insert(0,Message(
-                  message: message,
-                  sender: sender,
-                  timestamp: timestampInt));
-          });
-        }
+          _messages.insert(
+              0,
+              Message(
+                  message: message, sender: sender, timestamp: timestampInt));
+        });
+      }
     });
   }
 
@@ -359,66 +340,78 @@ class _ChatPageState extends State<ChatPage>
     );
   }
 
-Widget _buildUserTile(User user) {
-  return ListTile(
-    title: Row(
-      children: [
-        Expanded(
-          child: Text(user.Name),
-        ),
-        if (user.hasUnreadMessages)
-          const Icon(
-            Icons.brightness_1,
-            color: Colors.red,
-            size: 10.0,
+  Widget _buildUserTile(User user) {
+    return ListTile(
+      leading: user.profilePicture == "null"
+          ? CircleAvatar(
+              child: Text(
+                user.Initials,
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 130, 125, 125)),
+              ),
+              radius: 25,
+            )
+          : CircleAvatar(
+              backgroundImage: NetworkImage(user.profilePicture),
+              radius: 25,
+            ),
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(user.Name),
           ),
-      ],
-    ),
-    // subtitle: Text(user.userType),
-    subtitle: FutureBuilder<String>(
-      future: _getUserLastMessage(user),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("");
-        } else if (snapshot.hasError) {
-          return Text("");
-        } else {
-          String lastMessage = snapshot.data ?? "";
-          // Restricting lastMessage to 20 characters
-          if (lastMessage.length > 20) {
-            return Text('${lastMessage.substring(0, 20)}...');
+          if (user.hasUnreadMessages)
+            const Icon(
+              Icons.brightness_1,
+              color: Colors.red,
+              size: 10.0,
+            ),
+        ],
+      ),
+      // subtitle: Text(user.userType),
+      subtitle: FutureBuilder<String>(
+        future: _getUserLastMessage(user),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("");
+          } else if (snapshot.hasError) {
+            return Text("");
+          } else {
+            String lastMessage = snapshot.data ?? "";
+            // Restricting lastMessage to 20 characters
+            if (lastMessage.length > 20) {
+              return Text('${lastMessage.substring(0, 20)}...');
+            }
+            return Text('$lastMessage');
           }
-          return Text('$lastMessage');
-        }
+        },
+      ),
+      tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
+      onTap: () {
+        setState(() {
+          if (_selectedUser == user) {
+            return;
+          }
+          _selectedUser = user;
+          _changeUserReadMessages(_selectedUser!.ID, false);
+          setState(() {
+            _createUserMessageList(_selectedUser!.ID);
+          });
+        });
       },
-    ),
-    tileColor: _selectedUser == user ? Colors.grey[300] : Colors.white,
-    onTap: () {
-      setState(() {
-        if(_selectedUser == user)
-        {
-          return;
-        }
-        _selectedUser = user;
-        _changeUserReadMessages(_selectedUser!.ID, false);
-        setState((){_createUserMessageList(_selectedUser!.ID);});
-      });
-    },
-  );
-}
-
+    );
+  }
 
   Widget _buildUserList() {
     return Container(
-  decoration: BoxDecoration(
-    // border: Border.all(color: Palette.ktoCrimson, width: 3),
-    border: Border(right : BorderSide(color: Palette.ktoCrimson, width: 3)),
-  ),
+      decoration: BoxDecoration(
+        // border: Border.all(color: Palette.ktoCrimson, width: 3),
+        border: Border(right: BorderSide(color: Palette.ktoCrimson, width: 3)),
+      ),
       width: 250.0,
       child: ListView.builder(
         itemCount: _users.length,
         itemBuilder: (BuildContext context, int index) {
-          
           if (_users.elementAt(index).ID != _currentUser) {
             return _buildUserTile(_users.elementAt(index));
           } else {
@@ -433,85 +426,87 @@ Widget _buildUserTile(User user) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedUser != null ? _selectedUser!.Name : 'Chat', style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text(_selectedUser != null ? _selectedUser!.Name : 'Chat',
+            style: TextStyle(
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
         backgroundColor: Palette.ktoCrimson,
       ),
       body: Row(
         children: [
           _buildUserList(),
-
           Expanded(
-            child: _selectedUser != null ? Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    reverse: true,
-                    itemCount: _messages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _buildMessage(_messages[index]);
-                    },
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          controller: _textController,
-                          decoration: InputDecoration(
-                            hintText: 'Type a message',
+              child: _selectedUser != null
+                  ? Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                            reverse: true,
+                            itemCount: _messages.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return _buildMessage(_messages[index]);
+                            },
                           ),
-                          onSubmitted: (String message) {
-                            _sendMessage(message);
-                          },
                         ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextField(
+                                  controller: _textController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Type a message',
+                                  ),
+                                  onSubmitted: (String message) {
+                                    _sendMessage(message);
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.send),
+                                onPressed: () {
+                                  _sendMessage(_textController.text);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(
+                      // padding: EdgeInsets.all(16.0),
+                      color: Colors.white,
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.message, size: 64),
+                          SizedBox(width: 8.0),
+                          Text(
+                            'Your messages',
+                            style: TextStyle(
+                              color: Colors.black, // Set the text color
+                              fontSize: 64.0, // Set the font size
+                              fontWeight:
+                                  FontWeight.bold, // Set the font weight
+                            ),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          _sendMessage(_textController.text);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
-           : Container(
-            // padding: EdgeInsets.all(16.0),  
-            color: Colors.white, 
-            
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.message,size: 64
-                ),
-                SizedBox(width: 8.0), 
-                Text(
-                  'Your messages',
-                  style: TextStyle(
-                    color: Colors.black, // Set the text color
-                    fontSize: 64.0, // Set the font size
-                    fontWeight: FontWeight.bold, // Set the font weight
-                  ),
-                ),
-              ],
-            ),
-          )
-          )
+                    ))
         ],
       ),
     );
@@ -523,11 +518,11 @@ class Message {
   final String sender;
   final int timestamp;
 
-  Message(
-      {required this.message,
-      required this.sender,
-      required this.timestamp,
-      });
+  Message({
+    required this.message,
+    required this.sender,
+    required this.timestamp,
+  });
 }
 
 class User {
@@ -535,14 +530,15 @@ class User {
   final String ID;
   final String userType;
   bool hasUnreadMessages;
+  final String profilePicture;
+  final String Initials;
 
   User({
     required this.Name,
     required this.ID,
     required this.userType,
     this.hasUnreadMessages = false,
+    required this.profilePicture,
+    required this.Initials,
   });
 }
-
-
-

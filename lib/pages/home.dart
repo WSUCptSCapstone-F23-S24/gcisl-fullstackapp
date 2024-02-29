@@ -521,84 +521,103 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Column(children: [
-                                    Row(children: [
-                                      _postList[index]["profile picture"] ==
-                                              "null"
-                                          ? CircleAvatar(
-                                              child: Text(
-                                                _postList[index]["initials"],
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Color.fromARGB(
-                                                        255, 130, 125, 125)),
-                                              ),
-                                              radius: 15,
-                                            )
-                                          : CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  _postList[index]
-                                                      ["profile picture"]),
-                                              radius: 15,
-                                            ),
-                                      TextButton(
-                                          child: Text(
-                                            _postList[index]["full name"] ??
-                                                "anonymous",
-                                            style: const TextStyle(
-                                              // decoration: TextDecoration.underline,
-                                              // color: Palette.ktoCrimson,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ProfilePage1(
-                                                            _postList[index]
-                                                                    ["email"]
-                                                                .hashCode
-                                                                .toString(),
-                                                            true)));
-                                            //ProfilePage1(_postList[index][4].hashCode.toString());
-                                          }),
-                                      if (_postList[index]["userType"] !=
-                                              "null" &&
-                                          _postList[index]["userType"] != null)
-                                        Text(
-                                          '-  ${_postList[index]["userType"]}',
-                                          style: const TextStyle(
-                                            // decoration: TextDecoration.underline,
-                                            // color: Palette.ktoCrimson,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                    ]),
-                                    Row(children: [
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 15.0),
-                                          child: Tooltip(
-                                              message: DateFormat(
-                                                      'MM/dd/yyyy hh:mm a')
-                                                  .format(DateTime
-                                                      .fromMillisecondsSinceEpoch(
-                                                          int.parse(_postList[
-                                                                  index]
-                                                              ["timestamp"]))),
-                                              child: SelectableText(
-                                                '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Row(
+                                      children: [
+                                        _postList[index]["profile picture"] ==
+                                                "null"
+                                            ? CircleAvatar(
+                                                child: Text(
+                                                  _postList[index]["initials"],
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Color.fromARGB(
+                                                          255, 130, 125, 125)),
                                                 ),
-                                              ))),
-                                    ])
-                                  ]),
+                                                radius: 25,
+                                              )
+                                            : CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    _postList[index]
+                                                        ["profile picture"]),
+                                                radius: 25,
+                                              ),
+                                        Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(children: [
+                                                TextButton(
+                                                    child: Text(
+                                                      _postList[index]
+                                                              ["full name"] ??
+                                                          "anonymous",
+                                                      style: const TextStyle(
+                                                        // decoration: TextDecoration.underline,
+                                                        // color: Palette.ktoCrimson,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ProfilePage1(
+                                                                  _postList[index]
+                                                                          [
+                                                                          "email"]
+                                                                      .hashCode
+                                                                      .toString(),
+                                                                  true)));
+                                                      //ProfilePage1(_postList[index][4].hashCode.toString());
+                                                    }),
+                                                if (_postList[index]
+                                                            ["userType"] !=
+                                                        "null" &&
+                                                    _postList[index]
+                                                            ["userType"] !=
+                                                        null)
+                                                  Text(
+                                                    '-  ${_postList[index]["userType"]}',
+                                                    style: const TextStyle(
+                                                      // decoration: TextDecoration.underline,
+                                                      // color: Palette.ktoCrimson,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                              ]),
+                                              Row(children: [
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 15.0),
+                                                    child: Tooltip(
+                                                        message: DateFormat(
+                                                                'MM/dd/yyyy hh:mm a')
+                                                            .format(DateTime
+                                                                .fromMillisecondsSinceEpoch(
+                                                                    int.parse(_postList[
+                                                                            index]
+                                                                        [
+                                                                        "timestamp"]))),
+                                                        child: SelectableText(
+                                                          '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ))),
+                                              ])
+                                            ]),
+                                      ],
+                                    ),
+                                  ),
                                   _postList[index]["post body"] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
