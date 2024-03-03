@@ -94,10 +94,24 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                 element.child("email").value.toString(),
                 element.child("company").value.toString(),
                 element.child("position").value.toString(),
+                element.child("profile picture").value.toString(),
               ]);
             }));
 
     userInfo = user;
+  }
+
+  String getInitials(String fullName) {
+    List<String> nameParts = fullName.split(" ");
+    String initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    initials = initials.toUpperCase();
+    return initials;
   }
 
   @override
@@ -142,8 +156,24 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                       ? Colors.blueGrey.shade50
                                       : Colors.white,
                                   child: ListTile(
-                                    leading: Icon(Icons.portrait_rounded,
-                                        color: Palette.ktoCrimson),
+                                    leading: userInfo[index][10] == "null"
+                                        ? CircleAvatar(
+                                            child: Text(
+                                              getInitials(userInfo[index][0] +
+                                                  " " +
+                                                  userInfo[index][1]),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color.fromARGB(
+                                                      255, 130, 125, 125)),
+                                            ),
+                                            radius: 25,
+                                          )
+                                        : CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                userInfo[index][10]),
+                                            radius: 25,
+                                          ),
                                     title: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -160,7 +190,8 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                                                 child: Text(
                                               userInfo[index][0] +
                                                   " " +
-                                                  userInfo[index][1] +"\n",
+                                                  userInfo[index][1] +
+                                                  "\n",
                                               style: TextStyle(
                                                   color: _selectedIndex == index
                                                       ? Color.fromARGB(
