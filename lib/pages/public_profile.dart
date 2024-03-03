@@ -61,8 +61,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
   TextEditingController _countryAddressController = TextEditingController();
   TextEditingController _userBioController = TextEditingController();
 
-
-DatabaseReference ref = FirebaseDatabase.instance.ref("users");
+  DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
   String? _profilePictureUrl; // New field to hold profile picture URL
 
@@ -129,54 +128,48 @@ DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
   getCurrentUser() {
     ref.get().then((snapshot) => snapshot.children.forEach((element) {
-              if (element.key.toString() == widget.emailHashString) {
-                setState(() {
-                  _nameController.text =
-                      element.child("first name").value.toString() +
-                          " " +
-                          element.child("last name").value.toString();
-                  _companyPositionController.text =
-                      element.child("position").value.toString();
-                  _phoneController.text =
-                      element.child("phone").value.toString();
-                  _zipcodeController.text =
-                      element.child("zip address").value.toString();
-                  _companyController.text =
-                      element.child("company").value.toString();
-                  _companyPositionController.text =
-                      element.child("position").value.toString();
-                  _countryAddressController.text =
-                      element.child("country address").value.toString();
-                  _profilePictureUrl =
-                      element.child("profile picture").value.toString();
-                  _emailController.text = 
-                      element.child("email").value.toString();
-                  var bioSnapshot = element.child("bio");
-                  if (bioSnapshot.exists) {
-                      _userBioController.text = bioSnapshot.value.toString();
-                  } else {
-                      _userBioController.text = "";
-                  }
-                });
+          if (element.key.toString() == widget.emailHashString) {
+            setState(() {
+              _nameController.text =
+                  element.child("first name").value.toString() +
+                      " " +
+                      element.child("last name").value.toString();
+              _companyPositionController.text =
+                  element.child("position").value.toString();
+              _phoneController.text = element.child("phone").value.toString();
+              _zipcodeController.text =
+                  element.child("zip address").value.toString();
+              _companyController.text =
+                  element.child("company").value.toString();
+              _companyPositionController.text =
+                  element.child("position").value.toString();
+              _countryAddressController.text =
+                  element.child("country address").value.toString();
+              _profilePictureUrl =
+                  element.child("profile picture").value.toString();
+              _emailController.text = element.child("email").value.toString();
+              var bioSnapshot = element.child("bio");
+              if (bioSnapshot.exists) {
+                _userBioController.text = bioSnapshot.value.toString();
+              } else {
+                _userBioController.text = "";
               }
-            }));
+            });
+          }
+        }));
   }
 
-
-  void _setUserBio(String bio)
-  {
-    if(emailHash == null)
-    {
+  void _setUserBio(String bio) {
+    if (emailHash == null) {
       return;
     }
-    if(bio.length > 500)
-    {
-      bio = bio.substring(0,500);
+    if (bio.length > 500) {
+      bio = bio.substring(0, 500);
     }
-    ref.child(emailHash!).update({"bio" : bio});
+    ref.child(emailHash!).update({"bio": bio});
   }
-  void getInitials() 
-  {
+
+  void getInitials() {
     // Gets the initials of the users name
     String fullName = _nameController.text;
     print("fullName: " + fullName);
@@ -209,232 +202,216 @@ DatabaseReference ref = FirebaseDatabase.instance.ref("users");
     // Gets the initials of the users name
     getInitials();
 
-  return Scaffold(
-  body: Padding(
-    padding: const EdgeInsets.all(20.0),
-    child: 
-    Column(
-    children:[
-      if (widget.isOtherPage)
-        Row(
-          children: [
-            const SizedBox(width: 16.0),
-            FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              heroTag: 'back',
-              elevation: 0,
-              backgroundColor: Colors.grey,
-              label: const Text("Go Back"),
-              icon: const Icon(Icons.arrow_back),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-      Container
-      (
-      height: 300,
-      decoration: BoxDecoration
-      (
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      child: Row
-      (
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return Scaffold(
+        body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(children: [
+          if (widget.isOtherPage)
+            Row(
               children: [
-                _profilePictureUrl.toString() == "null"
-                    ? CircleAvatar(
-                        backgroundColor: Palette.ktoCrimson,
-                        child: Text(
-                          initials,
-                          style: TextStyle(fontSize: 50, color: Colors.white),
-                        ),
-                        radius: 100,
-                      )
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(_profilePictureUrl!),
-                        radius: 100,
-                      ),
-                SizedBox(
-                  height: 16,
+                const SizedBox(width: 16.0),
+                FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  heroTag: 'back',
+                  elevation: 0,
+                  backgroundColor: Colors.grey,
+                  label: const Text("Go Back"),
+                  icon: const Icon(Icons.arrow_back),
                 ),
-                if (emailHash == widget.emailHashString)
-                  ElevatedButton(
-                    onPressed: () {
-                      _pickImage(); // Call the image picker function here
-                    },
-                    child: Text('Edit Profile Picture'),
-                  ),
               ],
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Padding
-            (
-              padding: const EdgeInsets.fromLTRB(0,20,20,0),
-              child:
-              Column
-              (
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 20),
+          Container(
+            height: 300,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row
-                      (
-                        children:
-                        [
+                      _profilePictureUrl.toString() == "null"
+                          ? CircleAvatar(
+                              backgroundColor: Palette.ktoCrimson,
+                              child: Text(
+                                initials,
+                                style: TextStyle(
+                                    fontSize: 50, color: Colors.white),
+                              ),
+                              radius: 100,
+                            )
+                          : CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(_profilePictureUrl!),
+                              radius: 100,
+                            ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      if (emailHash == widget.emailHashString)
+                        ElevatedButton(
+                          onPressed: () {
+                            _pickImage(); // Call the image picker function here
+                          },
+                          child: Text('Edit Profile Picture'),
+                        ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              Text(
+                                _nameController.text,
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Spacer(),
+                              if (isCurrentUserProfile)
+                                ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfilePage()));
+                                    },
+                                    child: Text(
+                                      'Edit Profile',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Palette.ktoCrimson,
+                                    ))
+                              else
+                                ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ChatPage(
+                                                  widget.emailHashString)));
+                                    },
+                                    child: Text(
+                                      'Message User',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Palette.ktoCrimson,
+                                    ))
+                            ]),
+                            Text(
+                              "${_companyController.text} - ${_companyPositionController.text}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            Text(
+                              "Email - ${_emailController.text}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              "Phone - ${Formatting.formatPhoneString(_phoneController.text)}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
                           Text(
-                            _nameController.text,
+                            "Bio",
                             style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.black,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
                           Spacer(),
                           if (isCurrentUserProfile)
-                            ElevatedButton
-                            (
+                            ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ProfilePage()));
+                                  _setUserBio(_userBioController.text);
                                 },
-                                child: Text('Edit Profile',style: TextStyle(color: Colors.white),),
-                                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
-
-                            )
-                          else
-                          ElevatedButton
-                            (
-                                onPressed: () {
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChatPage(widget.emailHashString)));
-                                },
-                                child: Text('Message User',style: TextStyle(color: Colors.white),),
-                                style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
-
-                            )
-                            
-                        ]
-                      ),
-                      Text(
-                        "${_companyController.text} - ${_companyPositionController.text}",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Text(
-                        "Email - ${_emailController.text}",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Phone - ${Formatting.formatPhoneString(_phoneController.text)}",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-          Expanded
-          (
-            flex: 2,
-            child: 
-            Padding
-            (
-              padding: const EdgeInsets.fromLTRB(0,30,20,0),
-              child:
-              Column
-              (
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: 
-                [
-                  Row
-                  (
-                    children:
-                    [
-                      Text
-                      (
-                        "Bio",
-                        style: TextStyle
-                        (
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Spacer(),
-                      if(isCurrentUserProfile)
-                        ElevatedButton
-                        (
-                            onPressed: () {
-                              _setUserBio(_userBioController.text);
-                            },
-                            child: Text('Update Bio',style: TextStyle(color: Colors.white),),
-                            style:ElevatedButton.styleFrom(backgroundColor: Palette.ktoCrimson,)
-                        ),
-                    ]
-                  ),
-                  SizedBox(height: 10),
-                  Expanded
-                  (
-                    child: TextFormField
-                    (
-                      initialValue: _userBioController.text,
-                      controller: _userBioController,
-                      maxLines: null,
-                      readOnly: !isCurrentUserProfile,
-                      decoration: InputDecoration
-                      (
-                          hintText: isCurrentUserProfile ? "Enter your bio..." : "This user has not entered a bio yet",
-                          border: OutlineInputBorder(),
-                      ),
+                                child: Text(
+                                  'Update Bio',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Palette.ktoCrimson,
+                                )),
+                        ]),
+                        SizedBox(height: 10),
+                        Expanded(
+                          child: TextFormField(
+                            // initialValue: _userBioController.text,
+                            controller: _userBioController,
+                            maxLines: null,
+                            readOnly: !isCurrentUserProfile,
+                            decoration: InputDecoration(
+                              hintText: isCurrentUserProfile
+                                  ? "Enter your bio..."
+                                  : "This user has not entered a bio yet",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        )
+                        // SizedBox(height: 10),
+                        //
+                        // SizedBox(height: 10),
+                      ],
                     ),
-                  )
-                  // SizedBox(height: 10),
-                  // 
-                  // SizedBox(height: 10),
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+          PostPortion(widget.emailHashString!),
+        ]),
       ),
-    ),
-    PostPortion(widget.emailHashString!),
-    ]
-    ),
-  )
-);
+    ));
+  }
 }
-}
-
 
 class _ProfileInfoRow extends StatefulWidget {
   TextEditingController companyPositionController = TextEditingController();
@@ -641,7 +618,6 @@ class _PostPortionState extends State<PostPortion> {
             const SizedBox(
               height: 16,
             ),
-           
             const SizedBox(
               height: 16,
             ),
