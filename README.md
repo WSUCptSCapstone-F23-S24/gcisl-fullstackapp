@@ -118,6 +118,10 @@ Through VS code IDE:
 - Documentation: [Sprint 4 Report](https://docs.google.com/document/d/1jGkCPw_bqtdQeE8N7DpaYAnbHHS64B-GHSmATr-2aIM/edit)
 - Video: [link](https://drive.google.com/file/d/1wW2fBLHnND7Sr8hTbaIpWQZmorfUXgsr/view)
 
+#### Sprint 5:
+- Documentation: [Sprint 5 Report](https://docs.google.com/document/d/1oIFmjMZpa0klbf-ue4jMdNTUFzoS82h_bFcrCl08COM/edit?usp=sharing)
+- Video: [link](https://drive.google.com/file/d/1S-rAgXZtE-g5tkGmWiPe2DPBlMdtwvRO/view?usp=sharing)
+
 ## PREVIOUS GROUP - Sprints
 
 #### Sprint 1:
