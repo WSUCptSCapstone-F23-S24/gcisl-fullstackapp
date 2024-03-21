@@ -178,6 +178,10 @@ class _MyHomePageState extends State<MyHomePage> {
       print("No email hash");
       return;
     }
+    if(text.length == 0)
+    {
+      return;
+    }
     _commentRef.child(commentID).set(
     {
       'text': text,
@@ -713,18 +717,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                       ),
+                                      SizedBox(width:10),
                                       Expanded(
                                         flex: 1,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Palette.ktoCrimson),
                                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.zero,
-                                              // side: BorderSide(color: Colors.red)
-                                            )
-                                          )
                                         ),
                                           onPressed: () {
                                             _sendComment(_postList[index]["textController"],  _postList[index]['post id'], _postList[index]['comments']);
@@ -734,6 +733,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           style: TextStyle(color: Colors.white)),
                                         ),
                                       ),
+                                      SizedBox(width:10)
                                     ],
                                   ),
                                 ]),
