@@ -139,15 +139,6 @@ class _CommentsPageState extends State<CommentsPage> {
       'timestamp': timestamp,
       'replies': [],
     });
-
-    // setState(() {
-    //   _comments.add(Comment(
-    //       commentID: '',
-    //       commentText: text,
-    //       commentedBy: widget.username.toString(),
-    //       commentTime: timestamp));
-    // });
-    // Clear the comment input field
     _commentController.clear();
   }
 
