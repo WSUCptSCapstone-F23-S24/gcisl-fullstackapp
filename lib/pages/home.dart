@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showEmojiPicker = false;
   var downloadUrl = null;
   bool isLiked = false;
+  final _commentController = TextEditingController();
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -156,12 +157,39 @@ class _MyHomePageState extends State<MyHomePage> {
           "commentPreview": commentPreview,
           "profile picture": profilePicture,
           "initials": initials,
+          "textController" : TextEditingController(),
         });
         updatePostList();
       });
     }
   }
 
+
+  void _sendComment(TextEditingController  textCon, String postID, Map comments) {
+    String text = textCon.text;
+    print("entered send comments - ${text} - ${postID}");
+    final DatabaseReference _commentRef = _database
+        .child(postID)
+        .child('comments'); // references the comments in the database
+    final timestamp = DateTime.now().toString();
+    String commentID = _commentRef.push().key.toString();
+    if(emailHash == null)
+    {
+      print("No email hash");
+      return;
+    }
+    _commentRef.child(commentID).set(
+    {
+      'text': text,
+      'likes':[],
+      'sender': emailHash.toString(),
+      'timestamp': timestamp,
+      'replies': [],
+    });
+    comments[commentID] = text;
+    textCon.clear();
+
+  }
   void updatePostList() {
     _postList = PostFiltering.filterPosts(_allPosts, searchBarText);
     _localPostListSort();
@@ -673,7 +701,43 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                   const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: TextField(
+                                          controller: _postList[index]["textController"],
+                                          decoration: InputDecoration(
+                                            hintText: 'Leave a comment',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty.all(Palette.ktoCrimson),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.zero,
+                                              // side: BorderSide(color: Colors.red)
+                                            )
+                                          )
+                                        ),
+                                          onPressed: () {
+                                            _sendComment(_postList[index]["textController"],  _postList[index]['post id'], _postList[index]['comments']);
+                                            setState((){});
+                                          },
+                                          child: Text('Leave Comment',
+                                          style: TextStyle(color: Colors.white)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ]),
+                                
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
