@@ -7,6 +7,7 @@ import 'package:gcisl_app/palette.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
+import 'image.dart';
 
 class CommentsPage extends StatefulWidget {
   final String postId;
@@ -185,7 +186,7 @@ class _CommentsPageState extends State<CommentsPage> {
     _replyController.clear();
   }
 
-  void _retrievePost(DataSnapshot snapshot) async {
+  Future<Map<String, String?>> _retrievePost(DataSnapshot snapshot) async {
     String? uniquePostId = snapshot.key;
     String? uniquePostImageId = snapshot.child("image").key;
     final newPost = snapshot.child("text").value.toString();
@@ -251,29 +252,31 @@ class _CommentsPageState extends State<CommentsPage> {
           "email": email,
           "post id": uniquePostId,
           "image id": uniquePostImageId,
-          "likes": likes,
-          "comments": comments,
           "userType": userType,
           "commentPreview": commentPreview,
           "profile picture": profilePicture,
           "initials": initials,
-      }
+      };
   }
 
-  Future<Map?> _loadPost()
+  Future<Map<String, String?>?> _loadPost() async
   {
-    final ref = _database.instance.ref();
-    final snapshot = await ref.child(widget.postID).get();
+    final snapshot = await _database.child(widget.postId).get();
     if (!snapshot.exists) 
     {
       print('Post not found');
       return null;
     }
-    Map postMap = _retrievePost(snapshot);
+    Future<Map<String, String?>> postMap = _retrievePost(snapshot);
     return postMap;
   }
 
-  Widget buildPost(Map<String, dynamic> postData) {
+  Widget buildPost(Map<String, String?>? postData) {
+    if(postData == null)
+    {
+      print("Null post");
+      return SizedBox.shrink();
+    }
   return Card(
     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     elevation: 5,
@@ -288,7 +291,7 @@ class _CommentsPageState extends State<CommentsPage> {
               postData["profile picture"] == "null"
                   ? CircleAvatar(
                       child: Text(
-                        postData["initials"],
+                        postData["initials"]!,
                         style: TextStyle(
                           fontSize: 15,
                           color: Color.fromARGB(255, 130, 125, 125),
@@ -297,7 +300,7 @@ class _CommentsPageState extends State<CommentsPage> {
                       radius: 25,
                     )
                   : CircleAvatar(
-                      backgroundImage: NetworkImage(postData["profile picture"]),
+                      backgroundImage: NetworkImage(postData["profile picture"]!),
                       radius: 25,
                     ),
               SizedBox(width: 10),
@@ -306,8 +309,7 @@ class _CommentsPageState extends State<CommentsPage> {
                 children: [
                   Row(
                     children: [
-                      TextButton(
-                        child: Text(
+                          Text(
                           postData["full name"] ?? "anonymous",
                           style: const TextStyle(
                             color: Colors.black,
@@ -315,18 +317,6 @@ class _CommentsPageState extends State<CommentsPage> {
                             fontSize: 16,
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfilePage1(
-                                postData["email"].hashCode.toString(),
-                                true,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
                       if (postData["userType"] != "null" && postData["userType"] != null)
                         Text(
                           '-  ${postData["userType"]}',
@@ -345,11 +335,11 @@ class _CommentsPageState extends State<CommentsPage> {
                         child: Tooltip(
                           message: DateFormat('MM/dd/yyyy hh:mm a').format(
                             DateTime.fromMillisecondsSinceEpoch(
-                              int.parse(postData["timestamp"]),
+                              int.parse(postData["timestamp"]!),
                             ),
                           ),
                           child: SelectableText(
-                            '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(postData["timestamp"])))}',
+                            '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(postData["timestamp"]!)))}',
                             style: const TextStyle(
                               color: Colors.grey,
                             ),
@@ -377,7 +367,7 @@ class _CommentsPageState extends State<CommentsPage> {
                         children: [
                           ListTile(
                             title: SelectableText(
-                              postData["post body"],
+                              postData["post body"]!,
                             ),
                           ),
                         ],
@@ -394,7 +384,7 @@ class _CommentsPageState extends State<CommentsPage> {
                       showDialog(
                         context: context,
                         builder: (context) => ImageDialog(
-                          imageUrl: postData["image"],
+                          imageUrl: postData["image"]!,
                         ),
                       );
                     },
@@ -402,7 +392,7 @@ class _CommentsPageState extends State<CommentsPage> {
                       children: [
                         SizedBox(
                           child: Image.network(
-                            postData["image"],
+                            postData["image"]!,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
@@ -445,7 +435,20 @@ class _CommentsPageState extends State<CommentsPage> {
       ),
       body: Column(
         children: <Widget>[
-          buildPost(_loadPost),
+          FutureBuilder<Map<String, String?>?>(
+            future: _loadPost(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); // or any other loading indicator
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return Text('Post not found');
+              } else {
+                return buildPost(snapshot.data!);
+              }
+            },
+          ),
           // Display Comments
           Expanded(
             child: ListView.builder(
