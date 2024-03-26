@@ -26,6 +26,7 @@ class _CommentsPageState extends State<CommentsPage> {
   List<Comment> _comments = [];
   List<Reply> _replies = [];
   String? emailHash;
+  Map<String,UserInfo> loadedProfilePictures = <String,UserInfo>{};
 
   @override
   void initState() {
@@ -55,6 +56,68 @@ class _CommentsPageState extends State<CommentsPage> {
     String username = await _getUserNameHelper(userid);
     print("Name: " + username);
     return username;
+  }
+
+  Widget getCircleAvatar(UserInfo user, double size)
+  {
+    if(user.profileImageURL == "null")
+    {
+      return CircleAvatar(
+              child: Text(
+                user.initials,
+                style: TextStyle(
+                    fontSize: size - 10, color: Color.fromARGB(255, 130, 125, 125)),
+              ),
+              radius: size,
+            );
+    }
+      return CircleAvatar(
+              backgroundImage: NetworkImage(user.profileImageURL),
+              radius: size,
+            );
+  }
+
+  Widget loadUserData(DataSnapshot userSnapshot, String senderID, double size)
+  {
+      String? firstName = userSnapshot.child("first name").value.toString();
+      String? lastName = userSnapshot.child("last name").value.toString();
+      String? profilePicture = userSnapshot.child("profile picture").value.toString();
+      List<String> nameParts = "$firstName $lastName".split(" ");
+      String initials = "";
+      for (int i = 0; i < nameParts.length; i++) {
+        if (nameParts[i].isNotEmpty) {
+          String initial = nameParts[i][0];
+          initials += initial;
+        }
+      }
+    initials = initials.toUpperCase();
+    UserInfo info = new UserInfo( profileImageURL: profilePicture, initials: initials);
+    loadedProfilePictures[senderID] = info;
+    print("Returning box");
+    return getCircleAvatar(info, size);
+  }
+
+
+  Future<Widget> loadUserProfilePicture(String senderID,double circleSize) async
+  {
+    print("Enter load user PFP - $senderID");
+    if(loadedProfilePictures.containsKey(senderID))
+    {
+      return getCircleAvatar(loadedProfilePictures[senderID]!,circleSize);
+    }
+    DatabaseReference users = FirebaseDatabase.instance.ref().child("users");
+    Future<DataSnapshot> userSnapshot = users.child(senderID).get();
+    return userSnapshot.then((snapshot) 
+    { 
+      print("Loading user data");
+      return loadUserData(snapshot, senderID,circleSize);
+    }).catchError
+    ( (error)
+    {
+      print("Returning box [$error]");
+      return SizedBox.shrink();
+    });
+    
   }
 
   // Function that Loads all the comments on a post from the database
@@ -319,7 +382,7 @@ class _CommentsPageState extends State<CommentsPage> {
                         ),
                       if (postData["userType"] != "null" && postData["userType"] != null)
                         Text(
-                          '-  ${postData["userType"]}',
+                          ' -  ${postData["userType"]}',
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -493,18 +556,54 @@ class _CommentsPageState extends State<CommentsPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        username.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row
+                                      (
+                                        children: 
+                                        [
+                                          FutureBuilder<Widget>(
+                                            future: loadUserProfilePicture(comment.commentedBy, 20),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return CircularProgressIndicator(); // or any other loading indicator
+                                              } else if (snapshot.hasError) {
+                                                return Text('Error: ${snapshot.error}');
+                                              } else if (!snapshot.hasData || snapshot.data == null) {
+                                                return Text('Error: COULD NOT LOAD PROFILE');
+                                              } else {
+                                                return snapshot.data!;
+                                              }
+                                            },
+                                          ),
+                                          SizedBox(width:10),
+                                          Column
+                                          (
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: 
+                                            [
+                                              Text
+                                              (
+                                                username.toString(),
+                                                style: TextStyle
+                                                (
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text
+                                              (
+                                                comment.commentTime.toString() ?? '',
+                                                style: 
+                                                TextStyle
+                                                (
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                          ,
+                                        ],
                                       ),
-                                      Text(
-                                        comment.commentTime.toString() ?? '',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
+                                      
+                                      
                                       Text(comment.commentText ?? ''),
                                     ],
                                   ),
@@ -615,25 +714,56 @@ class _CommentsPageState extends State<CommentsPage> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                Text(
-                                                                  replyUsername
-                                                                      .toString(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  reply.replyTime
-                                                                          .toString() ??
-                                                                      '',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
+                                                                Row
+                                                                (
+                                                                  children:
+                                                                  [
+                                                                    FutureBuilder<Widget>(
+                                                                      future: loadUserProfilePicture(comment.commentedBy, 15),
+                                                                      builder: (context, snapshot) {
+                                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                          return CircularProgressIndicator(); // or any other loading indicator
+                                                                        } else if (snapshot.hasError) {
+                                                                          return Text('Error: ${snapshot.error}');
+                                                                        } else if (!snapshot.hasData || snapshot.data == null) {
+                                                                          return Text('Error: COULD NOT LOAD PROFILE');
+                                                                        } else {
+                                                                          return snapshot.data!;
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                    SizedBox(width:10),
+                                                                    Column
+                                                                    (
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: 
+                                                                      [
+                                                                        Text
+                                                                          (
+                                                                            replyUsername
+                                                                                .toString(),
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight
+                                                                                      .bold,
+                                                                            ),
+                                                                          ),
+                                                                        Text
+                                                                        (
+                                                                            reply.replyTime
+                                                                                    .toString() ??
+                                                                                '',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors
+                                                                                  .grey,
+                                                                            ),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                    
+                                                                  ]
                                                                 ),
                                                                 Text(reply
                                                                         .replyText ??
@@ -716,7 +846,8 @@ class Comment {
   });
 }
 
-class Reply {
+class Reply 
+{
   final String replyID;
   final String replyText;
   final String repliedBy;
@@ -728,4 +859,14 @@ class Reply {
     required this.repliedBy,
     required this.replyTime,
   });
-}
+  }
+
+  class UserInfo
+  { 
+    final String profileImageURL;
+    final String initials;
+    UserInfo({
+      required this.profileImageURL,
+      required this.initials,
+    });
+  }
