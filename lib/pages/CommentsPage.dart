@@ -7,6 +7,7 @@ import 'package:gcisl_app/palette.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
+import 'image.dart';
 
 class CommentsPage extends StatefulWidget {
   final String postId;
@@ -185,6 +186,228 @@ class _CommentsPageState extends State<CommentsPage> {
     _replyController.clear();
   }
 
+  Future<Map<String, String?>> _retrievePost(DataSnapshot snapshot) async {
+    String? uniquePostId = snapshot.key;
+    String? uniquePostImageId = snapshot.child("image").key;
+    final newPost = snapshot.child("text").value.toString();
+    String? userName = snapshot.child("user_name").value.toString();
+    String? timestamp = snapshot.child("timestamp").value.toString();
+    String? image = snapshot.child("image").value.toString();
+    String? email = snapshot.child("email").value.toString();
+    var likes = snapshot.child("likes").value;
+    var comments = snapshot.child("comments").value;
+    String? userType = snapshot.child("userType").value.toString();
+
+    String? commentPreview = "";
+
+    print("UT - $userType");
+    if (userType == "null") {
+      userType = null;
+    }
+    if (userName == "null") {
+      userName = "anonymous";
+    }
+
+    // Hash the email to get the email hashcode
+    int emailHashCode = email.hashCode;
+
+    // Fetch the user details from the "users" table based on the hashed email
+    DataSnapshot userSnapshot = await FirebaseDatabase.instance
+        .ref('users')
+        .child(emailHashCode
+            .toString()) // assuming the emailHashCode is stored as the key in the users table
+        .get();
+
+    // Extract first name and last name from the user details
+    String? firstName = userSnapshot.child("first name").value.toString();
+    String? lastName = userSnapshot.child("last name").value.toString();
+    String? profilePicture =
+        userSnapshot.child("profile picture").value.toString();
+
+    // Gets the initials of the users name
+    String fullName = "$firstName $lastName";
+    List<String> nameParts = fullName.split(" ");
+    String initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    initials = initials.toUpperCase();
+
+    if (likes == null) {
+      likes = [];
+    }
+
+    if (comments == null) {
+      comments = <String, dynamic>{};
+    }
+
+  return {
+          "post body": newPost,
+          "full name": "$firstName $lastName",
+          "timestamp": timestamp,
+          "image": image,
+          "email": email,
+          "post id": uniquePostId,
+          "image id": uniquePostImageId,
+          "userType": userType,
+          "commentPreview": commentPreview,
+          "profile picture": profilePicture,
+          "initials": initials,
+      };
+  }
+
+  Future<Map<String, String?>?> _loadPost() async
+  {
+    final snapshot = await _database.child(widget.postId).get();
+    if (!snapshot.exists) 
+    {
+      print('Post not found');
+      return null;
+    }
+    Future<Map<String, String?>> postMap = _retrievePost(snapshot);
+    return postMap;
+  }
+
+  Widget buildPost(Map<String, String?>? postData) {
+    if(postData == null)
+    {
+      print("Null post");
+      return SizedBox.shrink();
+    }
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+    elevation: 5,
+    child: Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              postData["profile picture"] == "null"
+                  ? CircleAvatar(
+                      child: Text(
+                        postData["initials"]!,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 130, 125, 125),
+                        ),
+                      ),
+                      radius: 25,
+                    )
+                  : CircleAvatar(
+                      backgroundImage: NetworkImage(postData["profile picture"]!),
+                      radius: 25,
+                    ),
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                          Text(
+                          postData["full name"] ?? "anonymous",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      if (postData["userType"] != "null" && postData["userType"] != null)
+                        Text(
+                          '-  ${postData["userType"]}',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: Tooltip(
+                          message: DateFormat('MM/dd/yyyy hh:mm a').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                              int.parse(postData["timestamp"]!),
+                            ),
+                          ),
+                          child: SelectableText(
+                            '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(postData["timestamp"]!)))}',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+          postData["post body"] == ""
+              ? Container(
+                  constraints: const BoxConstraints(minHeight: 75),
+                )
+              : Column(
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(minHeight: 75),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: SelectableText(
+                              postData["post body"]!,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+          postData["image"] == "null"
+              ? const SizedBox(height: 0)
+              : MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => ImageDialog(
+                          imageUrl: postData["image"]!,
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          child: Image.network(
+                            postData["image"]!,
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+}
+
+
   Future<void> _updateLikesInDatabase(String commentID, String postID, List likes) async {
       final postRef = _database
         .child(postID)
@@ -212,6 +435,20 @@ class _CommentsPageState extends State<CommentsPage> {
       ),
       body: Column(
         children: <Widget>[
+          FutureBuilder<Map<String, String?>?>(
+            future: _loadPost(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); // or any other loading indicator
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return Text('Post not found');
+              } else {
+                return buildPost(snapshot.data!);
+              }
+            },
+          ),
           // Display Comments
           Expanded(
             child: ListView.builder(
