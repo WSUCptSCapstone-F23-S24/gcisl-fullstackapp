@@ -111,7 +111,8 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _addNewMessageToList(DatabaseEvent event) {
-    if (event.snapshot.key == null) {
+    if (event.snapshot.key == null) 
+    {
       print("Unable to find userID");
       return;
     }
@@ -294,10 +295,19 @@ class _ChatPageState extends State<ChatPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isCurrentUser)
-            Icon(
-              Icons.person,
-              color: Colors.grey[300],
-            ),
+            _selectedUser!.profilePicture == "null"
+            ? CircleAvatar(
+                child: Text(
+                  _selectedUser!.Initials,
+                  style: TextStyle(
+                      fontSize: 15, color: Color.fromARGB(255, 130, 125, 125)),
+                ),
+                radius: 25,
+              )
+            : CircleAvatar(
+                backgroundImage: NetworkImage(_selectedUser!.profilePicture),
+                radius: 25,
+              ),
           if (!isCurrentUser) SizedBox(width: 10.0),
           Expanded(
             child: Column(

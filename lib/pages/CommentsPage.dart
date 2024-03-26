@@ -26,6 +26,7 @@ class _CommentsPageState extends State<CommentsPage> {
   List<Comment> _comments = [];
   List<Reply> _replies = [];
   String? emailHash;
+  Map<String,UserInfo> loadedProfilePictures = <String,UserInfo>{};
 
   @override
   void initState() {
@@ -55,6 +56,56 @@ class _CommentsPageState extends State<CommentsPage> {
     String username = await _getUserNameHelper(userid);
     print("Name: " + username);
     return username;
+  }
+
+  Widget getCircleAvatar(UserInfo user)
+  {
+    if(user.profileImageURL == "null")
+    {
+      return CircleAvatar(
+              child: Text(
+                user.initials,
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 130, 125, 125)),
+              ),
+              radius: 25,
+            );
+    }
+      return CircleAvatar(
+              backgroundImage: NetworkImage(user.profileImageURL),
+              radius: 25,
+            );
+  }
+
+  Widget loadUserData(DataSnapshot userSnapshot)
+  {
+      String? firstName = userSnapshot.child("first name").value.toString();
+      String? lastName = userSnapshot.child("last name").value.toString();
+      String? profilePicture = userSnapshot.child("profile picture").value.toString();
+      List<String> nameParts = "$firstName $lastName".split(" ");
+      String initials = "";
+      for (int i = 0; i < nameParts.length; i++) {
+        if (nameParts[i].isNotEmpty) {
+          String initial = nameParts[i][0];
+          initials += initial;
+        }
+      }
+    initials = initials.toUpperCase();
+    UserInfo info = new UserInfo( profileImageURL: profilePicture, initials: initials);
+    return getCircleAvatar(info);
+  }
+
+
+  Future<Widget> loadUserProfilePicture(String senderID) async
+  {
+    if(loadedProfilePictures.containsKey(senderID))
+    {
+      return getCircleAvatar(loadedProfilePictures[senderID]!);
+    }
+    DatabaseReference users = FirebaseDatabase.instance.ref().child("users");
+    Future<DataSnapshot> userSnapshot = users.child(senderID).get();
+    userSnapshot.then((snapshot) { return loadUserData(snapshot);});
+    return SizedBox.shrink();
   }
 
   // Function that Loads all the comments on a post from the database
@@ -716,7 +767,8 @@ class Comment {
   });
 }
 
-class Reply {
+class Reply 
+{
   final String replyID;
   final String replyText;
   final String repliedBy;
@@ -728,4 +780,14 @@ class Reply {
     required this.repliedBy,
     required this.replyTime,
   });
-}
+  }
+
+  class UserInfo
+  { 
+    final String profileImageURL;
+    final String initials;
+    UserInfo({
+      required this.profileImageURL,
+      required this.initials,
+    });
+  }
