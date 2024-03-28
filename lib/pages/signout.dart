@@ -16,30 +16,32 @@ class SignOut extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'You have been signed out.',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'You have been signed out.',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyApp()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, elevation: 0),
-                  child: Text(
-                    'Click here to sign in again',
-                    style: TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
-                  ))
-            ],
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MyApp()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, elevation: 0),
+                    child: Text(
+                      'Click here to sign in again',
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ))
+              ],
+            ),
           ),
         ),
       ),
