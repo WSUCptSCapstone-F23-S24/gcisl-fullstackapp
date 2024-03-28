@@ -1,5 +1,11 @@
 class PostFiltering
 {
+
+  static bool containsWord(String text, String searchWord)
+  {
+    List<String> wordList = text.split(' ');
+    return wordList.contains(searchWord);
+  }
   static List<dynamic> filterPosts(List<dynamic> postList, String? searchBar) 
   {
     List<dynamic> returnList = [];
@@ -21,7 +27,7 @@ class PostFiltering
         {
           continue;
         }
-        if (post["post body"].toLowerCase().contains(keyword) == true || post["full name"].toLowerCase().contains(keyword) == true || post["userType"].toLowerCase().contains(keyword) == true) 
+        if (containsWord(post["post body"].toLowerCase(),keyword) || containsWord(post["full name"].toLowerCase(),keyword) || containsWord(post["userType"].toLowerCase(),keyword))
         {
           matchFound = true;
           break; 
