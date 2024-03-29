@@ -187,6 +187,38 @@ class _ProfilePage1State extends State<ProfilePage1> {
     print("initials: " + initials);
   }
 
+  List<WorkExperience> workExperiences = [];
+
+  void addWorkExperience(WorkExperience workExp) {
+    setState(() {
+      workExperiences.add(workExp);
+    });
+  }
+
+  void showAddWorkExperienceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Work Experience'),
+          content: SingleChildScrollView(
+            child: WorkExperienceForm(
+              onSave: addWorkExperience,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -403,6 +435,71 @@ class _ProfilePage1State extends State<ProfilePage1> {
                     ),
                   ),
                 ),
+              ],
+            ),
+          ),
+          // New container for work experience
+          Container(
+            padding: EdgeInsets.all(20.0),
+            margin: EdgeInsets.symmetric(vertical: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Work Experience',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: showAddWorkExperienceDialog,
+                      child: Text('Add'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                // Display added work experiences
+                if (workExperiences.isNotEmpty)
+                  Column(
+                    children: [
+                      for (int i = 0; i < workExperiences.length; i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              workExperiences[i].company,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              workExperiences[i].jobTitle,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            // Add other details here
+                            Divider(),
+                          ],
+                        ),
+                    ],
+                  ),
+                if (workExperiences.isEmpty)
+                  Text(
+                    'No work experience added yet.',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -804,6 +901,107 @@ class _PostPortionState extends State<PostPortion> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class WorkExperience {
+  String company = '';
+  String jobTitle = '';
+  String employmentType = '';
+  String location = '';
+  String locationType = '';
+  bool isCurrentJob = false;
+  DateTime startDate = DateTime.now();
+  DateTime? endDate;
+  String description = '';
+  List<String> skills = [];
+
+  // Constructor
+  WorkExperience({
+    required this.company,
+    required this.jobTitle,
+    required this.employmentType,
+    required this.location,
+    required this.locationType,
+    required this.isCurrentJob,
+    required this.startDate,
+    this.endDate,
+    required this.description,
+    required this.skills,
+  });
+}
+
+class WorkExperienceForm extends StatefulWidget {
+  final Function(WorkExperience) onSave;
+
+  const WorkExperienceForm({Key? key, required this.onSave}) : super(key: key);
+
+  @override
+  _WorkExperienceFormState createState() => _WorkExperienceFormState();
+}
+
+class _WorkExperienceFormState extends State<WorkExperienceForm> {
+  final _formKey = GlobalKey<FormState>();
+  WorkExperience workExperience = WorkExperience(
+    company: '',
+    jobTitle: '',
+    employmentType: '',
+    location: '',
+    locationType: '',
+    isCurrentJob: false,
+    startDate: DateTime.now(),
+    description: '',
+    skills: [],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Company'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter company';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              workExperience.company = value!;
+            },
+          ),
+          // Add other form fields here
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Job Title'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your job title';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              workExperience.jobTitle = value!;
+            },
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                widget.onSave(workExperience);
+                Navigator.of(context).pop();
+              }
+            },
+            child: Text('Save'),
+          ),
+        ],
       ),
     );
   }
