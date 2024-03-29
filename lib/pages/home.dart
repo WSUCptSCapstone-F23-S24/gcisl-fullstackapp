@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var downloadUrl = null;
   bool isLiked = false;
   final _commentController = TextEditingController();
+  List<String> _filteredUsers = []; // Declare filtered users list
 
   final DatabaseReference _database =
       FirebaseDatabase.instance.ref().child('posts');
@@ -157,15 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
           "commentPreview": commentPreview,
           "profile picture": profilePicture,
           "initials": initials,
-          "textController" : TextEditingController(),
+          "textController": TextEditingController(),
         });
         updatePostList();
       });
     }
   }
 
-
-  void _sendComment(TextEditingController  textCon, String postID, Map comments) {
+  void _sendComment(
+      TextEditingController textCon, String postID, Map comments) {
     String text = textCon.text;
     print("entered send comments - ${text} - ${postID}");
     final DatabaseReference _commentRef = _database
@@ -173,27 +174,24 @@ class _MyHomePageState extends State<MyHomePage> {
         .child('comments'); // references the comments in the database
     final timestamp = DateTime.now().toString();
     String commentID = _commentRef.push().key.toString();
-    if(emailHash == null)
-    {
+    if (emailHash == null) {
       print("No email hash");
       return;
     }
-    if(text.length == 0)
-    {
+    if (text.length == 0) {
       return;
     }
-    _commentRef.child(commentID).set(
-    {
+    _commentRef.child(commentID).set({
       'text': text,
-      'likes':[],
+      'likes': [],
       'sender': emailHash.toString(),
       'timestamp': timestamp,
       'replies': [],
     });
     comments[commentID] = text;
     textCon.clear();
-
   }
+
   void updatePostList() {
     _postList = PostFiltering.filterPosts(_allPosts, searchBarText);
     _localPostListSort();
@@ -542,6 +540,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         final likes = _postList[index]["likes"] as List;
                         final comments = _postList[index]["comments"]
                             as Map<String, dynamic>;
+                        print(comments);
                         return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -710,34 +709,42 @@ class _MyHomePageState extends State<MyHomePage> {
                                       Expanded(
                                         flex: 3,
                                         child: TextField(
-                                          controller: _postList[index]["textController"],
+                                          controller: _postList[index]
+                                              ["textController"],
                                           decoration: InputDecoration(
                                             hintText: 'Leave a comment',
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width:10),
+                                      SizedBox(width: 10),
                                       Expanded(
                                         flex: 1,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(Palette.ktoCrimson),
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        ),
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Palette.ktoCrimson),
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                          ),
                                           onPressed: () {
-                                            _sendComment(_postList[index]["textController"],  _postList[index]['post id'], _postList[index]['comments']);
-                                            setState((){});
+                                            _sendComment(
+                                                _postList[index]
+                                                    ["textController"],
+                                                _postList[index]['post id'],
+                                                _postList[index]['comments']);
+                                            setState(() {});
                                           },
                                           child: Text('Leave Comment',
-                                          style: TextStyle(color: Colors.white)),
+                                              style: TextStyle(
+                                                  color: Colors.white)),
                                         ),
                                       ),
-                                      SizedBox(width:10)
+                                      SizedBox(width: 10)
                                     ],
                                   ),
                                 ]),
-                                
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
@@ -832,7 +839,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   Container(
                                     alignment: Alignment.centerLeft,
-                                    child: Text('Comments: ${comments.length}'),
+                                    child: Text(
+                                        'View Comments: ${comments.length}'),
                                   ),
                                 ],
                               )

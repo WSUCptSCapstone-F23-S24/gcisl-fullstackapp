@@ -248,13 +248,14 @@ class _ProfilePageState extends State<ProfilePage> {
       _emailController.text = user.email!;
 
       if (_userTypeController.text == "null") {
-        _userTypeController.text == "student";
+        _userTypeController.text = "student";
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print("user type: " + _userTypeController.text);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Palette.ktoCrimson,
@@ -478,19 +479,76 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Status'),
+                  decoration: InputDecoration(
+                    labelText: 'Role',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
                   controller: _userTypeController,
-                  maxLines: 1,
+                  readOnly: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your status';
+                      return 'Please enter your user role';
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    _userTypeController.text = value!;
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Select Role'),
+                          content: DropdownButtonFormField<String>(
+                            value: _userTypeController.text,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _userTypeController.text = newValue!;
+                              });
+                            },
+                            items: ['student', 'alumni', 'faculty']
+                                .map((String userType) {
+                              return DropdownMenuItem<String>(
+                                value: userType,
+                                child: Text(userType),
+                              );
+                            }).toList(),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
+                // TextFormField(
+                //   decoration: const InputDecoration(labelText: 'Role'),
+                //   controller: _userTypeController,
+                //   readOnly: true,
+                //   maxLines: 1,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter your user role';
+                //     }
+                //     return null;
+                //   },
+                //   onSaved: (value) {
+                //     _userTypeController.text = value!;
+                //   },
+                // ),
                 const SizedBox(height: 30.0),
                 ElevatedButton(
                   onPressed: _isLoading
