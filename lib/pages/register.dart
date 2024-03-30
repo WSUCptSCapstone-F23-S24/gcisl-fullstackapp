@@ -88,6 +88,42 @@ class _RegisterPageState extends State<RegisterPage> {
                       fontSize: 24),
                 ),
 
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Fill out the form below in order to create a new account on Cobb Connect',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                RichText(
+                  text: const TextSpan(
+                    text: 'Fields marked with',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' * ',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'are required',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 //Email textfield
                 const SizedBox(height: 20),
                 Container(
@@ -103,9 +139,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Email',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Email',
+                        //hintText: 'Email',
                       ),
                       textInputAction: TextInputAction.next,
                     ),
@@ -127,9 +175,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Password',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Password',
+                        //hintText: 'Password',
                       ),
                       textInputAction: TextInputAction.next,
                     ),
@@ -159,9 +219,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Re-enter Password',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Re-enter Password',
+                        //hintText: 'Re-enter Password',
                       ),
                     ),
                   ),
@@ -182,9 +254,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'First Name',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'First Name',
+                        //hintText: 'First Name',
                       ),
                     ),
                   ),
@@ -205,9 +289,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Last Name',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Last Name',
+                        //hintText: 'Last Name',
                       ),
                     ),
                   ),
@@ -228,9 +324,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Phone Number',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Phone Number',
+                        //hintText: 'Phone Number',
                       ),
                     ),
                   ),
@@ -351,15 +459,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: TextFormField(
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Postal Code/Zip Code'),
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Postal Code',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
+                        border: InputBorder.none,
+                        // hintText: 'Postal Code/Zip Code'
+                      ),
                       controller: _zipcodeController,
                       // keyboardType: TextInputType.number,
                       // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a zip code';
+                          return 'Please enter a postal code';
                         }
                         // if (value.length != 5) {
                         //   return 'Zip code must be 5 digits';
@@ -388,9 +509,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Company',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Company',
+                        //hintText: 'Company',
                       ),
                     ),
                   ),
@@ -411,18 +544,45 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Position',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Position',
+                        //hintText: 'Position',
                       ),
                     ),
                   ),
                 ),
 
+                const SizedBox(
+                  height: 20,
+                ),
                 //User-role drop-down button
                 // Add a dropdown or radio buttons for user type selection
                 DropdownButton<String>(
-                  value: _selectedUserType,
+                  hint: RichText(
+                    text: const TextSpan(
+                        text: 'Role',
+                        style: const TextStyle(color: Colors.black),
+                        children: [
+                          TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ))
+                        ]),
+                  ),
+                  //value: _selectedUserType,
                   items: <String>['student', 'alumni', 'faculty']
                       .map((String userType) {
                     return DropdownMenuItem<String>(
