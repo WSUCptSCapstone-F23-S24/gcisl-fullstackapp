@@ -270,7 +270,20 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'First Name'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'First Name',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _firstNameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -284,7 +297,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Last Name'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Last Name',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _lastNameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -298,7 +324,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Email',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
@@ -317,7 +356,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Phone'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Phone',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   validator: (value) {
@@ -425,7 +477,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 20.0),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Postal Code/Zip Code',
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Postal Code',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.grey.shade300),
@@ -436,7 +499,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a zip code';
+                      return 'Please enter a postal code';
                     }
                     // if (value.length != 5) {
                     //   return 'Zip code must be 5 digits';
@@ -449,7 +512,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Company'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Company',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _companyController,
                   maxLines: 1,
                   validator: (value) {
@@ -464,7 +540,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Position'),
+                  decoration: InputDecoration(
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Position',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
+                  ),
                   controller: _companyPositionController,
                   maxLines: 1,
                   validator: (value) {
@@ -480,7 +569,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 30.0),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Role',
+                    label: RichText(
+                      text: const TextSpan(
+                          text: 'Role',
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                                text: ' *',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ))
+                          ]),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.grey.shade300),
