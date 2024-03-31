@@ -219,6 +219,70 @@ class _ProfilePage1State extends State<ProfilePage1> {
     );
   }
 
+  void showEditWorkExperienceDialog(WorkExperience workExp) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Work Experience'),
+          content: SingleChildScrollView(
+            child: WorkExperienceForm(
+              onSave: (editedWorkExp) {
+                // Replace the original work experience with the edited one
+                int index = workExperiences.indexOf(workExp);
+                setState(() {
+                  workExperiences[index] = editedWorkExp;
+                });
+                //Navigator.of(context).pop();
+              },
+              initialWorkExperience:
+                  workExp, // Pass the work experience to edit
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showDeleteWorkExperienceConfirmation(WorkExperience workExp) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Work Experience'),
+          content:
+              Text('Are you sure you want to delete this work experience?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Remove the work experience from the list
+                setState(() {
+                  workExperiences.remove(workExp);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -294,7 +358,13 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           onPressed: () {
                             _pickImage(); // Call the image picker function here
                           },
-                          child: Text('Edit Profile Picture'),
+                          child: Text(
+                            'Edit Profile Picture',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Palette.ktoCrimson,
+                          ),
                         ),
                     ],
                   ),
@@ -461,7 +531,15 @@ class _ProfilePage1State extends State<ProfilePage1> {
                     ),
                     ElevatedButton(
                       onPressed: showAddWorkExperienceDialog,
-                      child: Text('Add'),
+                      child: Text(
+                        'Add',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Palette.ktoCrimson,
+                      ),
                     ),
                   ],
                 ),
@@ -474,12 +552,37 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              workExperiences[i].company,
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  workExperiences[i].company,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        // Implement editing functionality
+                                        showEditWorkExperienceDialog(
+                                            workExperiences[i]);
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        // Implement deletion functionality
+                                        showDeleteWorkExperienceConfirmation(
+                                            workExperiences[i]);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             Text(
                               workExperiences[i].jobTitle,
@@ -493,6 +596,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         ),
                     ],
                   ),
+
                 if (workExperiences.isEmpty)
                   Text(
                     'No work experience added yet.',
@@ -935,8 +1039,11 @@ class WorkExperience {
 
 class WorkExperienceForm extends StatefulWidget {
   final Function(WorkExperience) onSave;
+  final WorkExperience? initialWorkExperience; // Add this line
 
-  const WorkExperienceForm({Key? key, required this.onSave}) : super(key: key);
+  const WorkExperienceForm(
+      {Key? key, required this.onSave, this.initialWorkExperience})
+      : super(key: key);
 
   @override
   _WorkExperienceFormState createState() => _WorkExperienceFormState();
@@ -944,17 +1051,24 @@ class WorkExperienceForm extends StatefulWidget {
 
 class _WorkExperienceFormState extends State<WorkExperienceForm> {
   final _formKey = GlobalKey<FormState>();
-  WorkExperience workExperience = WorkExperience(
-    company: '',
-    jobTitle: '',
-    employmentType: '',
-    location: '',
-    locationType: '',
-    isCurrentJob: false,
-    startDate: DateTime.now(),
-    description: '',
-    skills: [],
-  );
+  late WorkExperience workExperience;
+
+  @override
+  void initState() {
+    super.initState();
+    workExperience = widget.initialWorkExperience ??
+        WorkExperience(
+          company: '',
+          jobTitle: '',
+          employmentType: '',
+          location: '',
+          locationType: '',
+          isCurrentJob: false,
+          startDate: DateTime.now(),
+          description: '',
+          skills: [],
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
