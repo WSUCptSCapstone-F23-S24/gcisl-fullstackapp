@@ -251,37 +251,151 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black, width: 2)),
-                        child: Row(
-                          children: [
-                            if (userInfo.isNotEmpty)
-                              //fixes error when changing to analytics page due
-                              //to container trying to access list before it is initiazlied
-                              Expanded(
-                                  child: Text(
-                                userInfo[_selectedIndex][0] +
-                                    " " +
-                                    userInfo[_selectedIndex][1] +
-                                    "\n" +
-                                    userInfo[_selectedIndex][2] +
-                                    ", " +
-                                    userInfo[_selectedIndex][3].toString() +
-                                    "\n" +
-                                    userInfo[_selectedIndex][6].toString() +
-                                    "\n" +
-                                    userInfo[_selectedIndex][7].toString() +
-                                    "\n" +
-                                    userInfo[_selectedIndex][8].toString() +
-                                    "\n" +
-                                    userInfo[_selectedIndex][9].toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
-                                textAlign: TextAlign.center,
-                              )),
-                          ],
-                        ),
+                        child: userInfo.isNotEmpty
+                          ? buildUserInfoWidget(userInfo, _selectedIndex)
+                          : Container(), // Placeholder if userInfo is empty
                       )
                     ]),
               ),
             ]),
       ));
+
+Widget buildUserInfoWidget(List userInfo, int selectedIndex) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Container(
+        padding: EdgeInsets.all(10),
+        color: Colors.grey[200],
+        child: Text(
+          '${userInfo[selectedIndex][0]} ${userInfo[selectedIndex][1]}',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      SizedBox(height: 10),
+      Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'City',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${userInfo[selectedIndex][2]}',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Company',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${userInfo[selectedIndex][3]}',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      SizedBox(height: 10),
+      Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Email',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${userInfo[selectedIndex][6]}${userInfo[selectedIndex][7]}',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Job Title',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${userInfo[selectedIndex][8]}',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }
+}
+
+
