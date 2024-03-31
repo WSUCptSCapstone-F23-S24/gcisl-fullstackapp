@@ -65,6 +65,9 @@ class _ProfilePage1State extends State<ProfilePage1> {
 
   String? _profilePictureUrl; // New field to hold profile picture URL
 
+  // List of all the users work experience information
+  List<WorkExperience> workExperiences = [];
+
   Future<void> _pickImage() async {
     print("Entered _pickImage");
     final completer = Completer<void>();
@@ -154,6 +157,30 @@ class _ProfilePage1State extends State<ProfilePage1> {
               } else {
                 _userBioController.text = "";
               }
+              workExperiences.clear(); // Clear existing work experiences
+              var workExpSnapshot = element.child("workExperiences");
+              if (workExpSnapshot.exists) {
+                Map<dynamic, dynamic> workExpData =
+                    workExpSnapshot.value as Map;
+                workExpData.forEach((key, value) {
+                  WorkExperience workExp = WorkExperience(
+                    workExperienceID: key.toString(),
+                    company: value['company'],
+                    jobTitle: value['jobTitle'],
+                    //employmentType: value['employmentType'],
+                    location: value['location'],
+                    //locationType: value['locationType'],
+                    isCurrentJob: value['isCurrentJob'],
+                    startDate: value['startDate'],
+                    endDate:
+                        value['endDate'] != null ? value['endDate'] : "Current",
+                    description: value['description'],
+                    //skills: List<String>.from(value['skills']),
+                  );
+                  workExperiences.add(workExp);
+                  print("Work exp id: " + workExp.workExperienceID);
+                });
+              }
             });
           }
         }));
@@ -187,20 +214,21 @@ class _ProfilePage1State extends State<ProfilePage1> {
     print("initials: " + initials);
   }
 
-  List<WorkExperience> workExperiences = [];
-
+  // Function that adds a new work experrience to the list of work experiences
   void addWorkExperience(WorkExperience workExp) {
     setState(() {
       workExperiences.add(workExp);
     });
+    saveWorkExperience(emailHash.toString(), workExp); // Save to Firebase
   }
 
+  // Function that shows a dialog box with a form to fill out a new work experience
   void showAddWorkExperienceDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Work Experience'),
+          title: const Text('Add Work Experience'),
           content: SingleChildScrollView(
             child: WorkExperienceForm(
               onSave: addWorkExperience,
@@ -211,7 +239,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Center(child: Text('Cancel')),
             ),
           ],
         );
@@ -219,6 +247,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
     );
   }
 
+  // Function to show dialog box that has a form filled out from a previous work experience to edit
   void showEditWorkExperienceDialog(WorkExperience workExp) {
     showDialog(
       context: context,
@@ -228,6 +257,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
           content: SingleChildScrollView(
             child: WorkExperienceForm(
               onSave: (editedWorkExp) {
+                updateWorkExperience(emailHash.toString(), workExp);
                 // Replace the original work experience with the edited one
                 int index = workExperiences.indexOf(workExp);
                 setState(() {
@@ -252,6 +282,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
     );
   }
 
+  // Function to show dialog box to confirm confirmation of delteing work experience
   void showDeleteWorkExperienceConfirmation(WorkExperience workExp) {
     showDialog(
       context: context,
@@ -269,6 +300,8 @@ class _ProfilePage1State extends State<ProfilePage1> {
             ),
             TextButton(
               onPressed: () {
+                deleteWorkExperience(
+                    emailHash.toString(), workExp.workExperienceID);
                 // Remove the work experience from the list
                 setState(() {
                   workExperiences.remove(workExp);
@@ -281,6 +314,66 @@ class _ProfilePage1State extends State<ProfilePage1> {
         );
       },
     );
+  }
+
+  // Adds work experience to the realtime database
+  Future<void> saveWorkExperience(String userId, WorkExperience workExp) async {
+    try {
+      await ref.child(userId).child('workExperiences').push().set({
+        'company': workExp.company,
+        'jobTitle': workExp.jobTitle,
+        //'employmentType': workExp.employmentType,
+        'location': workExp.location,
+        //'locationType': workExp.locationType,
+        'isCurrentJob': workExp.isCurrentJob,
+        'startDate': workExp.startDate,
+        'endDate': workExp.endDate,
+        'description': workExp.description,
+        //'skills': workExp.skills,
+      });
+    } catch (error) {
+      print('Error saving work experience: $error');
+    }
+  }
+
+  // Updates work experience when editing to the realtime database
+  Future<void> updateWorkExperience(
+      String userId, WorkExperience workExp) async {
+    try {
+      await ref
+          .child(userId)
+          .child('workExperiences')
+          .child(workExp.workExperienceID)
+          .set({
+        'company': workExp.company,
+        'jobTitle': workExp.jobTitle,
+        //'employmentType': workExp.employmentType,
+        'location': workExp.location,
+        //'locationType': workExp.locationType,
+        'isCurrentJob': workExp.isCurrentJob,
+        'startDate': workExp.startDate,
+        'endDate': workExp.endDate,
+        'description': workExp.description,
+        //'skills': workExp.skills,
+      });
+    } catch (error) {
+      print('Error saving work experience: $error');
+    }
+  }
+
+  // Deletes work experience from the realtime database
+  void deleteWorkExperience(String userId, String workExperienceId) {
+    // Remove the work experience from Firebase
+    ref
+        .child(userId)
+        .child('workExperiences')
+        .child(workExperienceId)
+        .remove()
+        .then((_) {
+      print('Work experience deleted from database');
+    }).catchError((error) {
+      print('Error deleting work experience: $error');
+    });
   }
 
   @override
@@ -461,7 +554,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
-                          Text(
+                          const Text(
                             "Bio",
                             style: TextStyle(
                               fontSize: 20,
@@ -469,7 +562,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                               color: Colors.black,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           if (isCurrentUserProfile)
                             ElevatedButton(
                                 onPressed: () {
@@ -529,21 +622,22 @@ class _ProfilePage1State extends State<ProfilePage1> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: showAddWorkExperienceDialog,
-                      child: Text(
-                        'Add',
-                        style: TextStyle(
-                          color: Colors.white,
+                    if (emailHash == widget.emailHashString)
+                      ElevatedButton(
+                        onPressed: showAddWorkExperienceDialog,
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Palette.ktoCrimson,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Palette.ktoCrimson,
-                      ),
-                    ),
                   ],
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 // Display added work experiences
                 if (workExperiences.isNotEmpty)
                   Column(
@@ -556,49 +650,73 @@ class _ProfilePage1State extends State<ProfilePage1> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  workExperiences[i].company,
-                                  style: TextStyle(
+                                  workExperiences[i].jobTitle,
+                                  style: const TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.edit),
-                                      onPressed: () {
-                                        // Implement editing functionality
-                                        showEditWorkExperienceDialog(
-                                            workExperiences[i]);
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () {
-                                        // Implement deletion functionality
-                                        showDeleteWorkExperienceConfirmation(
-                                            workExperiences[i]);
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                if (emailHash == widget.emailHashString)
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: () {
+                                          // Implement editing functionality
+                                          showEditWorkExperienceDialog(
+                                              workExperiences[i]);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () {
+                                          // Implement deletion functionality
+                                          showDeleteWorkExperienceConfirmation(
+                                              workExperiences[i]);
+                                        },
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                             Text(
-                              workExperiences[i].jobTitle,
-                              style: TextStyle(
-                                fontSize: 16.0,
+                              workExperiences[i].company,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            Text(
+                              workExperiences[i].location,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            Text(
+                              workExperiences[i].startDate +
+                                  ' - ' +
+                                  workExperiences[i].endDate,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              workExperiences[i].description,
+                              style: const TextStyle(
+                                fontSize: 13.0,
                               ),
                             ),
                             // Add other details here
-                            Divider(),
+                            const Divider(),
                           ],
                         ),
                     ],
                   ),
 
                 if (workExperiences.isEmpty)
-                  Text(
+                  const Text(
                     'No work experience added yet.',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
@@ -1011,29 +1129,31 @@ class _PostPortionState extends State<PostPortion> {
 }
 
 class WorkExperience {
+  String workExperienceID = '';
   String company = '';
   String jobTitle = '';
   String employmentType = '';
   String location = '';
   String locationType = '';
   bool isCurrentJob = false;
-  DateTime startDate = DateTime.now();
-  DateTime? endDate;
+  String startDate = '';
+  String endDate = '';
   String description = '';
   List<String> skills = [];
 
   // Constructor
   WorkExperience({
+    required this.workExperienceID,
     required this.company,
     required this.jobTitle,
-    required this.employmentType,
+    //required this.employmentType,
     required this.location,
-    required this.locationType,
+    //required this.locationType,
     required this.isCurrentJob,
     required this.startDate,
-    this.endDate,
+    required this.endDate,
     required this.description,
-    required this.skills,
+    //required this.skills,
   });
 }
 
@@ -1052,22 +1172,40 @@ class WorkExperienceForm extends StatefulWidget {
 class _WorkExperienceFormState extends State<WorkExperienceForm> {
   final _formKey = GlobalKey<FormState>();
   late WorkExperience workExperience;
+  bool isCurrentJob = false;
+  TextEditingController companyController = TextEditingController();
+  TextEditingController jobTitleController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController startDateController = TextEditingController();
+  TextEditingController endDateController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     workExperience = widget.initialWorkExperience ??
         WorkExperience(
+          workExperienceID: '',
           company: '',
           jobTitle: '',
-          employmentType: '',
+          //employmentType: '',
           location: '',
-          locationType: '',
+          //locationType: '',
           isCurrentJob: false,
-          startDate: DateTime.now(),
+          startDate: '',
+          endDate: '',
           description: '',
-          skills: [],
+          //skills: [],
         );
+
+    isCurrentJob = workExperience.isCurrentJob;
+
+    companyController.text = workExperience.company;
+    jobTitleController.text = workExperience.jobTitle;
+    locationController.text = workExperience.location;
+    startDateController.text = workExperience.startDate;
+    endDateController.text = workExperience.endDate;
+    descriptionController.text = workExperience.description;
   }
 
   @override
@@ -1078,7 +1216,8 @@ class _WorkExperienceFormState extends State<WorkExperienceForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
-            decoration: InputDecoration(labelText: 'Company'),
+            controller: companyController,
+            decoration: const InputDecoration(labelText: 'Company'),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter company';
@@ -1091,7 +1230,8 @@ class _WorkExperienceFormState extends State<WorkExperienceForm> {
           ),
           // Add other form fields here
           TextFormField(
-            decoration: InputDecoration(labelText: 'Job Title'),
+            controller: jobTitleController,
+            decoration: const InputDecoration(labelText: 'Job Title'),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your job title';
@@ -1102,18 +1242,87 @@ class _WorkExperienceFormState extends State<WorkExperienceForm> {
               workExperience.jobTitle = value!;
             },
           ),
+          TextFormField(
+            controller: locationController,
+            decoration: const InputDecoration(labelText: 'Location'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your location';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              workExperience.location = value!;
+            },
+          ),
+          CheckboxListTile(
+            title: const Text("Current Job"),
+            value: isCurrentJob,
+            onChanged: (value) {
+              setState(() {
+                isCurrentJob = value!;
+                workExperience.isCurrentJob = value;
+              });
+            },
+          ),
+          TextFormField(
+            controller: startDateController,
+            decoration: const InputDecoration(
+                labelText: 'Start Date', hintText: 'month, year'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter start date';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              workExperience.startDate = value!;
+            },
+          ),
+          if (!isCurrentJob)
+            TextFormField(
+              controller: endDateController,
+              decoration: const InputDecoration(
+                  labelText: 'End Date', hintText: 'month, year'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter end date';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                workExperience.endDate = value!;
+              },
+            ),
+          TextFormField(
+            controller: descriptionController,
+            maxLines: null,
+            decoration: const InputDecoration(labelText: 'Description'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your job description';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              workExperience.description = value!;
+            },
+          ),
           const SizedBox(
-            height: 30,
+            height: 20,
           ),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                if (isCurrentJob) {
+                  workExperience.endDate = "Current";
+                }
                 widget.onSave(workExperience);
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Save'),
+            child: const Center(child: Text('Save')),
           ),
         ],
       ),
