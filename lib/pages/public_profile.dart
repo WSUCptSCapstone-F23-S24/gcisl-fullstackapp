@@ -29,6 +29,7 @@ import "../helper_functions/post_filtering.dart";
 export "../helper_functions/post_filtering.dart";
 import "../helper_functions/formating.dart";
 import '../palette.dart';
+import 'package:gcisl_app/helper_functions/work_experience.dart';
 
 class ProfilePage1 extends StatefulWidget {
   String? emailHashString = "";
@@ -64,6 +65,9 @@ class _ProfilePage1State extends State<ProfilePage1> {
   DatabaseReference ref = FirebaseDatabase.instance.ref("users");
 
   String? _profilePictureUrl; // New field to hold profile picture URL
+
+  // List of all the users work experience information
+  List<WorkExperience> workExperiences = [];
 
   Future<void> _pickImage() async {
     print("Entered _pickImage");
@@ -154,6 +158,30 @@ class _ProfilePage1State extends State<ProfilePage1> {
               } else {
                 _userBioController.text = "";
               }
+              workExperiences.clear(); // Clear existing work experiences
+              var workExpSnapshot = element.child("workExperiences");
+              if (workExpSnapshot.exists) {
+                Map<dynamic, dynamic> workExpData =
+                    workExpSnapshot.value as Map;
+                workExpData.forEach((key, value) {
+                  WorkExperience workExp = WorkExperience(
+                    workExperienceID: key.toString(),
+                    company: value['company'],
+                    jobTitle: value['jobTitle'],
+                    //employmentType: value['employmentType'],
+                    location: value['location'],
+                    //locationType: value['locationType'],
+                    isCurrentJob: value['isCurrentJob'],
+                    startDate: value['startDate'],
+                    endDate:
+                        value['endDate'] != null ? value['endDate'] : "Current",
+                    description: value['description'],
+                    //skills: List<String>.from(value['skills']),
+                  );
+                  workExperiences.add(workExp);
+                  print("Work exp id: " + workExp.workExperienceID);
+                });
+              }
             });
           }
         }));
@@ -185,6 +213,168 @@ class _ProfilePage1State extends State<ProfilePage1> {
       initials = initials.toUpperCase();
     });
     print("initials: " + initials);
+  }
+
+  // Function that adds a new work experrience to the list of work experiences
+  void addWorkExperience(WorkExperience workExp) {
+    setState(() {
+      workExperiences.add(workExp);
+    });
+    saveWorkExperience(emailHash.toString(), workExp); // Save to Firebase
+  }
+
+  // Function that shows a dialog box with a form to fill out a new work experience
+  void showAddWorkExperienceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add Work Experience'),
+          content: SingleChildScrollView(
+            child: WorkExperienceForm(
+              onSave: addWorkExperience,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Center(child: Text('Cancel')),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to show dialog box that has a form filled out from a previous work experience to edit
+  void showEditWorkExperienceDialog(WorkExperience workExp) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Work Experience'),
+          content: SingleChildScrollView(
+            child: WorkExperienceForm(
+              onSave: (editedWorkExp) {
+                updateWorkExperience(emailHash.toString(), workExp);
+                // Replace the original work experience with the edited one
+                int index = workExperiences.indexOf(workExp);
+                setState(() {
+                  workExperiences[index] = editedWorkExp;
+                });
+                //Navigator.of(context).pop();
+              },
+              initialWorkExperience:
+                  workExp, // Pass the work experience to edit
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to show dialog box to confirm confirmation of delteing work experience
+  void showDeleteWorkExperienceConfirmation(WorkExperience workExp) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Work Experience'),
+          content:
+              Text('Are you sure you want to delete this work experience?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteWorkExperience(
+                    emailHash.toString(), workExp.workExperienceID);
+                // Remove the work experience from the list
+                setState(() {
+                  workExperiences.remove(workExp);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Adds work experience to the realtime database
+  Future<void> saveWorkExperience(String userId, WorkExperience workExp) async {
+    try {
+      await ref.child(userId).child('workExperiences').push().set({
+        'company': workExp.company,
+        'jobTitle': workExp.jobTitle,
+        //'employmentType': workExp.employmentType,
+        'location': workExp.location,
+        //'locationType': workExp.locationType,
+        'isCurrentJob': workExp.isCurrentJob,
+        'startDate': workExp.startDate,
+        'endDate': workExp.endDate,
+        'description': workExp.description,
+        //'skills': workExp.skills,
+      });
+    } catch (error) {
+      print('Error saving work experience: $error');
+    }
+  }
+
+  // Updates work experience when editing to the realtime database
+  Future<void> updateWorkExperience(
+      String userId, WorkExperience workExp) async {
+    try {
+      await ref
+          .child(userId)
+          .child('workExperiences')
+          .child(workExp.workExperienceID)
+          .set({
+        'company': workExp.company,
+        'jobTitle': workExp.jobTitle,
+        //'employmentType': workExp.employmentType,
+        'location': workExp.location,
+        //'locationType': workExp.locationType,
+        'isCurrentJob': workExp.isCurrentJob,
+        'startDate': workExp.startDate,
+        'endDate': workExp.endDate,
+        'description': workExp.description,
+        //'skills': workExp.skills,
+      });
+    } catch (error) {
+      print('Error saving work experience: $error');
+    }
+  }
+
+  // Deletes work experience from the realtime database
+  void deleteWorkExperience(String userId, String workExperienceId) {
+    // Remove the work experience from Firebase
+    ref
+        .child(userId)
+        .child('workExperiences')
+        .child(workExperienceId)
+        .remove()
+        .then((_) {
+      print('Work experience deleted from database');
+    }).catchError((error) {
+      print('Error deleting work experience: $error');
+    });
   }
 
   @override
@@ -262,7 +452,13 @@ class _ProfilePage1State extends State<ProfilePage1> {
                           onPressed: () {
                             _pickImage(); // Call the image picker function here
                           },
-                          child: Text('Edit Profile Picture'),
+                          child: Text(
+                            'Edit Profile Picture',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Palette.ktoCrimson,
+                          ),
                         ),
                     ],
                   ),
@@ -359,7 +555,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(children: [
-                          Text(
+                          const Text(
                             "Bio",
                             style: TextStyle(
                               fontSize: 20,
@@ -367,7 +563,7 @@ class _ProfilePage1State extends State<ProfilePage1> {
                               color: Colors.black,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           if (isCurrentUserProfile)
                             ElevatedButton(
                                 onPressed: () {
@@ -403,6 +599,130 @@ class _ProfilePage1State extends State<ProfilePage1> {
                     ),
                   ),
                 ),
+              ],
+            ),
+          ),
+          // New container for work experience
+          Container(
+            padding: EdgeInsets.all(20.0),
+            margin: EdgeInsets.symmetric(vertical: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Work Experience',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (emailHash == widget.emailHashString)
+                      ElevatedButton(
+                        onPressed: showAddWorkExperienceDialog,
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Palette.ktoCrimson,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
+                // Display added work experiences
+                if (workExperiences.isNotEmpty)
+                  Column(
+                    children: [
+                      for (int i = 0; i < workExperiences.length; i++)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  workExperiences[i].jobTitle,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (emailHash == widget.emailHashString)
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: () {
+                                          // Implement editing functionality
+                                          showEditWorkExperienceDialog(
+                                              workExperiences[i]);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () {
+                                          // Implement deletion functionality
+                                          showDeleteWorkExperienceConfirmation(
+                                              workExperiences[i]);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            Text(
+                              workExperiences[i].company,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            Text(
+                              workExperiences[i].location,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            Text(
+                              workExperiences[i].startDate +
+                                  ' - ' +
+                                  workExperiences[i].endDate,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              workExperiences[i].description,
+                              style: const TextStyle(
+                                fontSize: 13.0,
+                              ),
+                            ),
+                            // Add other details here
+                            const Divider(),
+                          ],
+                        ),
+                    ],
+                  ),
+
+                if (workExperiences.isEmpty)
+                  const Text(
+                    'No work experience added yet.',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
               ],
             ),
           ),

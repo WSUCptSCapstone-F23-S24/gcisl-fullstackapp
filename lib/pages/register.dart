@@ -88,6 +88,42 @@ class _RegisterPageState extends State<RegisterPage> {
                       fontSize: 24),
                 ),
 
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Fill out the form below in order to create a new account on Cobb Connect',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                RichText(
+                  text: const TextSpan(
+                    text: 'Fields marked with',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' * ',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'are required',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 //Email textfield
                 const SizedBox(height: 20),
                 Container(
@@ -103,9 +139,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Email',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Email',
+                        //hintText: 'Email',
                       ),
                       textInputAction: TextInputAction.next,
                     ),
@@ -127,9 +175,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Password',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Password',
+                        //hintText: 'Password',
                       ),
                       textInputAction: TextInputAction.next,
                     ),
@@ -159,9 +219,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Re-enter Password',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Re-enter Password',
+                        //hintText: 'Re-enter Password',
                       ),
                     ),
                   ),
@@ -182,9 +254,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'First Name',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'First Name',
+                        //hintText: 'First Name',
                       ),
                     ),
                   ),
@@ -205,9 +289,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Last Name',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Last Name',
+                        //hintText: 'Last Name',
                       ),
                     ),
                   ),
@@ -228,9 +324,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Phone Number',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Phone Number',
+                        //hintText: 'Phone Number',
                       ),
                     ),
                   ),
@@ -239,103 +347,118 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 30.0),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.50,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: CSCPicker(
-                    ///Enable disable state dropdown [OPTIONAL PARAMETER]
-                    showStates: true,
-
-                    /// Enable disable city drop down [OPTIONAL PARAMETER]
-                    showCities: true,
-
-                    ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-                    flagState: CountryFlag.DISABLE,
-
-                    ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-                    dropdownDecoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        color: Colors.white,
-                        border:
-                            Border.all(color: Colors.grey.shade300, width: 1)),
-
-                    ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-                    disabledDropdownDecoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        color: Colors.grey.shade300,
-                        border:
-                            Border.all(color: Colors.grey.shade300, width: 1)),
-
-                    ///placeholders for dropdown search field
-                    countrySearchPlaceholder: "Country",
-                    stateSearchPlaceholder: "State",
-                    citySearchPlaceholder: "City",
-
-                    ///labels for dropdown
-                    countryDropdownLabel: "Country",
-                    stateDropdownLabel: "State",
-                    cityDropdownLabel: "City",
-
-                    ///Default Country
-                    defaultCountry: CscCountry.United_States,
-
-                    ///Disable country dropdown (Note: use it with default country)
-                    //disableCountry: true,
-
-                    ///selected item style [OPTIONAL PARAMETER]
-                    selectedItemStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      label: RichText(
+                        text: const TextSpan(
+                            text: 'Location',
+                            style: const TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ))
+                            ]),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
+                    child: CSCPicker(
+                      ///Enable disable state dropdown [OPTIONAL PARAMETER]
+                      showStates: true,
 
-                    ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-                    dropdownHeadingStyle: const TextStyle(
+                      /// Enable disable city drop down [OPTIONAL PARAMETER]
+                      showCities: true,
+
+                      ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+                      flagState: CountryFlag.DISABLE,
+
+                      ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+                      dropdownDecoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Colors.grey.shade300, width: 1)),
+
+                      ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+                      disabledDropdownDecoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          color: Colors.grey.shade300,
+                          border: Border.all(
+                              color: Colors.grey.shade300, width: 1)),
+
+                      ///placeholders for dropdown search field
+                      countrySearchPlaceholder: "Country",
+                      stateSearchPlaceholder: "State",
+                      citySearchPlaceholder: "City",
+
+                      ///labels for dropdown
+                      countryDropdownLabel: "Country",
+                      stateDropdownLabel: "State",
+                      cityDropdownLabel: "City",
+
+                      ///Default Country
+                      defaultCountry: CscCountry.United_States,
+
+                      ///Disable country dropdown (Note: use it with default country)
+                      //disableCountry: true,
+
+                      ///selected item style [OPTIONAL PARAMETER]
+                      selectedItemStyle: const TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
+                        fontSize: 14,
+                      ),
 
-                    ///DropdownDialog Item style [OPTIONAL PARAMETER]
-                    dropdownItemStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
+                      ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+                      dropdownHeadingStyle: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold),
+
+                      ///DropdownDialog Item style [OPTIONAL PARAMETER]
+                      dropdownItemStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+
+                      ///Dialog box radius [OPTIONAL PARAMETER]
+                      dropdownDialogRadius: 10.0,
+
+                      ///Search bar radius [OPTIONAL PARAMETER]
+                      searchBarRadius: 10.0,
+
+                      ///triggers once country selected in dropdown
+                      onCountryChanged: (value) {
+                        setState(() {
+                          ///store value in country variable
+                          countryValue = value;
+                        });
+                      },
+
+                      ///triggers once state selected in dropdown
+                      onStateChanged: (value) {
+                        setState(() {
+                          ///store value in state variable
+                          stateValue = value;
+                        });
+                      },
+
+                      ///triggers once city selected in dropdown
+                      onCityChanged: (value) {
+                        setState(() {
+                          ///store value in city variable
+                          cityValue = value;
+                        });
+                      },
+
+                      ///Show only specific countries using country filter
+                      // countryFilter: ["United States", "Canada", "Mexico"],
                     ),
-
-                    ///Dialog box radius [OPTIONAL PARAMETER]
-                    dropdownDialogRadius: 10.0,
-
-                    ///Search bar radius [OPTIONAL PARAMETER]
-                    searchBarRadius: 10.0,
-
-                    ///triggers once country selected in dropdown
-                    onCountryChanged: (value) {
-                      setState(() {
-                        ///store value in country variable
-                        countryValue = value;
-                      });
-                    },
-
-                    ///triggers once state selected in dropdown
-                    onStateChanged: (value) {
-                      setState(() {
-                        ///store value in state variable
-                        stateValue = value;
-                      });
-                    },
-
-                    ///triggers once city selected in dropdown
-                    onCityChanged: (value) {
-                      setState(() {
-                        ///store value in city variable
-                        cityValue = value;
-                      });
-                    },
-
-                    ///Show only specific countries using country filter
-                    // countryFilter: ["United States", "Canada", "Mexico"],
                   ),
                 ),
                 const SizedBox(height: 20.0),
@@ -351,15 +474,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: TextFormField(
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Postal Code/Zip Code'),
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Postal Code',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
+                        border: InputBorder.none,
+                        // hintText: 'Postal Code/Zip Code'
+                      ),
                       controller: _zipcodeController,
                       // keyboardType: TextInputType.number,
                       // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a zip code';
+                          return 'Please enter a postal code';
                         }
                         // if (value.length != 5) {
                         //   return 'Zip code must be 5 digits';
@@ -388,9 +524,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Company',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Company',
+                        //hintText: 'Company',
                       ),
                     ),
                   ),
@@ -411,18 +559,45 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: _requiredValidator,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: const TextSpan(
+                              text: 'Position',
+                              style: const TextStyle(color: Colors.black),
+                              children: [
+                                TextSpan(
+                                    text: ' *',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                    ))
+                              ]),
+                        ),
                         border: InputBorder.none,
-                        hintText: 'Position',
+                        //hintText: 'Position',
                       ),
                     ),
                   ),
                 ),
 
+                const SizedBox(
+                  height: 20,
+                ),
                 //User-role drop-down button
                 // Add a dropdown or radio buttons for user type selection
                 DropdownButton<String>(
-                  value: _selectedUserType,
+                  hint: RichText(
+                    text: const TextSpan(
+                        text: 'Role',
+                        style: const TextStyle(color: Colors.black),
+                        children: [
+                          TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ))
+                        ]),
+                  ),
+                  //value: _selectedUserType,
                   items: <String>['student', 'alumni', 'faculty']
                       .map((String userType) {
                     return DropdownMenuItem<String>(

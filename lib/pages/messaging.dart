@@ -111,8 +111,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _addNewMessageToList(DatabaseEvent event) {
-    if (event.snapshot.key == null) 
-    {
+    if (event.snapshot.key == null) {
       print("Unable to find userID");
       return;
     }
@@ -296,18 +295,20 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           if (!isCurrentUser)
             _selectedUser!.profilePicture == "null"
-            ? CircleAvatar(
-                child: Text(
-                  _selectedUser!.Initials,
-                  style: TextStyle(
-                      fontSize: 15, color: Color.fromARGB(255, 130, 125, 125)),
-                ),
-                radius: 25,
-              )
-            : CircleAvatar(
-                backgroundImage: NetworkImage(_selectedUser!.profilePicture),
-                radius: 25,
-              ),
+                ? CircleAvatar(
+                    child: Text(
+                      _selectedUser!.Initials,
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 130, 125, 125)),
+                    ),
+                    radius: 25,
+                  )
+                : CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(_selectedUser!.profilePicture),
+                    radius: 25,
+                  ),
           if (!isCurrentUser) SizedBox(width: 10.0),
           Expanded(
             child: Column(
@@ -420,6 +421,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       width: 250.0,
       child: ListView.builder(
+        physics: AlwaysScrollableScrollPhysics(),
         itemCount: _users.length,
         itemBuilder: (BuildContext context, int index) {
           if (_users.elementAt(index).ID != _currentUser) {
@@ -452,6 +454,7 @@ class _ChatPageState extends State<ChatPage> {
                       children: <Widget>[
                         Expanded(
                           child: ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
                             reverse: true,
                             itemCount: _messages.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -495,26 +498,28 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ],
                     )
-                  : Container(
-                      // padding: EdgeInsets.all(16.0),
-                      color: Colors.white,
+                  : SingleChildScrollView(
+                      child: Container(
+                        // padding: EdgeInsets.all(16.0),
+                        color: Colors.white,
 
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.message, size: 64),
-                          SizedBox(width: 8.0),
-                          Text(
-                            'Your messages',
-                            style: TextStyle(
-                              color: Colors.black, // Set the text color
-                              fontSize: 64.0, // Set the font size
-                              fontWeight:
-                                  FontWeight.bold, // Set the font weight
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.message, size: 64),
+                            SizedBox(width: 8.0),
+                            Text(
+                              'Your messages',
+                              style: TextStyle(
+                                color: Colors.black, // Set the text color
+                                fontSize: 64.0, // Set the font size
+                                fontWeight:
+                                    FontWeight.bold, // Set the font weight
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ))
         ],
