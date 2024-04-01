@@ -26,7 +26,7 @@ class _CommentsPageState extends State<CommentsPage> {
   List<Comment> _comments = [];
   List<Reply> _replies = [];
   String? emailHash;
-  Map<String,UserInfo> loadedProfilePictures = <String,UserInfo>{};
+  Map<String, UserInfo> loadedProfilePictures = <String, UserInfo>{};
 
   @override
   void initState() {
@@ -58,66 +58,59 @@ class _CommentsPageState extends State<CommentsPage> {
     return username;
   }
 
-  Widget getCircleAvatar(UserInfo user, double size)
-  {
-    if(user.profileImageURL == "null")
-    {
+  Widget getCircleAvatar(UserInfo user, double size) {
+    if (user.profileImageURL == "null") {
       return CircleAvatar(
-              child: Text(
-                user.initials,
-                style: TextStyle(
-                    fontSize: size - 10, color: Color.fromARGB(255, 130, 125, 125)),
-              ),
-              radius: size,
-            );
+        child: Text(
+          user.initials,
+          style: TextStyle(
+              fontSize: size - 10, color: Color.fromARGB(255, 130, 125, 125)),
+        ),
+        radius: size,
+      );
     }
-      return CircleAvatar(
-              backgroundImage: NetworkImage(user.profileImageURL),
-              radius: size,
-            );
+    return CircleAvatar(
+      backgroundImage: NetworkImage(user.profileImageURL),
+      radius: size,
+    );
   }
 
-  Widget loadUserData(DataSnapshot userSnapshot, String senderID, double size)
-  {
-      String? firstName = userSnapshot.child("first name").value.toString();
-      String? lastName = userSnapshot.child("last name").value.toString();
-      String? profilePicture = userSnapshot.child("profile picture").value.toString();
-      List<String> nameParts = "$firstName $lastName".split(" ");
-      String initials = "";
-      for (int i = 0; i < nameParts.length; i++) {
-        if (nameParts[i].isNotEmpty) {
-          String initial = nameParts[i][0];
-          initials += initial;
-        }
+  Widget loadUserData(DataSnapshot userSnapshot, String senderID, double size) {
+    String? firstName = userSnapshot.child("first name").value.toString();
+    String? lastName = userSnapshot.child("last name").value.toString();
+    String? profilePicture =
+        userSnapshot.child("profile picture").value.toString();
+    List<String> nameParts = "$firstName $lastName".split(" ");
+    String initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
       }
+    }
     initials = initials.toUpperCase();
-    UserInfo info = new UserInfo( profileImageURL: profilePicture, initials: initials);
+    UserInfo info =
+        new UserInfo(profileImageURL: profilePicture, initials: initials);
     loadedProfilePictures[senderID] = info;
     print("Returning box");
     return getCircleAvatar(info, size);
   }
 
-
-  Future<Widget> loadUserProfilePicture(String senderID,double circleSize) async
-  {
+  Future<Widget> loadUserProfilePicture(
+      String senderID, double circleSize) async {
     print("Enter load user PFP - $senderID");
-    if(loadedProfilePictures.containsKey(senderID))
-    {
-      return getCircleAvatar(loadedProfilePictures[senderID]!,circleSize);
+    if (loadedProfilePictures.containsKey(senderID)) {
+      return getCircleAvatar(loadedProfilePictures[senderID]!, circleSize);
     }
     DatabaseReference users = FirebaseDatabase.instance.ref().child("users");
     Future<DataSnapshot> userSnapshot = users.child(senderID).get();
-    return userSnapshot.then((snapshot) 
-    { 
+    return userSnapshot.then((snapshot) {
       print("Loading user data");
-      return loadUserData(snapshot, senderID,circleSize);
-    }).catchError
-    ( (error)
-    {
+      return loadUserData(snapshot, senderID, circleSize);
+    }).catchError((error) {
       print("Returning box [$error]");
       return SizedBox.shrink();
     });
-    
   }
 
   // Function that Loads all the comments on a post from the database
@@ -137,7 +130,7 @@ class _CommentsPageState extends State<CommentsPage> {
             DateFormat('MM/dd/yyyy hh:mm a').format(timestamp);
         var likes = [];
 
-        if(event.snapshot.child('likes').value == null) {
+        if (event.snapshot.child('likes').value == null) {
           likes = [];
         } else {
           likes = event.snapshot.child('likes').value as List;
@@ -198,7 +191,7 @@ class _CommentsPageState extends State<CommentsPage> {
     _commentRef.child(commentID).set({
       // Generates a unique comment ID
       'text': text,
-      'likes':[],
+      'likes': [],
       'sender': emailHash.toString(),
       'timestamp': timestamp,
       'replies': [],
@@ -218,6 +211,48 @@ class _CommentsPageState extends State<CommentsPage> {
       'text': text,
       'sender': emailHash.toString(),
       'timestamp': timestamp,
+    });
+  }
+
+  // Function that deletes a comment on a post and its replies on them
+  void deleteComment(String commentID) {
+    final DatabaseReference _commentRef = _database
+        .child(widget.postId)
+        .child('comments')
+        .child(commentID); // references the comments in the database
+    _commentRef.remove().then((_) {
+      // Remove the comment from the local list
+      setState(() {
+        _comments.removeWhere((comment) => comment.commentID == commentID);
+      });
+      print('Comment deleted successfully');
+    }).catchError((error) {
+      print('Failed to delete comment: $error');
+      // Handle error
+    });
+  }
+
+  // Function that deletes just a reply to a comment
+  void deleteReply(String commentID, String replyID) {
+    final DatabaseReference _replyRef = _database
+        .child(widget.postId)
+        .child('comments')
+        .child(commentID)
+        .child('replies')
+        .child(replyID);
+    _replyRef.remove().then((_) {
+      // Remove the reply from the local list
+      setState(() {
+        _comments.forEach((comment) {
+          if (comment.commentID == commentID) {
+            comment.replies.removeWhere((reply) => reply.replyID == replyID);
+          }
+        });
+      });
+      print('Reply deleted successfully');
+    }).catchError((error) {
+      print('Failed to delete reply: $error');
+      // Handle error
     });
   }
 
@@ -307,26 +342,24 @@ class _CommentsPageState extends State<CommentsPage> {
       comments = <String, dynamic>{};
     }
 
-  return {
-          "post body": newPost,
-          "full name": "$firstName $lastName",
-          "timestamp": timestamp,
-          "image": image,
-          "email": email,
-          "post id": uniquePostId,
-          "image id": uniquePostImageId,
-          "userType": userType,
-          "commentPreview": commentPreview,
-          "profile picture": profilePicture,
-          "initials": initials,
-      };
+    return {
+      "post body": newPost,
+      "full name": "$firstName $lastName",
+      "timestamp": timestamp,
+      "image": image,
+      "email": email,
+      "post id": uniquePostId,
+      "image id": uniquePostImageId,
+      "userType": userType,
+      "commentPreview": commentPreview,
+      "profile picture": profilePicture,
+      "initials": initials,
+    };
   }
 
-  Future<Map<String, String?>?> _loadPost() async
-  {
+  Future<Map<String, String?>?> _loadPost() async {
     final snapshot = await _database.child(widget.postId).get();
-    if (!snapshot.exists) 
-    {
+    if (!snapshot.exists) {
       print('Post not found');
       return null;
     }
@@ -335,44 +368,44 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   Widget buildPost(Map<String, String?>? postData) {
-    if(postData == null)
-    {
+    if (postData == null) {
       print("Null post");
       return SizedBox.shrink();
     }
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-    elevation: 5,
-    child: Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              postData["profile picture"] == "null"
-                  ? CircleAvatar(
-                      child: Text(
-                        postData["initials"]!,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Color.fromARGB(255, 130, 125, 125),
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                postData["profile picture"] == "null"
+                    ? CircleAvatar(
+                        child: Text(
+                          postData["initials"]!,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 130, 125, 125),
+                          ),
                         ),
+                        radius: 25,
+                      )
+                    : CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(postData["profile picture"]!),
+                        radius: 25,
                       ),
-                      radius: 25,
-                    )
-                  : CircleAvatar(
-                      backgroundImage: NetworkImage(postData["profile picture"]!),
-                      radius: 25,
-                    ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                          Text(
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
                           postData["full name"] ?? "anonymous",
                           style: const TextStyle(
                             color: Colors.black,
@@ -380,104 +413,102 @@ class _CommentsPageState extends State<CommentsPage> {
                             fontSize: 16,
                           ),
                         ),
-                      if (postData["userType"] != "null" && postData["userType"] != null)
-                        Text(
-                          ' -  ${postData["userType"]}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                        if (postData["userType"] != "null" &&
+                            postData["userType"] != null)
+                          Text(
+                            ' -  ${postData["userType"]}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Tooltip(
+                            message: DateFormat('MM/dd/yyyy hh:mm a').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                int.parse(postData["timestamp"]!),
+                              ),
+                            ),
+                            child: SelectableText(
+                              '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(postData["timestamp"]!)))}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                         ),
-                    ],
-                  ),
-                  Row(
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+            postData["post body"] == ""
+                ? Container(
+                    constraints: const BoxConstraints(minHeight: 75),
+                  )
+                : Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: Tooltip(
-                          message: DateFormat('MM/dd/yyyy hh:mm a').format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                              int.parse(postData["timestamp"]!),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        constraints: const BoxConstraints(minHeight: 75),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: SelectableText(
+                                postData["post body"]!,
+                              ),
                             ),
-                          ),
-                          child: SelectableText(
-                            '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(postData["timestamp"]!)))}',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
+                          ],
                         ),
                       ),
                     ],
-                  )
-                ],
-              ),
-            ],
-          ),
-          postData["post body"] == ""
-              ? Container(
-                  constraints: const BoxConstraints(minHeight: 75),
-                )
-              : Column(
-                  children: [
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      constraints: const BoxConstraints(minHeight: 75),
+                  ),
+            postData["image"] == "null"
+                ? const SizedBox(height: 0)
+                : MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => ImageDialog(
+                            imageUrl: postData["image"]!,
+                          ),
+                        );
+                      },
                       child: Column(
                         children: [
-                          ListTile(
-                            title: SelectableText(
-                              postData["post body"]!,
+                          SizedBox(
+                            child: Image.network(
+                              postData["image"]!,
+                              fit: BoxFit.scaleDown,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-          postData["image"] == "null"
-              ? const SizedBox(height: 0)
-              : MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => ImageDialog(
-                          imageUrl: postData["image"]!,
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          child: Image.network(
-                            postData["image"]!,
-                            fit: BoxFit.scaleDown,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-          const SizedBox(height: 8),
-        ],
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-
-  Future<void> _updateLikesInDatabase(String commentID, String postID, List likes) async {
-      final postRef = _database
-        .child(postID)
-        .child('comments')
-        .child(commentID);
-      await postRef.child('likes').set(likes);
-    }
+  Future<void> _updateLikesInDatabase(
+      String commentID, String postID, List likes) async {
+    final postRef = _database.child(postID).child('comments').child(commentID);
+    await postRef.child('likes').set(likes);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -556,54 +587,73 @@ class _CommentsPageState extends State<CommentsPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row
-                                      (
-                                        children: 
-                                        [
-                                          FutureBuilder<Widget>(
-                                            future: loadUserProfilePicture(comment.commentedBy, 20),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                                return CircularProgressIndicator(); // or any other loading indicator
-                                              } else if (snapshot.hasError) {
-                                                return Text('Error: ${snapshot.error}');
-                                              } else if (!snapshot.hasData || snapshot.data == null) {
-                                                return Text('Error: COULD NOT LOAD PROFILE');
-                                              } else {
-                                                return snapshot.data!;
-                                              }
-                                            },
-                                          ),
-                                          SizedBox(width:10),
-                                          Column
-                                          (
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: 
-                                            [
-                                              Text
-                                              (
-                                                username.toString(),
-                                                style: TextStyle
-                                                (
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              FutureBuilder<Widget>(
+                                                future: loadUserProfilePicture(
+                                                    comment.commentedBy, 20),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircularProgressIndicator(); // or any other loading indicator
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    return Text(
+                                                        'Error: ${snapshot.error}');
+                                                  } else if (!snapshot
+                                                          .hasData ||
+                                                      snapshot.data == null) {
+                                                    return Text(
+                                                        'Error: COULD NOT LOAD PROFILE');
+                                                  } else {
+                                                    return snapshot.data!;
+                                                  }
+                                                },
                                               ),
-                                              Text
-                                              (
-                                                comment.commentTime.toString() ?? '',
-                                                style: 
-                                                TextStyle
-                                                (
-                                                  color: Colors.grey,
-                                                ),
+                                              SizedBox(width: 10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    username.toString(),
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    comment.commentTime
+                                                            .toString() ??
+                                                        '',
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
-                                          )
-                                          ,
+                                          ),
+                                          if (comment.commentedBy ==
+                                              emailHash) // Show delete button/icon only if the comment was posted by the current user
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () {
+                                                // Call deleteComment function when delete button/icon is pressed
+                                                deleteComment(
+                                                    comment.commentID);
+                                              },
+                                            ),
                                         ],
                                       ),
-                                      
-                                      
                                       Text(comment.commentText ?? ''),
                                     ],
                                   ),
@@ -614,17 +664,22 @@ class _CommentsPageState extends State<CommentsPage> {
                                       LikeButton(
                                         likeCount: likes.length,
                                         //countPostion: CountPostion.bottom,
-                                        isLiked: likes.contains(_getUserName(emailHash!)),
+                                        isLiked: likes
+                                            .contains(_getUserName(emailHash!)),
                                         onTap: (isLiked) async {
                                           setState(() {
                                             if (isLiked) {
-                                              likes.remove(_getUserName(emailHash!));
+                                              likes.remove(
+                                                  _getUserName(emailHash!));
                                             } else {
-                                              likes.add(_getUserName(emailHash!));
+                                              likes.add(
+                                                  _getUserName(emailHash!));
                                             }
                                           });
                                           await _updateLikesInDatabase(
-                                              _comments[index].commentID, widget.postId, likes);
+                                              _comments[index].commentID,
+                                              widget.postId,
+                                              likes);
                                           return Future.value(!isLiked);
                                         },
                                         likeBuilder: (isLiked) {
@@ -714,57 +769,70 @@ class _CommentsPageState extends State<CommentsPage> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                Row
-                                                                (
-                                                                  children:
-                                                                  [
-                                                                    FutureBuilder<Widget>(
-                                                                      future: loadUserProfilePicture(comment.commentedBy, 15),
-                                                                      builder: (context, snapshot) {
-                                                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                                                          return CircularProgressIndicator(); // or any other loading indicator
-                                                                        } else if (snapshot.hasError) {
-                                                                          return Text('Error: ${snapshot.error}');
-                                                                        } else if (!snapshot.hasData || snapshot.data == null) {
-                                                                          return Text('Error: COULD NOT LOAD PROFILE');
-                                                                        } else {
-                                                                          return snapshot.data!;
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                    SizedBox(width:10),
-                                                                    Column
-                                                                    (
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                      children: 
-                                                                      [
-                                                                        Text
-                                                                          (
-                                                                            replyUsername
-                                                                                .toString(),
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight:
-                                                                                  FontWeight
-                                                                                      .bold,
-                                                                            ),
+                                                                Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          FutureBuilder<
+                                                                              Widget>(
+                                                                            future:
+                                                                                loadUserProfilePicture(comment.commentedBy, 15),
+                                                                            builder:
+                                                                                (context, snapshot) {
+                                                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                                return CircularProgressIndicator(); // or any other loading indicator
+                                                                              } else if (snapshot.hasError) {
+                                                                                return Text('Error: ${snapshot.error}');
+                                                                              } else if (!snapshot.hasData || snapshot.data == null) {
+                                                                                return Text('Error: COULD NOT LOAD PROFILE');
+                                                                              } else {
+                                                                                return snapshot.data!;
+                                                                              }
+                                                                            },
                                                                           ),
-                                                                        Text
-                                                                        (
-                                                                            reply.replyTime
-                                                                                    .toString() ??
-                                                                                '',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Colors
-                                                                                  .grey,
-                                                                            ),
+                                                                          SizedBox(
+                                                                              width: 10),
+                                                                          Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Text(
+                                                                                replyUsername.toString(),
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              ),
+                                                                              Text(
+                                                                                reply.replyTime.toString() ?? '',
+                                                                                style: TextStyle(
+                                                                                  color: Colors.grey,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      if (reply
+                                                                              .repliedBy ==
+                                                                          emailHash) // Show delete button/icon only if the comment was posted by the current user
+                                                                        IconButton(
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.delete,
+                                                                            color:
+                                                                                Colors.red,
+                                                                          ),
+                                                                          onPressed:
+                                                                              () {
+                                                                            // Call deleteComment function when delete button/icon is pressed
+                                                                            deleteReply(comment.commentID,
+                                                                                reply.replyID);
+                                                                          },
                                                                         ),
-                                                                      ],
-                                                                    )
-                                                                    
-                                                                  ]
-                                                                ),
+                                                                    ]),
                                                                 Text(reply
                                                                         .replyText ??
                                                                     ''),
@@ -846,8 +914,7 @@ class Comment {
   });
 }
 
-class Reply 
-{
+class Reply {
   final String replyID;
   final String replyText;
   final String repliedBy;
@@ -859,14 +926,13 @@ class Reply
     required this.repliedBy,
     required this.replyTime,
   });
-  }
+}
 
-  class UserInfo
-  { 
-    final String profileImageURL;
-    final String initials;
-    UserInfo({
-      required this.profileImageURL,
-      required this.initials,
-    });
-  }
+class UserInfo {
+  final String profileImageURL;
+  final String initials;
+  UserInfo({
+    required this.profileImageURL,
+    required this.initials,
+  });
+}
