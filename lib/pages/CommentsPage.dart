@@ -723,27 +723,28 @@ class _CommentsPageState extends State<CommentsPage> {
                                             .replies
                                             .length,
                                         itemBuilder: ((context, index) {
-                                          final reply = _comments[commentIndex]
-                                              .replies[index];
+                                          final reply = _comments[commentIndex].replies[index];
                                           return FutureBuilder(
                                               future:
                                                   _getUserName(reply.repliedBy),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
+                                              builder: (context, snapshot) 
+                                              {
+                                                if (snapshot.connectionState == ConnectionState.waiting) {
                                                   return CircularProgressIndicator(); // Or any other loading indicator
-                                                } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      'Error: ${snapshot.error}');
-                                                } else {
-                                                  final replyUsername =
-                                                      snapshot.data ?? '';
-                                                  print("reply username: " +
-                                                      replyUsername.toString());
-                                                  return Container(
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 8),
-                                                    child: Card(
+                                                } 
+                                                else if (snapshot.hasError) 
+                                                {
+                                                  return Text('Error: ${snapshot.error}');
+                                                } 
+                                                else 
+                                                {
+                                                  final replyUsername = snapshot.data ?? '';
+                                                  print("reply username: " + replyUsername.toString());
+                                                  return Container
+                                                  (
+                                                    margin: EdgeInsets.only(bottom: 8),
+                                                    child: Card
+                                                    (
                                                       elevation: 2,
                                                       shape:
                                                           RoundedRectangleBorder(
@@ -779,7 +780,7 @@ class _CommentsPageState extends State<CommentsPage> {
                                                                           FutureBuilder<
                                                                               Widget>(
                                                                             future:
-                                                                                loadUserProfilePicture(comment.commentedBy, 15),
+                                                                                loadUserProfilePicture(reply.repliedBy, 15),
                                                                             builder:
                                                                                 (context, snapshot) {
                                                                               if (snapshot.connectionState == ConnectionState.waiting) {
