@@ -122,6 +122,10 @@ Through VS code IDE:
 - Documentation: [Sprint 5 Report](https://docs.google.com/document/d/1oIFmjMZpa0klbf-ue4jMdNTUFzoS82h_bFcrCl08COM/edit?usp=sharing)
 - Video: [link](https://drive.google.com/file/d/1S-rAgXZtE-g5tkGmWiPe2DPBlMdtwvRO/view?usp=sharing)
 
+#### Sprint 6:
+- Documentation: [Sprint 6 Report](https://docs.google.com/document/d/1tC8OJfxgHrPcCnUCgVUWgUTP2Q_17aieDA1zLAib3gY/edit?usp=sharing)
+- Video: [link](https://drive.google.com/file/d/1tkINICTGXRcUVexMCHahG4ziXJ4UIETr/view) 
+
 ## PREVIOUS GROUP - Sprints
 
 #### Sprint 1:
