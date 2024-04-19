@@ -311,7 +311,6 @@ class _AnalyticsPage extends State<AnalyticsPage> {
             children: [
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.black, width: 2),
@@ -332,13 +331,13 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                         style: TextStyle(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
+                      SizedBox(height:5),
                     ],
                   ),
                 ),
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.black, width: 2),
@@ -359,6 +358,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                         style: TextStyle(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
+                      SizedBox(height:5),
                     ],
                   ),
                 ),
@@ -373,7 +373,6 @@ class _AnalyticsPage extends State<AnalyticsPage> {
             children: [
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.black, width: 2),
@@ -394,13 +393,13 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                         style: TextStyle(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
+                      SizedBox(height:5),
                     ],
                   ),
                 ),
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     border: Border.all(color: Colors.black, width: 2),
@@ -421,6 +420,7 @@ class _AnalyticsPage extends State<AnalyticsPage> {
                         style: TextStyle(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
+                      SizedBox(height:5),
                     ],
                   ),
                 ),
