@@ -12,6 +12,8 @@ import 'package:geocoding/geocoding.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../helper_functions/geolocation_service.dart';
+import '../helper_functions/phone_verification.dart';
+
 
 import '../palette.dart';
 
@@ -157,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
         "first name": _firstName,
         "last name": _lastName,
         "email": _emailController.text,
-        "phone": _phone,
+        "phone": PhoneVerification.extractNumbers(_phone!),
         "company": _company,
         //"street address": _location1Control.text,
         "city address": cityValue,
@@ -371,13 +373,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   controller: _phoneController,
+                  validator: PhoneVerification.isValidPhoneNumber,
                   keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    return null;
-                  },
                   onSaved: (value) {
                     _phone = value;
                   },
