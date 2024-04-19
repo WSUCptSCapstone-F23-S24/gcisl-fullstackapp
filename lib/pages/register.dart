@@ -6,6 +6,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geocoding/geocoding.dart';
+import '../helper_functions/phone_verification.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../helper_functions/geolocation_service.dart';
@@ -321,7 +322,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: const EdgeInsets.only(left: 20.0),
                     child: TextFormField(
                       controller: _phoneController,
-                      validator: _requiredValidator,
+                      validator: PhoneVerification.isValidPhoneNumber,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
@@ -679,6 +680,16 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
+  String? _phoneNumberValidator(String? text)
+  {
+    String? normalValidator = _requiredValidator(text);
+    if(normalValidator != null)
+    {
+      return normalValidator;
+    }
+
+  }
+
   String? _confirmPassword(String? confirmPass) {
     if (confirmPass == null || confirmPass.trim().isEmpty) {
       return 'This Field is Required';
@@ -742,7 +753,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'first name': _firstNameController.text,
         'last name': _lastNameController.text,
         "email": _emailControllor.text,
-        'phone': _phoneController.text,
+        'phone': PhoneVerification.extractNumbers(_phoneController.text),
         'company': _companyController.text,
         "city address": cityValue,
         "state address": stateValue,
