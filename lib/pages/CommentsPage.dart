@@ -664,16 +664,13 @@ class _CommentsPageState extends State<CommentsPage> {
                                       LikeButton(
                                         likeCount: likes.length,
                                         //countPostion: CountPostion.bottom,
-                                        isLiked: likes
-                                            .contains(_getUserName(emailHash!)),
+                                        isLiked: likes.contains(emailHash!),
                                         onTap: (isLiked) async {
                                           setState(() {
                                             if (isLiked) {
-                                              likes.remove(
-                                                  _getUserName(emailHash!));
+                                              likes.remove(emailHash!);
                                             } else {
-                                              likes.add(
-                                                  _getUserName(emailHash!));
+                                              likes.add(emailHash!);
                                             }
                                           });
                                           await _updateLikesInDatabase(
@@ -723,28 +720,27 @@ class _CommentsPageState extends State<CommentsPage> {
                                             .replies
                                             .length,
                                         itemBuilder: ((context, index) {
-                                          final reply = _comments[commentIndex].replies[index];
+                                          final reply = _comments[commentIndex]
+                                              .replies[index];
                                           return FutureBuilder(
                                               future:
                                                   _getUserName(reply.repliedBy),
-                                              builder: (context, snapshot) 
-                                              {
-                                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
                                                   return CircularProgressIndicator(); // Or any other loading indicator
-                                                } 
-                                                else if (snapshot.hasError) 
-                                                {
-                                                  return Text('Error: ${snapshot.error}');
-                                                } 
-                                                else 
-                                                {
-                                                  final replyUsername = snapshot.data ?? '';
-                                                  print("reply username: " + replyUsername.toString());
-                                                  return Container
-                                                  (
-                                                    margin: EdgeInsets.only(bottom: 8),
-                                                    child: Card
-                                                    (
+                                                } else if (snapshot.hasError) {
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else {
+                                                  final replyUsername =
+                                                      snapshot.data ?? '';
+                                                  print("reply username: " +
+                                                      replyUsername.toString());
+                                                  return Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 8),
+                                                    child: Card(
                                                       elevation: 2,
                                                       shape:
                                                           RoundedRectangleBorder(
