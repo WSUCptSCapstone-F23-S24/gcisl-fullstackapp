@@ -69,8 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (usersData != null) {
         usersData.forEach((key, value) {
           if (value['email'] != currentEmail) return;
-          bool tempisAdmin =
-              value['isAdmin'] != null ? value['isAdmin'] as bool : false;
+          bool tempisAdmin = value['isAdmin'] != null ? value['isAdmin'] as bool : false;
           currentUserType = value["userType"];
           isAdmin = tempisAdmin;
         });
@@ -136,11 +135,11 @@ class _MyHomePageState extends State<MyHomePage> {
       comments = <String, dynamic>{};
     }
 
-    if (event.snapshot.child("comments").value != null) {
-      setState(() {
-        commentPreview = findMostLikedComment(comments);
-      });
-    }
+    // if (event.snapshot.child("comments").value != null) {
+    //   setState(() {
+    //     commentPreview = findMostLikedComment(comments);
+    //   });
+    // }
 
     if (mounted) {
       setState(() {
@@ -818,13 +817,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                     SizedBox(
                                       width: 60,
                                     ),
-                                    if (_postList[index]["comments"].length > 0)
-                                      Card(
-                                        child: SizedBox(
-                                            width: 200,
-                                            child: Text(_postList[index]
-                                                ["commentPreview"])),
-                                      ),
+                                    // if (_postList[index]["comments"].length > 0)
+                                    //   Card(
+                                    //     child: SizedBox(
+                                    //         width: 200,
+                                    //         child: Text(_postList[index]
+                                    //             ["commentPreview"])),
+                                    //   ),
                                   ],
                                 ),
                               ),
