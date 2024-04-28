@@ -932,18 +932,18 @@ class _PostPortionState extends State<PostPortion> {
     }
     if (mounted && email.hashCode.toString() == widget.emailHashcode) {
       setState(() {
-        _postList.insert(0, [
-          newPost,
-          "$firstName $lastName",
-          timestamp,
-          image,
-          email,
-          uniquePostId,
-          uniquePostImageId,
-          userType,
-          profilePicture,
-          initials,
-        ]);
+        _postList.insert(0, {
+          "post body": newPost,
+          "full name": "$firstName $lastName",
+          "timestamp": timestamp,
+          "image": image,
+          "email": email,
+          "post id": uniquePostId,
+          "image id": uniquePostImageId,
+          "userType": userType,
+          "profile picture": profilePicture,
+          "initials": initials,
+        });
         _localPostListSort();
       });
     }
@@ -1013,10 +1013,11 @@ class _PostPortionState extends State<PostPortion> {
                                     padding: const EdgeInsets.only(left: 15.0),
                                     child: Row(
                                       children: [
-                                        _postList[index][8] == "null"
+                                        _postList[index]["profile picture"] ==
+                                                "null"
                                             ? CircleAvatar(
                                                 child: Text(
-                                                  _postList[index][9],
+                                                  _postList[index]["initials"],
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color: Color.fromARGB(
@@ -1026,7 +1027,8 @@ class _PostPortionState extends State<PostPortion> {
                                               )
                                             : CircleAvatar(
                                                 backgroundImage: NetworkImage(
-                                                    _postList[index][8]),
+                                                    _postList[index]
+                                                        ["profile picture"]),
                                                 radius: 25,
                                               ),
                                         Column(
@@ -1036,7 +1038,8 @@ class _PostPortionState extends State<PostPortion> {
                                               Row(children: [
                                                 TextButton(
                                                     child: Text(
-                                                      _postList[index][1] ??
+                                                      _postList[index]
+                                                              ["full name"] ??
                                                           "anonymous",
                                                       style: const TextStyle(
                                                         // decoration: TextDecoration.underline,
@@ -1051,21 +1054,23 @@ class _PostPortionState extends State<PostPortion> {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ProfilePage1(
-                                                                      _postList[index]
-                                                                              [
-                                                                              4]
-                                                                          .hashCode
-                                                                          .toString(),
-                                                                      true)));
+                                                              builder: (context) => ProfilePage1(
+                                                                  _postList[index]
+                                                                          [
+                                                                          "email"]
+                                                                      .hashCode
+                                                                      .toString(),
+                                                                  true)));
                                                       //ProfilePage1(_postList[index][4].hashCode.toString());
                                                     }),
-                                                if (_postList[index][7] !=
+                                                if (_postList[index]
+                                                            ["userType"] !=
                                                         "null" &&
-                                                    _postList[index][7] != null)
+                                                    _postList[index]
+                                                            ["userType"] !=
+                                                        null)
                                                   Text(
-                                                    '-  ${_postList[index][7]}',
+                                                    '-  ${_postList[index]["userType"]}',
                                                     style: const TextStyle(
                                                       // decoration: TextDecoration.underline,
                                                       // color: Palette.ktoCrimson,
@@ -1087,9 +1092,10 @@ class _PostPortionState extends State<PostPortion> {
                                                                 .fromMillisecondsSinceEpoch(
                                                                     int.parse(_postList[
                                                                             index]
-                                                                        [2]))),
+                                                                        [
+                                                                        "timestamp"]))),
                                                         child: SelectableText(
-                                                          '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index][2])))}',
+                                                          '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
                                                           style:
                                                               const TextStyle(
                                                             color: Colors.grey,
@@ -1100,7 +1106,7 @@ class _PostPortionState extends State<PostPortion> {
                                       ],
                                     ),
                                   ),
-                                  _postList[index][0] == ""
+                                  _postList[index]["post body"] == ""
                                       ? Container(
                                           constraints: const BoxConstraints(
                                               minHeight: 75),
@@ -1117,7 +1123,8 @@ class _PostPortionState extends State<PostPortion> {
                                                 children: [
                                                   ListTile(
                                                     title: SelectableText(
-                                                      _postList[index][0],
+                                                      _postList[index]
+                                                          ["post body"],
                                                     ),
                                                   ),
                                                 ],
@@ -1125,7 +1132,7 @@ class _PostPortionState extends State<PostPortion> {
                                             ),
                                           ],
                                         ),
-                                  _postList[index][3] == "null"
+                                  _postList[index]["image"] == "null"
                                       ? const SizedBox(height: 0)
                                       : MouseRegion(
                                           cursor: SystemMouseCursors.click,
@@ -1137,7 +1144,7 @@ class _PostPortionState extends State<PostPortion> {
                                                     ImageDialog(
                                                         imageUrl:
                                                             _postList[index]
-                                                                [3]),
+                                                                ["image"]),
                                               );
                                             },
                                             child: Column(
@@ -1145,7 +1152,7 @@ class _PostPortionState extends State<PostPortion> {
                                                 //const SizedBox(height: 2),
                                                 SizedBox(
                                                   child: Image.network(
-                                                    _postList[index][3],
+                                                    _postList[index]["image"],
                                                     fit: BoxFit.scaleDown,
                                                   ),
                                                 ),
