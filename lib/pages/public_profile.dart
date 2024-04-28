@@ -877,14 +877,16 @@ class _PostPortionState extends State<PostPortion> {
   @override
   void initState() {
     super.initState();
-    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
-    getCurrentUser().then((value) {
-      setState(() {
-        username = value;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+      getCurrentUser().then((value) {
+        setState(() {
+          username = value;
+        });
       });
+      currentEmail = FirebaseAuth.instance.currentUser?.email;
+      _database.onChildAdded.listen(_onNewPostAdded);
     });
-    currentEmail = FirebaseAuth.instance.currentUser?.email;
-    _database.onChildAdded.listen(_onNewPostAdded);
   }
 
   void _onNewPostAdded(DatabaseEvent event) async {
