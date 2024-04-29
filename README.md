@@ -49,7 +49,7 @@ For VS code, you will want to add extensions to make it easier to read code
 - C++/C
 - GitLens (optional)
 
-### Clonning Repo
+### Cloning Repo
 - Create a new folder to store the repository on your local machine
 - Open Visual Studio, or the IDE of your choice 
 - Select "Clone a Repo" from the left side tab
@@ -61,20 +61,12 @@ For VS code, you will want to add extensions to make it easier to read code
 - Open terminal window in VS code 
 - Run command "Flutter Run"
 
-
-
-## Functionality
--User sign-in page
--User registration page
--Appbar
-
-
 ## Known Problems
 
 There are no known problems.
 
 ## Accounts
-Currently we are in the process of moving all exterior services under one gmail account. This will allow future users to be able to access Cobb Connect services without having to contact prior students. We are centralizing all information under the account `wsucobbconnect@gmail.com`. The password for this account is `gocougs!`.
+Currently we are in the process of moving all exterior services under one gmail account. This will allow future users to be able to access Cobb Connect services without having to contact prior students. We are centralizing all information under the account `cobbconnectwsu@gmail.com`. The password for this account is `gocougs!`.
 <br>
 The services we currently have attached to the gmail:
 <br>
@@ -82,8 +74,7 @@ The services we currently have attached to the gmail:
 <br>
 [Radar](https://radar.com/)
 <br>
-Google Maps - Yet To Be Added
-
+[Google Maps](https://developers.google.com/maps)
 
 ## Contributing
 
