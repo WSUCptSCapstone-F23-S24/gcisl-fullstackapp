@@ -877,14 +877,16 @@ class _PostPortionState extends State<PostPortion> {
   @override
   void initState() {
     super.initState();
-    emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
-    getCurrentUser().then((value) {
-      setState(() {
-        username = value;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      emailHash = FirebaseAuth.instance.currentUser?.email?.hashCode.toString();
+      getCurrentUser().then((value) {
+        setState(() {
+          username = value;
+        });
       });
+      currentEmail = FirebaseAuth.instance.currentUser?.email;
+      _database.onChildAdded.listen(_onNewPostAdded);
     });
-    currentEmail = FirebaseAuth.instance.currentUser?.email;
-    _database.onChildAdded.listen(_onNewPostAdded);
   }
 
   void _onNewPostAdded(DatabaseEvent event) async {
@@ -909,21 +911,39 @@ class _PostPortionState extends State<PostPortion> {
     // Extract first name and last name from the user details
     String? firstName = userSnapshot.child("first name").value.toString();
     String? lastName = userSnapshot.child("last name").value.toString();
+    String? profilePicture =
+        userSnapshot.child("profile picture").value.toString();
+    String? userType = userSnapshot.child("userType").value.toString();
+
+    // Gets the initials of the users name
+    String fullName = "$firstName $lastName";
+    List<String> nameParts = fullName.split(" ");
+    String initials = "";
+    for (int i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].isNotEmpty) {
+        String initial = nameParts[i][0];
+        initials += initial;
+      }
+    }
+    initials = initials.toUpperCase();
 
     if (userName == "null") {
       userName = "anonymous";
     }
     if (mounted && email.hashCode.toString() == widget.emailHashcode) {
       setState(() {
-        _postList.insert(0, [
-          newPost,
-          "$firstName $lastName",
-          timestamp,
-          image,
-          email,
-          uniquePostId,
-          uniquePostImageId
-        ]);
+        _postList.insert(0, {
+          "post body": newPost,
+          "full name": "$firstName $lastName",
+          "timestamp": timestamp,
+          "image": image,
+          "email": email,
+          "post id": uniquePostId,
+          "image id": uniquePostImageId,
+          "userType": userType,
+          "profile picture": profilePicture,
+          "initials": initials,
+        });
         _localPostListSort();
       });
     }
@@ -932,199 +952,266 @@ class _PostPortionState extends State<PostPortion> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 16,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            DropdownButton<PostSortOption>(
-              value: _selectedSortOption,
-              onChanged: (newSortOption) {
-                setState(() {
-                  _selectedSortOption = newSortOption;
-                  // Sort the post list based on the selected option
-                  _localPostListSort();
-                });
-              },
-              items: [
-                DropdownMenuItem(
-                  value: PostSortOption.newest,
-                  child: Text('Most Recent'),
-                ),
-                DropdownMenuItem(
-                  value: PostSortOption.oldest,
-                  child: Text('Oldest'),
-                ),
-                DropdownMenuItem(
-                  value: PostSortOption.alphabetical,
-                  child: Text('Alphabetical (A-Z)'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_postList.isNotEmpty)
-              Column(children: [
-                Container(
-                  width: 900,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: min(_postList.length, _displayedPosts),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 15,
-                          ),
-                          child: Column(children: [
+        child: Center(
+      child: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 16,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          DropdownButton<PostSortOption>(
+            value: _selectedSortOption,
+            onChanged: (newSortOption) {
+              setState(() {
+                _selectedSortOption = newSortOption;
+                // Sort the post list based on the selected option
+                _localPostListSort();
+              });
+            },
+            items: [
+              DropdownMenuItem(
+                value: PostSortOption.newest,
+                child: Text('Most Recent'),
+              ),
+              DropdownMenuItem(
+                value: PostSortOption.oldest,
+                child: Text('Oldest'),
+              ),
+              DropdownMenuItem(
+                value: PostSortOption.alphabetical,
+                child: Text('Alphabetical (A-Z)'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_postList.isNotEmpty)
+            Column(children: [
+              Container(
+                width: 900,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: min(_postList.length, _displayedPosts),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 15,
+                        ),
+                        child: Column(
+                          children: [
                             Card(
-                              child: Column(children: [
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                TextButton(
-                                    child: Text(
-                                      _postList[index][1] ?? "anonymous",
-                                      style: const TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        color: Palette.ktoCrimson,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: Row(
+                                      children: [
+                                        _postList[index]["profile picture"] ==
+                                                "null"
+                                            ? CircleAvatar(
+                                                child: Text(
+                                                  _postList[index]["initials"],
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Color.fromARGB(
+                                                          255, 130, 125, 125)),
+                                                ),
+                                                radius: 25,
+                                              )
+                                            : CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    _postList[index]
+                                                        ["profile picture"]),
+                                                radius: 25,
+                                              ),
+                                        Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(children: [
+                                                TextButton(
+                                                    child: Text(
+                                                      _postList[index]
+                                                              ["full name"] ??
+                                                          "anonymous",
+                                                      style: const TextStyle(
+                                                        // decoration: TextDecoration.underline,
+                                                        // color: Palette.ktoCrimson,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ProfilePage1(
+                                                                  _postList[index]
+                                                                          [
+                                                                          "email"]
+                                                                      .hashCode
+                                                                      .toString(),
+                                                                  true)));
+                                                      //ProfilePage1(_postList[index][4].hashCode.toString());
+                                                    }),
+                                                if (_postList[index]
+                                                            ["userType"] !=
+                                                        "null" &&
+                                                    _postList[index]
+                                                            ["userType"] !=
+                                                        null)
+                                                  Text(
+                                                    '-  ${_postList[index]["userType"]}',
+                                                    style: const TextStyle(
+                                                      // decoration: TextDecoration.underline,
+                                                      // color: Palette.ktoCrimson,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                              ]),
+                                              Row(children: [
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 15.0),
+                                                    child: Tooltip(
+                                                        message: DateFormat(
+                                                                'MM/dd/yyyy hh:mm a')
+                                                            .format(DateTime
+                                                                .fromMillisecondsSinceEpoch(
+                                                                    int.parse(_postList[
+                                                                            index]
+                                                                        [
+                                                                        "timestamp"]))),
+                                                        child: SelectableText(
+                                                          '${DateFormat('MMM d').format(DateTime.fromMillisecondsSinceEpoch(int.parse(_postList[index]["timestamp"])))}',
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ))),
+                                              ])
+                                            ]),
+                                      ],
                                     ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProfilePage1(
-                                                      _postList[index][4]
-                                                          .hashCode
-                                                          .toString(),
-                                                      true)));
-                                      //ProfilePage1(_postList[index][4].hashCode.toString());
-                                    }),
-                                _postList[index][0] == ""
-                                    ? Container(
-                                        constraints:
-                                            const BoxConstraints(minHeight: 75),
-                                      )
-                                    : Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Container(
-                                            constraints: const BoxConstraints(
-                                                minHeight: 75),
+                                  ),
+                                  _postList[index]["post body"] == ""
+                                      ? Container(
+                                          constraints: const BoxConstraints(
+                                              minHeight: 75),
+                                        )
+                                      : Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            Container(
+                                              constraints: const BoxConstraints(
+                                                  minHeight: 75),
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    title: SelectableText(
+                                                      _postList[index]
+                                                          ["post body"],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                  _postList[index]["image"] == "null"
+                                      ? const SizedBox(height: 0)
+                                      : MouseRegion(
+                                          cursor: SystemMouseCursors.click,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    ImageDialog(
+                                                        imageUrl:
+                                                            _postList[index]
+                                                                ["image"]),
+                                              );
+                                            },
                                             child: Column(
                                               children: [
-                                                ListTile(
-                                                  title: SelectableText(
-                                                    _postList[index][0],
+                                                //const SizedBox(height: 2),
+                                                SizedBox(
+                                                  child: Image.network(
+                                                    _postList[index]["image"],
+                                                    fit: BoxFit.scaleDown,
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                _postList[index][3] == "null"
-                                    ? const SizedBox(height: 0)
-                                    : MouseRegion(
-                                        cursor: SystemMouseCursors.click,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => ImageDialog(
-                                                  imageUrl: _postList[index]
-                                                      [3]),
-                                            );
-                                          },
-                                          child: Column(
-                                            children: [
-                                              //const SizedBox(height: 2),
-                                              SizedBox(
-                                                child: Image.network(
-                                                  _postList[index][3],
-                                                  fit: BoxFit.scaleDown,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
                                         ),
-                                      ),
-                                const SizedBox(height: 8),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                  ),
-                                  child: SelectableText(
-                                    DateFormat('MM/dd/yyyy hh:mm a').format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            int.parse(_postList[index][2]))),
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ]),
+                                ],
+                              ),
                             ),
-                          ]));
-                    },
-                  ),
+                          ],
+                        ));
+                  },
                 ),
-                if (_postList.length > _displayedPosts)
-                  SizedBox(
-                    width: 125,
-                    height: 65,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Card(
-                        color: Palette.ktoCrimson,
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _displayedPosts += 30;
-                            });
-                          },
-                          child: const Text(
-                            'Load More',
-                            style: TextStyle(color: Colors.white, fontSize: 19),
-                          ),
+              ),
+              if (_postList.length > _displayedPosts)
+                SizedBox(
+                  width: 125,
+                  height: 65,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Card(
+                      color: Palette.ktoCrimson,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _displayedPosts += 30;
+                          });
+                        },
+                        child: const Text(
+                          'Load More',
+                          style: TextStyle(color: Colors.white, fontSize: 19),
                         ),
                       ),
                     ),
                   ),
-              ]),
-            if (_postList.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'No posts yet.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                ),
+            ]),
+          if (_postList.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'No posts yet.',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            const SizedBox(height: 16),
-            const Text(
-              'You Have Reached the End \u{1F60A}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
             ),
-          ],
-        ),
+          const SizedBox(height: 16),
+          const Text(
+            'You Have Reached the End \u{1F60A}',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
-    );
+    ));
   }
 }
