@@ -598,7 +598,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ))
                         ]),
                   ),
-                  //value: _selectedUserType,
+                  value: _selectedUserType,
                   items: <String>['student', 'alumni', 'faculty']
                       .map((String userType) {
                     return DropdownMenuItem<String>(
