@@ -13,6 +13,7 @@ The motivation behind this project was the Granger Cobb Institute for Senior Liv
 
 ### Video Guides
 Building Flutter Website - https://drive.google.com/file/d/1De30K4JmwDO2uFtg1S6ISESFVbkqVj0Q/view?usp=sharing
+<br>
 Deleting Information from Firebase - https://drive.google.com/file/d/1pjCJnHBRjWA9Ggkm8R_g1PMrm9vNPJkn/view?usp=sharing
 
 ## Installation (to Edit and Contribute)
@@ -124,7 +125,7 @@ Through VS code IDE:
 
 #### Sprint 7:
 - Documentation: [Sprint 7 Report](https://docs.google.com/document/d/1mAbWgI1gNNuD5pPv9P0ymVqLJ64Apw36uaq-EZzT5N8/edit?usp=sharing)
-- Video [link] (https://drive.google.com/file/d/1FmXYLBPwT0YIUJTo58jIiwOMAmuHWKxn/view?usp=sharing)
+- Video [link](https://drive.google.com/file/d/1FmXYLBPwT0YIUJTo58jIiwOMAmuHWKxn/view?usp=sharing)
 
 ## PREVIOUS GROUP - Sprints
 
