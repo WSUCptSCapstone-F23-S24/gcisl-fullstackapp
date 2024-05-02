@@ -10,6 +10,11 @@ Our project provided by Granger Cobb Institute for Senior Living (GCISL) has ask
 ### Motivation
 The motivation behind this project was the Granger Cobb Institute for Senior Living is a new institution in the school of hospitality looking for a way to stay connected with alumni in the field. They have data of students who have graduated from the hospitality program in the past eleven years and plan to share this application with them so faculty and alumni can reconnect. The GCISL team will provide the faculty with an application that can help connect the school with alumni 
 
+
+### Video Guides
+Building Flutter Website - https://drive.google.com/file/d/1De30K4JmwDO2uFtg1S6ISESFVbkqVj0Q/view?usp=sharing
+Deleting Information from Firebase - https://drive.google.com/file/d/1pjCJnHBRjWA9Ggkm8R_g1PMrm9vNPJkn/view?usp=sharing
+
 ## Installation (to Edit and Contribute)
 ### Prerequisites
 ***IDE*** -  You will need a program to view and edit code. We recommend Visual Studio Code.
